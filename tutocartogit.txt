@@ -1,0 +1,20 @@
+# Dans le home
+git clone git@github.com:Taldrain/Carto.git
+
+# Ajouter dans une zone tampon
+git add <filename>
+
+# Ajouter les fichiers de la zone tampon sur le repo local avec le coms
+git commit -m '<commentaire>'
+
+# Agencer le repo local (ca fait classe apparement)
+git repack && git prune
+
+# Envoyer sur le repo distant
+git push
+
+# Mettre a jour le repo local
+git pull
+
+# Afficher le status du repo local
+git status
