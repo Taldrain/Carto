@@ -27,7 +27,7 @@ let first () =
 		~hpolicy:`AUTOMATIC
 		~vpolicy:`AUTOMATIC
 		~packing:vbox#add () in
-	let secvbox = GPack.vbox
+	let secvbox = GPack.vbox 
 		~packing:scrolled_window#add_with_viewport () in
 	(* begin -- Generation des boutons en fonction de !nb_colors *)
 	for i=1 to (Refe.get_nb_colors ()) do
@@ -37,14 +37,11 @@ let first () =
 				~packing:secvbox#add ();
 			tbx = GEdit.entry
 				~max_length:4
+				~width:4
 				~packing:secvbox#add ()
 		} in
 			temp::(!list_lbltbx_struct)
 	done;
 	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
-	let separator2 = GMisc.separator `HORIZONTAL 
-		~packing:vbox#add () in
-	(* --------------------------------------- *)
-	let btn :
 
