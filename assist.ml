@@ -43,4 +43,8 @@ let first () =
 	done;
 	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
-	
+	let separator2 = GMisc.separator `HORIZONTAL 
+		~packing:vbox#add () in
+	(* --------------------------------------- *)
+	let btn :
+
