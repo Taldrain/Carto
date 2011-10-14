@@ -2,12 +2,14 @@ CC=ocamlopt
 RM=rm -rf
 OUT=carto
 FILE=refe.ml pre.ml browser.ml assist.ml main.ml
+FILEX=refe.cmx pre.cmx browser.cmx assist.cmx main.cmx
+WALL=-I +lablgtk2 -I +sdl -I +lablGL lablgl.cmxa lablgtk.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa
 
-all: ${FILE} 
-	${CC} -I +lablgtk2 -I +sdl -I +lablGL -o ${OUT} lablgl.cmxa lablgtk.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa ${FILE}
+all: $(FILEX) 
+	$(CC) $(WALL) $^ -o $(OUT) 
 
-simple: simple.ml
-	${CC} -I +lablgtk2 -I +lablGL -o ${OUT} lablgtk.cmxa lablgl.cmxa lablgtkgl.cmxa simple.ml
+$(FILEX): $(FILE)
+	$(CC) $(WALL) -c $^
 
-clean::
-	${RM} *.cm* *.o .*.swp ~* ${OUT}
+clean:
+	$(RM) *.cm* *.o .*.swp ~* '#'* $(OUT)
