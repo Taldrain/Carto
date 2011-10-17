@@ -4,9 +4,13 @@
 
 type struct_alt = {
 	lbl : GMisc.label;
+	img : GMisc.image;
 	tbx : GEdit.entry
 }
 let list_lbltbx_struct = ref ([] : struct_alt list)
+
+(* Formulaire de demande d'altitude *)
+
 
 let first () =
 	let win1 = GWindow.window 
@@ -29,16 +33,41 @@ let first () =
 		~packing:vbox#add () in
 	let secvbox = GPack.vbox 
 		~packing:scrolled_window#add_with_viewport () in
+	let hbox1 = GPack.hbox
+		~packing:secvbox#add () in
+	let hbox2 = GPack.hbox
+		~packing:secvbox#add () in
+	let hbox3 = GPack.hbox
+		~packing:secvbox#add () in
+
 	(* begin -- Generation des boutons en fonction de !nb_colors *)
+	Pre.sdl_init ();
+	let img_ref = Sdlloader.load_image "img/ref.png" in
+	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w, 
+				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
 	for i=1 to (Refe.get_nb_colors ()) do
+		let carname = ("img/car"^(string_of_int i)^".bmp") in
+		let cartouche = 
+			Sdlvideo.create_RGB_surface_format img_ref [] w h in
+		let rgb = List.hd (Refe.get_li ()) in
+		Refe.li := List.tl (Refe.get_li ()); 
+		for y=0 to h do
+		for x=0 to w do
+			Sdlvideo.put_pixel_color cartouche x y rgb;
+			Sdlvideo.save_BMP cartouche carname
+		done
+		done;
 		let temp = {
 			lbl = GMisc.label
 				~text:("Color "^(string_of_int i))
-				~packing:secvbox#add ();
+				~packing:hbox1#add ();
+			img = GMisc.image
+				~file:carname
+				~packing:hbox2#add ();
 			tbx = GEdit.entry
 				~max_length:4
 				~width:4
-				~packing:secvbox#add ()
+				~packing:hbox3#add ()
 		} in
 			temp::(!list_lbltbx_struct)
 	done;

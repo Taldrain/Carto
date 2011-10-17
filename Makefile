@@ -5,11 +5,11 @@ FILE=refe.ml pre.ml browser.ml assist.ml main.ml
 FILEX=refe.cmx pre.cmx browser.cmx assist.cmx main.cmx
 WALL=-I +lablgtk2 -I +sdl -I +lablGL lablgl.cmxa lablgtk.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa
 
-all: $(FILEX) 
+all: $(FILE) 
 	$(CC) $(WALL) $^ -o $(OUT) 
 
-$(FILEX): $(FILE)
-	$(CC) $(WALL) -c $^
+#%.cmx: %.ml
+#	$(CC) -c $a
 
 clean:
 	$(RM) *.cm* *.o .*.swp ~* '#'* $(OUT)
