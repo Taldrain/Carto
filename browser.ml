@@ -35,5 +35,5 @@ let browser parent () =
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;
 	dialog#destroy ()
-(* END -- Functions for the browser *)
+(* END -- Funcmions for the browser *)
 
