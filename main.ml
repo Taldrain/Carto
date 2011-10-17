@@ -37,14 +37,14 @@ let main () =
 			~label:"Execute" 
 			~packing:(vbox#pack ~padding:5) () in
 	btn_pre_trait#connect#clicked ~callback:Pre.pre_trait;
-	let btn_quit = GButton.button 
-		~label:"Quit" 
-		~packing:(vbox#pack ~padding:5) () in
-	btn_quit#connect#clicked ~callback:(quit);
 	let btn_assist = GButton.button
 		~label:"Assist"
 		~packing:(vbox#pack ~padding:5) () in
 	btn_assist#connect#clicked ~callback:(Assist.first);
+	let btn_quit = GButton.button 
+		~label:"Quit" 
+		~packing:(vbox#pack ~padding:5) () in
+	btn_quit#connect#clicked ~callback:(quit);
   	w#show ();
   	GMain.main ()
 (* BEGIN -- Main and various functions for the GTK interface *)

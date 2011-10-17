@@ -31,46 +31,54 @@ let first () =
 		~hpolicy:`AUTOMATIC
 		~vpolicy:`AUTOMATIC
 		~packing:vbox#add () in
-	let secvbox = GPack.vbox 
+	let secbox = GPack.hbox 
 		~packing:scrolled_window#add_with_viewport () in
-	let hbox1 = GPack.hbox
-		~packing:secvbox#add () in
-	let hbox2 = GPack.hbox
-		~packing:secvbox#add () in
-	let hbox3 = GPack.hbox
-		~packing:secvbox#add () in
+	let vbox1 = GPack.vbox
+		~packing:secbox#add () in
+	let vbox2 = GPack.vbox
+		~packing:secbox#add () in
+	let vbox3 = GPack.vbox
+		~packing:secbox#add () in
 
 	(* begin -- Generation des boutons en fonction de !nb_colors *)
 	Pre.sdl_init ();
 	let img_ref = Sdlloader.load_image "img/ref.png" in
 	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w, 
 				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
-	for i=1 to (Refe.get_nb_colors ()) do
+	for i=1 to List.length (Refe.get_li ()) do
+
 		let carname = ("img/car"^(string_of_int i)^".bmp") in
 		let cartouche = 
 			Sdlvideo.create_RGB_surface_format img_ref [] w h in
-		let rgb = List.hd (Refe.get_li ()) in
-		Refe.li := List.tl (Refe.get_li ()); 
-		for y=0 to h do
-		for x=0 to w do
+		match (Refe.get_li ()) with
+		| [] -> failwith "Critical error"
+		| e::q -> let rgb = e and queue = q in
+		Refe.li := queue;
+		for y=0 to (h-1) do
+		for x=0 to (w-1) do
 			Sdlvideo.put_pixel_color cartouche x y rgb;
-			Sdlvideo.save_BMP cartouche carname
-		done
 		done;
+		done;
+		Sdlvideo.save_BMP cartouche carname;
+
 		let temp = {
 			lbl = GMisc.label
 				~text:("Color "^(string_of_int i))
-				~packing:hbox1#add ();
+				~packing:vbox1#add ();
 			img = GMisc.image
 				~file:carname
-				~packing:hbox2#add ();
+				~packing:vbox2#add ();
 			tbx = GEdit.entry
 				~max_length:4
 				~width:4
-				~packing:hbox3#add ()
+				~packing:vbox3#add ()
 		} in
-			temp::(!list_lbltbx_struct)
+			temp::(!list_lbltbx_struct);
 	done;
+	let btn_finish = GButton.button
+		~label:"Finished"
+		~packing:(vbox#pack ~padding:5) () in
+	btn_finish#connect#clicked ~callback:(win1#destroy);
 	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
 

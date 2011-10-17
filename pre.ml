@@ -176,12 +176,12 @@ let map_to_matrice image interv =
 let pre_trait () =
   begin
     (* Nous voulons 1 argument *)
-    if Array.length (Sys.argv) < 2 then
+    if ((Refe.get_filename ()) = "") then
       failwith "Il manque le nom du fichier!";
     (* Initialisation de SDL *)
     sdl_init ();
     (* Chargement d'une image *)
-    let img = Sdlloader.load_image Sys.argv.(1) in
+    let img = Sdlloader.load_image (Refe.get_filename ()) in
     let interv = 25 in 
       (* On récupère les dimensions *)
       get_dims img;
