@@ -1,4 +1,4 @@
-let coords list text = 
+let coords list text =
   let rcoolors = open_in "/(*chemin*)/text.txt" and
       wcoords = open_out "/(*chemin*)/colors_altitude.txt" in
     while List.length list <> 0 do
@@ -8,5 +8,3 @@ let coords list text =
     done;
    close_out wcoords;
    close_in rcoolors
-
-    
