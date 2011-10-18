@@ -1,5 +1,5 @@
 (* BEGIN -- Functions for the browser *)
-let default d = function 
+let default d = function
 	| None -> d
 	| Some v -> v
 
@@ -20,7 +20,7 @@ let image_filter () =
 		is_string_prefix "image/" mime);
 	f
 
-let browser parent () = 
+let browser parent () =
 	let dialog = GWindow.file_chooser_dialog
 		~action: `OPEN
 		~title: "Open File"
@@ -30,7 +30,7 @@ let browser parent () =
 	dialog#add_filter (image_filter ());
 	dialog#add_filter (all_files ());
 	begin match dialog#run () with
-	| `OPEN -> Refe.filename := (default "<none>" dialog#filename); 
+	| `OPEN -> Refe.filename := (default "<none>" dialog#filename);
 				prerr_endline (Refe.get_filename ())
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;

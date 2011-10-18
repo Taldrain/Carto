@@ -13,17 +13,17 @@ let list_lbltbx_struct = ref ([] : struct_alt list)
 
 
 let first () =
-	let win1 = GWindow.window 
-		~title:"Assist first step" () 
-		~width:800 
+	let win1 = GWindow.window
+		~title:"Assist first step" ()
+		~width:800
 		~height:600 in
 	win1#connect#destroy ~callback:GMain.quit;
-	let vbox = GPack.vbox 
+	let vbox = GPack.vbox
 		~packing:win1#add () in
-	let lbl = GMisc.label 
+	let lbl = GMisc.label
 		~text:"Enter the colors for each level"
 		~packing:vbox#add () in
-	let separator = GMisc.separator `HORIZONTAL 
+	let separator = GMisc.separator `HORIZONTAL
 		~packing:vbox#add () in
 	(* --------------------------------------- *)
 	let scrolled_window = GBin.scrolled_window
@@ -31,7 +31,7 @@ let first () =
 		~hpolicy:`AUTOMATIC
 		~vpolicy:`AUTOMATIC
 		~packing:vbox#add () in
-	let secbox = GPack.hbox 
+	let secbox = GPack.hbox
 		~packing:scrolled_window#add_with_viewport () in
 	let vbox1 = GPack.vbox
 		~packing:secbox#add () in
@@ -43,12 +43,12 @@ let first () =
 	(* begin -- Generation des boutons en fonction de !nb_colors *)
 	Pre.sdl_init ();
 	let img_ref = Sdlloader.load_image "img/ref.png" in
-	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w, 
+	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w,
 				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
 	for i=1 to List.length (Refe.get_li ()) do
 
 		let carname = ("img/car"^(string_of_int i)^".bmp") in
-		let cartouche = 
+		let cartouche =
 			Sdlvideo.create_RGB_surface_format img_ref [] w h in
 		match (Refe.get_li ()) with
 		| [] -> failwith "Critical error"
