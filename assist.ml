@@ -17,13 +17,13 @@ let first () =
 		~title:"Assist first step" ()
 		~width:800
 		~height:600 in
-	win1#connect#destroy ~callback:GMain.quit;
+	ignore (win1#connect#destroy ~callback:GMain.quit);
 	let vbox = GPack.vbox
 		~packing:win1#add () in
-	let lbl = GMisc.label
+	let _lbl = GMisc.label
 		~text:"Enter the colors for each level"
 		~packing:vbox#add () in
-	let separator = GMisc.separator `HORIZONTAL
+	let _separator = GMisc.separator `HORIZONTAL
 		~packing:vbox#add () in
 	(* --------------------------------------- *)
 	let scrolled_window = GBin.scrolled_window
@@ -46,7 +46,7 @@ let first () =
 	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w,
 				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
 	for i=1 to List.length (Refe.get_li ()) do
-
+	ignore (
 		let carname = ("img/car"^(string_of_int i)^".bmp") in
 		let cartouche =
 			Sdlvideo.create_RGB_surface_format img_ref [] w h in
@@ -74,11 +74,12 @@ let first () =
 				~packing:vbox3#add ()
 		} in
 			temp::(!list_lbltbx_struct);
+	)
 	done;
 	let btn_finish = GButton.button
 		~label:"Finished"
 		~packing:(vbox#pack ~padding:5) () in
-	btn_finish#connect#clicked ~callback:(win1#destroy);
+	ignore (btn_finish#connect#clicked ~callback:(win1#destroy));
 	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
 
