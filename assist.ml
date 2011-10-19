@@ -16,7 +16,8 @@ let first () =
 	let win1 = GWindow.window
 		~title:"Assist first step" ()
 		~width:800
-		~height:600 in
+		~height:600 
+		~position:`CENTER in
 	ignore (win1#connect#destroy ~callback:GMain.quit);
 	let vbox = GPack.vbox
 		~packing:win1#add () in

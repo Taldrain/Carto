@@ -14,20 +14,22 @@ let main () =
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
 		~width:200
-		~height:400 in
+		~height:400 
+		~position:`CENTER in
   	ignore (w#connect#destroy ~callback:GMain.quit);
 
 	let vbox = GPack.vbox
 		~packing:w#add () in
 	let _lbl = GMisc.label
-			~text:"Projet Carto -- Topo team"
-			~packing:vbox#add () in
+		~text:"Projet Carto -- Topo team"
+		~packing:(vbox#pack ~expand:false ~fill:false) () in
 	let _separator = GMisc.separator `HORIZONTAL
-		~packing:vbox#add () in
+		~packing:(vbox#pack ~expand:false ~fill:false) () in
 
-	let _img = GMisc.image
-			~file:(Refe.get_filename ())
-			~packing:(vbox#pack ~padding:5) () in
+	let _lbl = GMisc.label
+		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
+		~packing:(vbox#pack ~expand:false ~fill:false) () in
+
     let btn_browse = GButton.button
 			~label:"Browse"
 			~packing:(vbox#pack ~padding:5) () in
