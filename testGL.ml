@@ -48,6 +48,7 @@ let scene_gl () =
   GlDraw.vertex3 (1.0, -1.0, 0.0);
   GlDraw.color (1.0, 1.0, 0.0);
   GlDraw.vertex3 (-1.0, -1.0, 0.0);
+  GlDraw.vertex3 (-1.0, 1.0, 1.0);
   GlDraw.ends ();
   (* ? *)
   Glut.swapBuffers ()

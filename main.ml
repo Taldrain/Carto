@@ -7,6 +7,7 @@
 
 (* BEGIN -- Main and various functions for the GTK interface *)
 let quit () =
+	GMain.quit ();
 	exit 0
 
 let main () =
@@ -17,7 +18,6 @@ let main () =
 		~height:400 
 		~position:`CENTER in
   	ignore (w#connect#destroy ~callback:GMain.quit);
-
 	let vbox = GPack.vbox
 		~packing:w#add () in
 	let _lbl = GMisc.label
@@ -29,7 +29,9 @@ let main () =
 	let _lbl = GMisc.label
 		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
-
+	let _lbl2 = GMisc.label
+		~text:(Refe.get_filename ())
+		~packing:(vbox#pack ~expand:false ~fill:false) () in
     let btn_browse = GButton.button
 			~label:"Browse"
 			~packing:(vbox#pack ~padding:5) () in

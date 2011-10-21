@@ -1,29 +1,26 @@
 (***************************************************************************)
 (*		L'assistant pour les couleurs dans un premier temps 			   *)
 (***************************************************************************)
-
-type struct_alt = {
-	alt : int;
-	rgb : (int*int*int)
-}
+type str_alt = Refe.struct_alt
 type struct_tbx = {
 	tbx : GEdit.entry;
 	color : (int*int*int)
 }
-let list_alt = ref ([] : struct_alt list)
 let list_tbx = ref ([] : struct_tbx list)
+
 (* Formulaire de demande d'altitude *)
 let save_alt () = 
 	print_endline (string_of_int (List.length !list_tbx));
 	while List.length !list_tbx != 0 do
 		let elt = List.hd !list_tbx in
 		let str = {
-			alt = int_of_string(elt.tbx#text);
-			rgb = elt.color
+			Refe.alt = (try int_of_string(elt.tbx#text) with
+						| _ -> -1);
+			Refe.rgb = elt.color
 		} in
 		list_tbx := List.tl !list_tbx;
-		print_endline elt.tbx#text;
-		ignore (str::(!list_alt))
+		print_endline (string_of_int str.Refe.alt);
+		ignore (str::(Refe.get_list_alt ()))
 	done
 
 let first () =
@@ -32,7 +29,7 @@ let first () =
 		~width:800
 		~height:600 
 		~position:`CENTER in
-	ignore (win1#connect#destroy ~callback:(fun _ -> ()));
+	ignore (win1#connect#destroy ~callback:(save_alt));
 	let vbox = GPack.vbox
 		~packing:win1#add () in
 	let _lbl = GMisc.label
@@ -89,10 +86,10 @@ let first () =
 	)
 	done;
 	print_endline (string_of_int (List.length !list_tbx));
-	let btn_finish = GButton.button
-		~label:"Finished"
+	let btn_ok = GButton.button
+		~label:"OK"
 		~packing:(vbox#pack ~padding:5) () in
-	ignore (btn_finish#connect#clicked ~callback:(save_alt));
+	ignore (btn_ok#connect#clicked ~callback:(win1#destroy));
 	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
 

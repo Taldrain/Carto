@@ -24,27 +24,24 @@ let setup width height =
   GlFunc.depth_func `lequal;
   GlMisc.hint `perspective_correction `nicest
 
+let rec list_rec = function
+    [] -> ()
+  | e::l -> GlDraw.color (fst e);
+            GlDraw.vertex3 (snd e);
+			list_rec l
+
 let scene_gl () =
   (* precaution *)
   GlClear.clear [`color; `depth];
   (* creer une matrice *)
   GlMat.load_identity ();
   (* changement "d'origine" de la matrice *)
-  GlMat.translate3 (0.0, 0.0, -5.0);
-  (* translation NOSHIT ? *)
-  GlMat.rotate3 !rquads (0.0, 0.0, 1.0);
-  (* couleur courante  (<= 1, avec 1 = blanc) *)
-  GlDraw.color (1.0, 0.0, 1.0);
+  GlMat.translate3 (0.0, 0.0, -40.0);
   (* test d'un carre *)
+  GlMat.rotate3 !rquads (1., 1., 1.);
   (* tout les tags ne sont pas permis, nous utiliserons `triangles *)
-  GlDraw.begins `quads;
-  GlDraw.vertex3 (-1.0, 1.0, 0.0);
-  GlDraw.color (1.0, 1.0, 1.0);
-  GlDraw.vertex3 (1.0, 1.0, 0.0);
-  GlDraw.color (0.0, 0.0, 1.0);
-  GlDraw.vertex3 (1.0, -1.0, 0.0);
-  GlDraw.color (1.0, 1.0, 0.0);
-  GlDraw.vertex3 (-1.0, -1.0, 0.0);
+  GlDraw.begins `triangles;
+  list_rec (((0.4, 0.6, 0.3), (20., 4., 3.))::((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::((0.0, 0.0, 1.0), (1.0, -1.0, 0.0))::[]);
   GlDraw.ends ();
   (* ? *)
   Glut.swapBuffers ()

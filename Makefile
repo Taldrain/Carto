@@ -1,16 +1,27 @@
+.SUFFIXES: .ml .cmx
+
 CC=ocamlopt
-FLAGS=
-RM=rm -rf
+RM=rm -f
 OUT=carto
-FILE=refe.ml pre.ml browser.ml assist.ml main.ml
-FILEX=refe.cmx pre.cmx browser.cmx assist.cmx main.cmx
-WALL=-I +lablgtk2 -I +sdl -I +lablGL lablgl.cmxa lablgtk.cmxa bigarray.cmxa sdl.cmxa sdlloader.cmxa
+ML=refe.ml pre.ml browser.ml assist.ml main.ml
+CMX=${ML:.ml=.cmx}
+WALL=-I +lablgtk2 -I +sdl -I +lablGL \
+lablgl.cmxa \
+lablgtk.cmxa \
+bigarray.cmxa \
+sdl.cmxa \
+sdlloader.cmxa
+IMG=img/car*
 
-all: $(FILE) 
-	$(CC) $(FLAGS) $(WALL) $^ -o $(OUT) 
+all: ${CMX}
+	${CC} ${WALL} ${CMX} -o ${OUT} 
 
-#%.cmx: %.ml
-#	$(CC) -c $a
+.ml.cmx:
+	${CC} ${WALL} -c $<
 
-clean:
-	$(RM) *.cm* *.o .*.swp ~* '#'* $(OUT)
+cleanimg:
+	${RM} ${IMG}
+cleanall:
+	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG} $(OUT)
+
+#END
