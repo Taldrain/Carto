@@ -28,7 +28,8 @@ let fixstep () =
 	match !list_inutile_tbx with
 		| [] -> failwith "Error"
 		| e::_ -> let t = e in
-				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
+		    try Refe.step := int_of_string
+		      (t#text);  Pre.pre_trait () with
 					| _ -> Refe.step := 5;
 		Pre.pre_trait ()	
 

@@ -5,20 +5,19 @@
 
 
 (* variables globales *)
-let interv = ref 18
 let w = ref 600
 let h = ref 600
 	
-let matrice = ref (Array.make_matrix ((!w)/(!interv) + 1)  ((!h)/(!interv) +
+(*let matrice = ref (Array.make_matrix ((!w)/(Refe.get_step()) + 1)  ((!h)/((Refe.get_step())) +
 							       1)
 							       (0,0))
 
 
-let matrice_rgb = ref (Array.make_matrix ((!w)/(!interv) +1) ((!h)/(!interv) +
+let matrice_rgb = ref (Array.make_matrix ((!w)/((Refe.get_step())) +1) ((!h)/((Refe.get_step())) +
 								  1) ((0,0),(0,0,0)))
    
    
-  
+*) 
 (* Dimensions d'une image *)
 let get_dims img =
   begin
@@ -169,20 +168,20 @@ let contour image image2 =
    carte *)
 
 
- let rec map_to_mat x y intx inty = match (intx, inty) with
+(* let rec map_to_mat x y intx inty = match (intx, inty) with
    | (intx, inty) when intx > (!w) ->
-       map_to_mat 0 (y+1) 0 (inty + !interv) 
+       map_to_mat 0 (y+1) 0 (inty + (Refe.get_step())) 
    | (intx, inty) when inty > (!h) -> () 
-   | (intx, inty) -> Array.set !matrice.(x) (y) (inty,intx); map_to_mat
-       (x+1) y (intx+(!interv)) inty
+  | (intx, inty) -> Array.set !matrice.(x) (y) (inty,intx); map_to_mat
+       (x+1) y (intx+((Refe.get_step()))) inty
        
 
 
    
  let matXY_to_matRGB img = 
    begin  
-     for y = 0 to ((!h)/(!interv)) do
-       for x = 0 to ((!w)/(!interv)) do
+     for y = 0 to ((!h)/((Refe.get_step()))) do
+       for x = 0 to ((!w)/((Refe.get_step()))) do
 	 let (a,b) = !matrice.(x).(y) in 
            Array.set !matrice_rgb.(x) (y) 
 	     ((x,y),(Sdlvideo.get_pixel_color img a b))
@@ -190,19 +189,19 @@ let contour image image2 =
      done;
    end
      
-
+*)
 	
 	
 (* main *)
 let pre_trait () =
   begin
     (* Nous voulons 1 argument *)
-    if Array.length (Sys.argv) < 2 then
+    if (Refe.get_filename()) == "" then
       failwith "Il manque le nom du fichier!";
     (* Initialisation de SDL *)
     sdl_init ();
     (* Chargement d'une image *)
-    let img = Sdlloader.load_image Sys.argv.(1) in
+    let img = Sdlloader.load_image (Refe.get_filename ()) in
       (* On récupère les dimensions *)
       get_dims img;
       let img2 = Sdlvideo.create_RGB_surface_format img [] !w !h in
@@ -217,11 +216,11 @@ let pre_trait () =
       (* enregistrement *)
       Sdlvideo.save_BMP img2 "out.bmp";
       (* fonction de quadrillage *)
-      contour_hor img2 !interv;
-      contour_ver img2 !interv;
-      contour_diag1 img2 !interv;
-      map_to_mat 0 0 0 0;
-      matXY_to_matRGB img;
+      contour_hor img2 (Refe.get_step());
+      contour_ver img2 (Refe.get_step());
+      contour_diag1 img2 (Refe.get_step());
+      (*map_to_mat 0 0 0 0;
+      matXY_to_matRGB img;*)
       (*  contour_diag2 img2 interv; *)
       (* on affiche l'image apres traitement*)
       show img2 display;  
