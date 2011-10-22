@@ -14,14 +14,16 @@ sdlloader.cmxa
 IMG=img/car*
 
 all: ${CMX}
-	${CC} ${WALL} ${CMX} -o ${OUT} 
+	${CC} ${WALL} ${CMX} -o ${OUT}
 
 .ml.cmx:
 	${CC} ${WALL} -c $<
 
+cleanall: clean
+	${RM} ${OUT} InfoCarto.txt out.bmp
 cleanimg:
 	${RM} ${IMG}
-cleanall:
-	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG} $(OUT)
+clean:
+	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END
