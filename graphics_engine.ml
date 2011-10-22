@@ -1,50 +1,70 @@
-(* figure en nouvement *)
-(* Rotation3 - (x, y, z)
- * indique sur quelle variable faire la rotation
- * x -> axe horizontal
- * y -> axe vertical
- * z -> rotation sens positif
- *)
-(* "q" et "w" pour tester *)
+(* Graphics engine *)
 
 let width = 640
 let height = 480
-let rquads = ref 0.0
+let rx = ref 0.0
+let ry = ref 0.0
+let rz = ref 0.0
+let line = ref true
+let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
+                 ((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
+                 ((0.0, 0.0, 1.0), (1.0, -1.0, 0.0))::
+                 ((1.0, 1.0, 0.0), (20., 4., 3.))::
+                 ((0.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
+                 ((1.0, 1.0, 1.0), (9.0, 4.0, 6.0))::
+                 ((0.0, 1.0, 0.0), (20., 4., 3.))::
+                 ((0., 1., 0.), (1.0, -1.0, 0.0))::
+                 ((1., 0., 1.),(9., 4., 6.))::[])
 
-let setup width height =
+
+
+let setup () =
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
   GlClear.color (0.0, 0.0, 0.0);
   (* profondeur *)
-  GlClear.depth 1.0;
+  GlClear.depth 5.;
   GlClear.clear [`color; `depth];
-  (* ? *)
   Gl.enable `depth_test;
   GlFunc.depth_func `lequal;
   GlMisc.hint `perspective_correction `nicest
 
-let rec list_rec = function
+
+let rec create_tri = function
     [] -> ()
   | e::l -> GlDraw.color (fst e);
             GlDraw.vertex3 (snd e);
-			list_rec l
+            create_tri l
 
+
+(* affichage de la scene *)
 let scene_gl () =
   (* precaution *)
   GlClear.clear [`color; `depth];
   (* creer une matrice *)
   GlMat.load_identity ();
   (* changement "d'origine" de la matrice *)
-  GlMat.translate3 (0.0, 0.0, -40.0);
-  (* test d'un carre *)
-  GlMat.rotate3 !rquads (1., 1., 1.);
-  (* tout les tags ne sont pas permis, nous utiliserons `triangles *)
+  GlMat.translate3 (0.0, 0.0, -10.0);
+  (* translation *)
+  GlMat.rotate3 !rx (2.0, 0.0, 0.0);
+  GlMat.rotate3 !ry (0.0, 2.0, 0.0);
+  GlMat.rotate3 !rz (0.0, 0.0, 2.0);
+  (* Modifier le mode d'affichage *)
+  if !line then
+    (GlDraw.polygon_mode `front `line;
+    GlDraw.polygon_mode `back `line)
+  else
+    (GlDraw.polygon_mode `front `fill;
+    GlDraw.polygon_mode `back `fill);
+  GlDraw.line_width 3.0;
   GlDraw.begins `triangles;
-  list_rec (((0.4, 0.6, 0.3), (20., 4., 3.))::((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::((0.0, 0.0, 1.0), (1.0, -1.0, 0.0))::[]);
+  create_tri !liste;
   GlDraw.ends ();
-  (* ? *)
-  Glut.swapBuffers ()
+  Glut.swapBuffers ()(*;
+  rx := !rx +. 5.;
+  ry := !ry +. 5.;
+  rz := !rz +. 5.*)
 
 
 (* redimensionner et lancement du programme *)
@@ -56,19 +76,36 @@ let reshape ~w ~h =
     GlMat.mode `projection;
     (* chargement de la matrice identite *)
     GlMat.load_identity ();
-    (* ? *)
     GluMat.perspective 45.0 ratio (0.1, 100.0);
     (* changement de mode ? *)
     GlMat.mode `modelview;
     GlMat.load_identity ()
+    
 
+(* fonction xor *)
+let xor a b =
+  if a = true then
+    (if b then false else true)
+  else
+    (if b then true else false)
+
+(* gestion des evenements du clavier *)
 let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
     27 -> exit 0
   (* touche "q" *)
-  | 113 -> rquads := !rquads +. 5.0
+  | 113 -> rx := !rx +. 5.0
   (* touche "w" *)
-  | 119 -> rquads := !rquads -. 5.0
+  | 119 -> rx := !rx -. 5.0
+  (* touche "a" *)
+  | 97 -> ry := !ry +. 5.0
+  (* touche "s" *)
+  | 115 -> ry := !ry -. 5.0
+  (* touche "z" *)
+  | 122 -> rz := !rz +. 5.0
+  (* touche "x" *)
+  | 120 -> rz := !rz -. 5.0
+  | 108 -> line := (xor !line true)
   | _ -> ()
 
 
@@ -83,18 +120,14 @@ let main () =
     Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
     (* Init de la fenetre, a remplacer par une fenetre gtk *)
     Glut.initWindowSize width height;
-    (* nom de la fenetre - ne sera plus necessaire *)
     ignore (Glut.createWindow "hello");
     (* creation de la scene *)
     Glut.displayFunc scene_gl;
     (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
-    (* reshape *)
     Glut.reshapeFunc reshape;
-    (* idle - tester sa place *)
     Glut.idleFunc(Some idle);
-    (* init *)
-    setup width height;
+    setup ();
     Glut.mainLoop ()
 
 let _ = main ()
