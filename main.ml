@@ -39,7 +39,9 @@ let main () =
 	let btn_pre_trait = GButton.button
 			~label:"Execute"
 			~packing:(vbox#pack ~padding:5) () in
-	ignore (btn_pre_trait#connect#clicked ~callback:Pre.pre_trait);
+	(*ignore (btn_pre_trait#connect#clicked ~callback:Pre.pre_trait);*)
+	ignore (btn_pre_trait#connect#clicked 
+		~callback:Assist.firstwin);
 	let btn_assist = GButton.button
 		~label:"Assist"
 		~packing:(vbox#pack ~padding:5) () in

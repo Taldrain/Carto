@@ -7,6 +7,7 @@ type struct_tbx = {
 	color : (int*int*int)
 }
 let list_tbx = ref ([] : struct_tbx list)
+let list_inutile_tbx = ref ([] : GEdit.entry list)
 
 (* Formulaire de demande d'altitude *)
 let save_alt () = 
@@ -22,6 +23,42 @@ let save_alt () =
 		print_endline (string_of_int str.Refe.alt);
 		ignore (str::(Refe.get_list_alt ()))
 	done
+
+let fixstep () =
+	match !list_inutile_tbx with
+		| [] -> failwith "Error"
+		| e::_ -> let t = e in
+		    try Refe.step := int_of_string
+		      (t#text);  Pre.pre_trait () with
+					| _ -> Refe.step := 5;
+		Pre.pre_trait ()	
+
+
+let firstwin () =
+	let win = GWindow.window
+		~title:"Bienvenu" ()
+		~width:300
+		~height:100
+		~position:`CENTER in
+	ignore (win#connect#destroy ~callback:(fixstep));
+	let box = GPack.vbox
+		~packing:win#add () in
+	let nd_box = GPack.hbox
+		~packing:box#add () in
+	let _lbl = GMisc.label
+		~text:"Entry the step"
+		~packing:nd_box#add () in
+	(* Textbox *)
+	let tbx = GEdit.entry
+			~max_length:4
+			~width:4
+			~packing:nd_box#add () in
+	ignore (list_inutile_tbx := tbx::!list_inutile_tbx);
+	let btn_ok = GButton.button
+		~label:"OK"
+		~packing:box#add () in
+	ignore (btn_ok#connect#clicked ~callback:(win#destroy));
+	win#show ()
 
 let first () =
 	let win1 = GWindow.window

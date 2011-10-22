@@ -13,3 +13,6 @@ type struct_alt = {
 }
 let list_alt = ref ([] : struct_alt list)
 let get_list_alt () = !list_alt
+
+let step = ref 5
+let get_step() = !step
