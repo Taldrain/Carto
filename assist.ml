@@ -23,7 +23,9 @@ let save_alt () =
 		print_endline (string_of_int str.Refe.alt);
 		ignore (str::(Refe.get_list_alt ()));
 		Refe.pos := 3
-	done
+	done;
+        Post.post_treat ();
+        Graphics_engine.main_engine ()          
 
 let fixstep () =
 	match !list_inutile_tbx with
@@ -127,6 +129,6 @@ let first () =
 		~label:"OK"
 		~packing:(vbox#pack ~padding:5) () in
 	ignore (btn_ok#connect#clicked ~callback:(win1#destroy));
-	win1#show ()
+	win1#show ();
 	(* end -- Generation des boutons en fonction de !nb_colors *)
 

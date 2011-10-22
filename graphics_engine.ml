@@ -6,7 +6,7 @@ let rx = ref 0.0
 let ry = ref 0.0
 let rz = ref 0.0
 let line = ref true
-let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
+(*let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
                  ((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
                  ((0.0, 0.0, 1.0), (1.0, -1.0, 0.0))::
                  ((1.0, 1.0, 0.0), (20., 4., 3.))::
@@ -14,7 +14,7 @@ let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
                  ((1.0, 1.0, 1.0), (9.0, 4.0, 6.0))::
                  ((0.0, 1.0, 0.0), (20., 4., 3.))::
                  ((0., 1., 0.), (1.0, -1.0, 0.0))::
-                 ((1., 0., 1.),(9., 4., 6.))::[])
+                 ((1., 0., 1.),(9., 4., 6.))::[])*)
 
 
 
@@ -33,8 +33,8 @@ let setup () =
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> GlDraw.color (fst e);
-            GlDraw.vertex3 (snd e);
+  | e::l -> GlDraw.color (snd e);
+            GlDraw.vertex3 (fst e);
             create_tri l
 
 
@@ -59,7 +59,7 @@ let scene_gl () =
     GlDraw.polygon_mode `back `fill);
   GlDraw.line_width 3.0;
   GlDraw.begins `triangles;
-  create_tri !liste;
+  create_tri (Refe.get_list_3d());
   GlDraw.ends ();
   Glut.swapBuffers ()(*;
   rx := !rx +. 5.;
@@ -114,7 +114,7 @@ let idle () =
   scene_gl ()
 
 
-let main_ () =
+let main_engine () =
     ignore (Glut.init Sys.argv);
     (* creation du mode d'affichage *)
     Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();

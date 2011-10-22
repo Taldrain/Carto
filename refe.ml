@@ -45,5 +45,5 @@ let matrice_ret = ref (Array.make_matrix
 let get_matrice_ret() = !matrice_ret
 
 
-let list_3d = ref []
+let list_3d = ref [((0.,0.,0.),(0.,0.,0.))]
 let get_list_3d() = !list_3d

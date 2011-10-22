@@ -3,7 +3,7 @@
 CC=ocamlopt
 RM=rm -f
 OUT=carto
-ML=refe.ml pre.ml post.ml browser.ml assist.ml main.ml graphics_engine.ml
+ML=refe.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
 WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 lablgl.cmxa \
