@@ -5,6 +5,9 @@ let height = 480
 let rx = ref 0.0
 let ry = ref 0.0
 let rz = ref 0.0
+let tx = ref 0.
+let ty = ref 0.
+let tz = ref (-10.)
 let line = ref true
 (*let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
                  ((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
@@ -45,7 +48,7 @@ let scene_gl () =
   (* creer une matrice *)
   GlMat.load_identity ();
   (* changement "d'origine" de la matrice *)
-  GlMat.translate3 (0.0, 0.0, -10.0);
+  GlMat.translate3 (!tx, !ty, !tz);
   (* translation *)
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
@@ -57,7 +60,7 @@ let scene_gl () =
   else
     (GlDraw.polygon_mode `front `fill;
     GlDraw.polygon_mode `back `fill);
-  GlDraw.line_width 3.0;
+  GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
@@ -105,7 +108,15 @@ let keyboard_event ~key ~x ~y = match key with
   | 122 -> rz := !rz +. 5.0
   (* touche "x" *)
   | 120 -> rz := !rz -. 5.0
+  (* touche "o" *)
   | 108 -> line := (xor !line true)
+  | 101 -> tx := !tx +. 5.0
+  | 114 -> tx := !tx -. 5.0
+  | 100 -> ty := !ty +. 5.0
+  | 102 -> ty := !ty -. 5.0
+  (* touche "c" *)
+  | 99 -> tz := !tz +. 5.0
+  | 118 -> tz := !tz -. 5.0
   | _ -> ()
 
 
