@@ -3,17 +3,23 @@
 CC=ocamlopt
 RM=rm -f
 OUT=carto
-ML=refe.ml pre.ml post.ml browser.ml assist.ml main.ml
+ML=refe.ml pre.ml post.ml browser.ml assist.ml main.ml graphics_engine.ml
 CMX=${ML:.ml=.cmx}
-WALL=-I +lablgtk2 -I +sdl -I +lablGL \
+WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 lablgl.cmxa \
 lablgtk.cmxa \
 bigarray.cmxa \
 sdl.cmxa \
-sdlloader.cmxa
+sdlloader.cmxa \
+lablglut.cmxa
 IMG=img/car*
 
-all: ${CMX}
+all: lib assemble
+
+lib:
+	ln -s /usr/lib/libglut.so.3 libglut.so
+
+assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
 
 .ml.cmx:
@@ -24,6 +30,6 @@ cleanall: clean
 cleanimg:
 	${RM} ${IMG}
 clean:
-	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
+	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG} libglut.so
 
 #END
