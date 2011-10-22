@@ -8,16 +8,17 @@
 let w = ref 600
 let h = ref 600
 	
-(*let matrice = ref (Array.make_matrix ((!w)/(Refe.get_step()) + 1)  ((!h)/((Refe.get_step())) +
-							       1)
-							       (0,0))
+let matrice = ref (Array.make_matrix 
+		     ((!w)/(Refe.get_step()) + 1) 
+		     ((!h)/(Refe.get_step()) + 1) (0,0))
 
 
-let matrice_rgb = ref (Array.make_matrix ((!w)/((Refe.get_step())) +1) ((!h)/((Refe.get_step())) +
-								  1) ((0,0),(0,0,0)))
+let matrice_rgb = ref (Array.make_matrix 
+			 ((!w)/((Refe.get_step())) + 1) 
+			 ((!h)/((Refe.get_step())) + 1) ((0,0),(0,0,0)))
    
    
-*) 
+
 (* Dimensions d'une image *)
 let get_dims img =
   begin
@@ -39,21 +40,16 @@ let rec wait_key () =
 	Sdlevent.KEYDOWN _ -> ()
       | _ -> wait_key ()
 	  
-(*
-  show img dst
-  affiche la surface img sur la surface de destination dst 
-(normalement l'écran)
-*)
+(* affiche la surface img sur la surface de destination dst 
+   (normalement l'écran) *)
 let show img dst =
   let d = Sdlvideo.display_format img in
     Sdlvideo.blit_surface d dst ();
     Sdlvideo.flip dst
       
       
-      
 (* fonction qui analyse si l'element est dans la liste, si oui
    le rajoute dans celle ci *)
-      
 let rec p_list li pix = 
   begin
     match li with
@@ -61,7 +57,7 @@ let rec p_list li pix =
       | e::li when e<>pix -> e::(p_list li pix)
       | _ -> li
   end
-
+    
 (* (int*int*int) -> string *)
 let str_of_tri tr = let (a,b,c) = tr in 
   "("^string_of_int(a)^","^string_of_int(b)^","^string_of_int(c)^")\n"
@@ -70,18 +66,17 @@ let str_of_tri tr = let (a,b,c) = tr in
 let rec stringList li = match li with
     [] -> []
   | e::li -> (str_of_tri e)::(stringList li) 
-
+      
 (* fonction qui ecrit une liste dans un .txt, le creer si 
    inexistant et le ferme *)
-
 let list_to_text li = 
   begin
     let f = open_out "InfoCarto.txt" in 
     let stringLi = stringList li in 
-    List.iter (output_string f) stringLi;
+      List.iter (output_string f) stringLi;
       close_out f;
   end
-
+    
 (* fonction contour *)
 let contour image image2 = 
   begin
@@ -168,28 +163,27 @@ let contour image image2 =
    carte *)
 
 
-(* let rec map_to_mat x y intx inty = match (intx, inty) with
+ let rec map_to_mat x y intx inty = match (intx, inty) with
    | (intx, inty) when intx > (!w) ->
        map_to_mat 0 (y+1) 0 (inty + (Refe.get_step())) 
    | (intx, inty) when inty > (!h) -> () 
-  | (intx, inty) -> Array.set !matrice.(x) (y) (inty,intx); map_to_mat
+   | (intx, inty) -> Array.set !matrice.(x) (y) (inty,intx); map_to_mat
        (x+1) y (intx+((Refe.get_step()))) inty
        
 
-
-   
+ 
  let matXY_to_matRGB img = 
    begin  
      for y = 0 to ((!h)/((Refe.get_step()))) do
        for x = 0 to ((!w)/((Refe.get_step()))) do
-	 let (a,b) = !matrice.(x).(y) in 
+ 	 let (a,b) = !matrice.(x).(y) in 
            Array.set !matrice_rgb.(x) (y) 
-	     ((x,y),(Sdlvideo.get_pixel_color img a b))
+ 	     ((x,y),(Sdlvideo.get_pixel_color img a b))
        done;
      done;
    end
      
-*)
+
 	
 	
 (* main *)
@@ -213,17 +207,18 @@ let pre_trait () =
       wait_key();
       (* on appelle la fonction de pretraitement*)
       contour img img2;
-      (* enregistrement *)
-      Sdlvideo.save_BMP img2 "out.bmp";
+      show img2 display; 
+      wait_key ();
       (* fonction de quadrillage *)
       contour_hor img2 (Refe.get_step());
       contour_ver img2 (Refe.get_step());
       contour_diag1 img2 (Refe.get_step());
-      (*map_to_mat 0 0 0 0;
-      matXY_to_matRGB img;*)
+      map_to_mat 0 0 0 0;
+      matXY_to_matRGB img;
       (*  contour_diag2 img2 interv; *)
       (* on affiche l'image apres traitement*)
-      show img2 display;  
+      show img2 display; 
+      (* enregistrement *) 
       Sdlvideo.save_BMP img2 "out.bmp";
 
       (* on attend une touche *)
