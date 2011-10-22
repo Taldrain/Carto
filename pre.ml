@@ -15,9 +15,11 @@ let matrice = ref (Array.make_matrix
 
 let matrice_rgb = ref (Array.make_matrix 
 			 ((!w)/((Refe.get_step())) + 1) 
-			 ((!h)/((Refe.get_step())) + 1) ((0,0),(0,0,0)))
-   
-   
+			 ((!h)/((Refe.get_step())) + 1)
+			 ((0,0),(0,0,0)))
+  
+
+(* FONCTIONS *)   
 
 (* Dimensions d'une image *)
 let get_dims img =
@@ -224,6 +226,7 @@ let pre_trait () =
       (* on attend une touche *)
       wait_key ();
       (* on quitte *)
-      Sdl.quit ()
+      Sdl.quit ();
+	Refe.pos := 2
   end
 (* END -- Functions for the pre traitement *)
