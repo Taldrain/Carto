@@ -5,10 +5,24 @@
 (* BEGIN -- GLOBAL VARIABLES *)
 (* END -- GLOBAL VARIABLES *)
 
+let num = ref 0
+
 (* BEGIN -- Main and various functions for the GTK interface *)
 let quit () =
 	GMain.quit ();
 	exit 0
+
+let exec_fst_treat () =
+	if Refe.get_pos () == 1 then
+		Assist.firstwin ()
+	else
+		()
+
+let exec_assist () =
+	if Refe.get_pos () == 2 then
+		Assist.first ()
+	else
+		()
 
 let main () =
 	ignore (GtkMain.Main.init ());
@@ -25,7 +39,6 @@ let main () =
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
-
 	let _lbl = GMisc.label
 		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
@@ -33,19 +46,18 @@ let main () =
 		~text:(Refe.get_filename ())
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
     let btn_browse = GButton.button
-			~label:"Browse"
-			~packing:(vbox#pack ~padding:5) () in
+		~label:"Browse"
+		~packing:(vbox#pack ~padding:5) () in
 	ignore (btn_browse#connect#clicked ~callback:(Browser.browser w));
 	let btn_pre_trait = GButton.button
-			~label:"Execute"
-			~packing:(vbox#pack ~padding:5) () in
-	(*ignore (btn_pre_trait#connect#clicked ~callback:Pre.pre_trait);*)
+		~label:"Execute"
+		~packing:(vbox#pack ~padding:5) () in
 	ignore (btn_pre_trait#connect#clicked 
-		~callback:Assist.firstwin);
+		~callback:(exec_fst_treat));
 	let btn_assist = GButton.button
 		~label:"Assist"
 		~packing:(vbox#pack ~padding:5) () in
-	ignore (btn_assist#connect#clicked ~callback:(Assist.first));
+	ignore (btn_assist#connect#clicked ~callback:(exec_assist));
 	let btn_quit = GButton.button
 		~label:"Quit"
 		~packing:(vbox#pack ~padding:5) () in

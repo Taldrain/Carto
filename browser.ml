@@ -34,6 +34,7 @@ let browser parent () =
 				prerr_endline (Refe.get_filename ())
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;
+	Refe.pos := 1;
 	dialog#destroy ()
 (* END -- Funcmions for the browser *)
 
