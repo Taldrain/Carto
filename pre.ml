@@ -8,6 +8,16 @@
 let interv = ref 18
 let w = ref 600
 let h = ref 600
+	
+let matrice = ref (Array.make_matrix ((!w)/(!interv) + 1)  ((!h)/(!interv) +
+							       1)
+							       (0,0))
+
+
+let matrice_rgb = ref (Array.make_matrix ((!w)/(!interv) +1) ((!h)/(!interv) +
+								  1) ((0,0),(0,0,0)))
+   
+   
   
 (* Dimensions d'une image *)
 let get_dims img =
@@ -153,14 +163,12 @@ let contour image image2 =
    in con_d image 0 0 0 interv
 *)
 
+
+
 (* creation de la matrice ayant les points des intersections de la
    carte *)
 
-	
- let matrice = ref (Array.make_matrix ((!w)/(!interv) + 1)  ((!h)/(!interv) +
-							       1) (0,0))
-   
-   
+
  let rec map_to_mat x y intx inty = match (intx, inty) with
    | (intx, inty) when intx > (!w) ->
        map_to_mat 0 (y+1) 0 (inty + !interv) 
@@ -170,19 +178,18 @@ let contour image image2 =
        
 
 
- let matrice_rgb = ref (Array.make_matrice ((!w)/(!interv) +1) ((!h)/(!interv) +
-								  1) ((0,0);(0,0,0)))
    
- let matXY_to_matRGB x y = 
-   begin
+ let matXY_to_matRGB img = 
+   begin  
      for y = 0 to ((!h)/(!interv)) do
        for x = 0 to ((!w)/(!interv)) do
-         Array.set (!matrice_rgb.(x) (y) ((x,y);(Sdlvideo.get_pixel_color
-						   (!matrice.(x).(y)))))
+	 let (a,b) = !matrice.(x).(y) in 
+           Array.set !matrice_rgb.(x) (y) 
+	     ((x,y),(Sdlvideo.get_pixel_color img a b))
        done;
      done;
    end
-
+     
 
 	
 	
@@ -213,6 +220,8 @@ let pre_trait () =
       contour_hor img2 !interv;
       contour_ver img2 !interv;
       contour_diag1 img2 !interv;
+      map_to_mat 0 0 0 0;
+      matXY_to_matRGB img;
       (*  contour_diag2 img2 interv; *)
       (* on affiche l'image apres traitement*)
       show img2 display;  
