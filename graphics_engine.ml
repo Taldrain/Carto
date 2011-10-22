@@ -114,7 +114,7 @@ let idle () =
   scene_gl ()
 
 
-let main () =
+let main_ () =
     ignore (Glut.init Sys.argv);
     (* creation du mode d'affichage *)
     Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
@@ -130,4 +130,4 @@ let main () =
     setup ();
     Glut.mainLoop ()
 
-let _ = main ()
+(* let _ = main () *)
