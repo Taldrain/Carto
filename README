@@ -1,3 +1,22 @@
-Projet Infospe - EPITA 2011/2012
-Cartographie - Caml
+                       Projet Infospe - EPITA 2011/2012
+                            Cartographie - Caml
+
+
+Commandes :
+
+Zoom : q -> -
+       e -> +
+
+Deplacer la carte : w -> vers le haut
+                    s -> vers le bas
+                    a -> vers la droite
+                    d -> vers la gauche
+
+Rotation de la carte : i -> sur l'axe des x, en positif
+                       k -> sur l'axe des x, en negatif
+                       l -> sur l'axe des y, en positif
+                       j -> sur l'axe des y, en negatif
+                       o -> sur l'axe des z, en positif
+                       u -> sur l'axe des z, en negatif
+
 
