@@ -27,7 +27,7 @@ let setup () =
   (* couleur de fond *)
   GlClear.color (0.0, 0.0, 0.0);
   (* profondeur *)
-  GlClear.depth 5.;
+  GlClear.depth 10.;
   GlClear.clear [`color; `depth];
   Gl.enable `depth_test;
   GlFunc.depth_func `lequal;
@@ -79,7 +79,7 @@ let reshape ~w ~h =
     GlMat.mode `projection;
     (* chargement de la matrice identite *)
     GlMat.load_identity ();
-    GluMat.perspective 45.0 ratio (0.1, 100.0);
+    GluMat.perspective 45.0 ratio (0.1, 500.0);
     (* changement de mode ? *)
     GlMat.mode `modelview;
     GlMat.load_identity ()
@@ -88,9 +88,9 @@ let reshape ~w ~h =
 (* fonction xor *)
 let xor a b =
   if a = true then
-    (if b then false else true)
+    not b
   else
-    (if b then true else false)
+    b
 
 (* gestion des evenements du clavier *)
 let keyboard_event ~key ~x ~y = match key with
@@ -105,17 +105,22 @@ let keyboard_event ~key ~x ~y = match key with
   (* touche "s" *)
   | 115 -> ry := !ry -. 5.0
   (* touche "z" *)
-  | 122 -> rz := !rz +. 5.0
+  | 122 -> rz := !rz -. 5.0
   (* touche "x" *)
-  | 120 -> rz := !rz -. 5.0
-  (* touche "o" *)
+  | 120 -> rz := !rz +. 5.0
+  (* touche "l" *)
   | 108 -> line := (xor !line true)
-  | 101 -> tx := !tx +. 5.0
-  | 114 -> tx := !tx -. 5.0
+  (* touche "e" *)
+  | 101 -> tx := !tx -. 5.0
+  (* touche "r" *)
+  | 114 -> tx := !tx +. 5.0
+  (* touche "d" *)
   | 100 -> ty := !ty +. 5.0
+  (* touche "f"*)
   | 102 -> ty := !ty -. 5.0
   (* touche "c" *)
   | 99 -> tz := !tz +. 5.0
+  (* touche "v" *)
   | 118 -> tz := !tz -. 5.0
   | _ -> ()
 

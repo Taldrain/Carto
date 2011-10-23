@@ -32,7 +32,7 @@ cleanall: clean
 	${RM} ${OUT} InfoCarto.txt out.bmp
 cleanimg:
 	${RM} ${IMG}
-clean: cleanso
+clean:
 	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END
