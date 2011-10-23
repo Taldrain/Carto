@@ -1,4 +1,5 @@
-let check = ref true
+(* POST TREATMENT *)
+
 let altitude pix = 
   let rec alt pi li = match li with
   | [] -> 0
@@ -39,18 +40,37 @@ let rec i_2_f = function
 					(float(r),float(g),float(b)))
 					::i_2_f l
 
+
+(* creation du .OBJ *)
+
+(*fonction qui ecrit la ligne correspondante d'un triplet dans l'obj*)
+let str_of_tri tr = let (a,b,c) = tr in 
+  "f "^string_of_int(int_of_float(a))^" "^
+    string_of_int(int_of_float(b))^" "^string_of_int(int_of_float(c))^"\n"
+
+
+
+let write_obj() = 
+  begin
+    let f = open_out "supermap.obj" in
+      output_string f "g topoteam \n\n";
+      let rec wri_obj li = match li with 
+	| [] -> ()
+	| (a,_)::li -> 
+	    begin 
+	      output_string f (str_of_tri a);
+	      wri_obj li;
+	    end
+      in wri_obj (Refe.get_list_3d());
+	close_out f;
+  end
+
+
+(*fonction main du post_treatment *)
 let post_treat() = 
   begin
     get_alt();
     Refe.list_3d := i_2_f (mat_to_li());
+    write_obj();
   end
 
-
-
-
-  
-
-
-
-
-	
