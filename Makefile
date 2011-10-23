@@ -14,10 +14,13 @@ sdlloader.cmxa \
 lablglut.cmxa
 IMG=img/car*
 
-all: lib assemble
+all: lib assemble cleanso
 
 lib:
 	ln -s /usr/lib/libglut.so.3 libglut.so
+
+cleanso:
+	${RM} libglut.so
 
 assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
@@ -29,7 +32,7 @@ cleanall: clean
 	${RM} ${OUT} InfoCarto.txt out.bmp
 cleanimg:
 	${RM} ${IMG}
-clean:
-	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG} libglut.so
+clean: cleanso
+	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END

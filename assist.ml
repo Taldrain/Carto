@@ -11,21 +11,21 @@ let list_inutile_tbx = ref ([] : GEdit.entry list)
 
 (* Formulaire de demande d'altitude *)
 let save_alt () = 
-	print_endline (string_of_int (List.length !list_tbx));
+	(*print_endline (string_of_int (List.length !list_tbx));*)
 	while List.length !list_tbx != 0 do
 		let elt = List.hd !list_tbx in
 		let str = {
 			Refe.alt = (try int_of_string(elt.tbx#text) with
-						| _ -> -1);
+				| _ -> -1);
 			Refe.rgb = elt.color
 		} in
 		list_tbx := List.tl !list_tbx;
-		print_endline (string_of_int str.Refe.alt);
-		ignore (str::(Refe.get_list_alt ()));
+		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 		Refe.pos := 3
 	done;
-        Post.post_treat ();
-        Graphics_engine.main_engine ()          
+
+    Post.post_treat ();
+    Graphics_engine.main_engine ()          
 
 let fixstep () =
 	match !list_inutile_tbx with
