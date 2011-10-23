@@ -1,5 +1,5 @@
 (***************************************************************************)
-(*		L'assistant pour les couleurs dans un premier temps 			   *)
+(*		L'assistant pour les couleurs dans un premier temps	   *)
 (***************************************************************************)
 type str_alt = Refe.struct_alt
 type struct_tbx = {
@@ -10,7 +10,7 @@ let list_tbx = ref ([] : struct_tbx list)
 let list_inutile_tbx = ref ([] : GEdit.entry list)
 
 (* Formulaire de demande d'altitude *)
-let save_alt () = 
+let save_alt () =
 	(*print_endline (string_of_int (List.length !list_tbx));*)
 	while List.length !list_tbx != 0 do
 		let elt = List.hd !list_tbx in
@@ -25,7 +25,7 @@ let save_alt () =
 	done;
 
     Post.post_treat ();
-    Graphics_engine.main_engine ()          
+    Graphics_engine.main_engine ()
 
 let fixstep () =
 	match !list_inutile_tbx with
@@ -33,12 +33,12 @@ let fixstep () =
 		| e::_ -> let t = e in
 				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
 					| _ -> Refe.step := 5;
-		Pre.pre_trait ()	
+		Pre.pre_trait ()
 
 
 let firstwin () =
 	let win = GWindow.window
-		~title:"Bienvenu" ()
+		~title:"Welcome" ()
 		~width:300
 		~height:100
 		~position:`CENTER in
@@ -66,7 +66,7 @@ let first () =
 	let win1 = GWindow.window
 		~title:"Assist first step" ()
 		~width:800
-		~height:600 
+		~height:600
 		~position:`CENTER in
 	ignore (win1#connect#destroy ~callback:(save_alt));
 	let vbox = GPack.vbox
@@ -119,7 +119,7 @@ let first () =
 		let str = {
 			tbx = tbx;
 			color = e
-		} in 
+		} in
 		list_tbx := str::(!list_tbx);
 		print_endline "Une tbx ajoute"
 	)

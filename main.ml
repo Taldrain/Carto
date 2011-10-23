@@ -29,7 +29,7 @@ let main () =
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
 		~width:200
-		~height:400 
+		~height:400
 		~position:`CENTER in
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	let vbox = GPack.vbox
@@ -52,7 +52,7 @@ let main () =
 	let btn_pre_trait = GButton.button
 		~label:"Execute"
 		~packing:(vbox#pack ~padding:5) () in
-	ignore (btn_pre_trait#connect#clicked 
+	ignore (btn_pre_trait#connect#clicked
 		~callback:(exec_fst_treat));
 	let btn_assist = GButton.button
 		~label:"Assist"

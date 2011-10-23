@@ -36,5 +36,5 @@ let browser parent () =
 	end;
 	Refe.pos := 1;
 	dialog#destroy ()
-(* END -- Funcmions for the browser *)
+(* END -- Functions for the browser *)
 

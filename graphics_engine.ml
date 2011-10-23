@@ -83,7 +83,7 @@ let reshape ~w ~h =
     (* changement de mode ? *)
     GlMat.mode `modelview;
     GlMat.load_identity ()
-    
+
 
 (* fonction xor *)
 let xor a b =
@@ -91,6 +91,7 @@ let xor a b =
     not b
   else
     b
+
 
 let reset () =
   rx := 0.;
