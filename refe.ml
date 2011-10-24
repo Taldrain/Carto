@@ -47,3 +47,6 @@ let get_matrice_ret() = !matrice_ret
 
 let list_3d = ref [((0.,0.,0.),(0.,0.,0.))]
 let get_list_3d() = !list_3d
+
+let list_xyz = ref [((0,0,0),(0,0,0))]
+let get_list_xyz() = !list_xyz
