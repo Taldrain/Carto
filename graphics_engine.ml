@@ -9,16 +9,6 @@ let tx = ref 0.
 let ty = ref 0.
 let tz = ref (-10.)
 let line = ref true
-(*let liste = ref (((0.4, 0.6, 0.3), (20., 4., 3.))::
-                 ((1.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
-                 ((0.0, 0.0, 1.0), (1.0, -1.0, 0.0))::
-                 ((1.0, 1.0, 0.0), (20., 4., 3.))::
-                 ((0.0, 1.0, 1.0), (1.0, 1.0, 0.0))::
-                 ((1.0, 1.0, 1.0), (9.0, 4.0, 6.0))::
-                 ((0.0, 1.0, 0.0), (20., 4., 3.))::
-                 ((0., 1., 0.), (1.0, -1.0, 0.0))::
-                 ((1., 0., 1.),(9., 4., 6.))::[])*)
-
 
 
 let setup () =
@@ -58,8 +48,8 @@ let scene_gl () =
     (GlDraw.polygon_mode `front `line;
     GlDraw.polygon_mode `back `line)
   else
-    (GlDraw.polygon_mode `front `fill;
-    GlDraw.polygon_mode `back `fill);
+    GlDraw.polygon_mode `front `fill;
+    GlDraw.polygon_mode `back `fill; 
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());

@@ -29,10 +29,10 @@ assemble: ${CMX}
 	${CC} ${WALL} -c $<
 
 cleanall: clean
-	${RM} ${OUT} InfoCarto.txt out.bmp
+	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj
 cleanimg:
 	${RM} ${IMG}
-clean:
+clean: cleanso
 	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END
