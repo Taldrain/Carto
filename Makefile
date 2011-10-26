@@ -16,6 +16,11 @@ IMG=img/car*
 
 all: lib assemble cleanso
 
+64: lib64 assemble cleanso
+
+lib64:
+	ln -s /usr/lib64/libglut.so.3 libglut.so
+
 lib:
 	ln -s /usr/lib/libglut.so.3 libglut.so
 
