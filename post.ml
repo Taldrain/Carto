@@ -26,7 +26,7 @@ let get_f x y = (Refe.get_matrice_ret()).(x).(y)
 let mat_to_lixyz() =
   let rec mtlix x y = match (x,y) with
     | (x,y) when y > ((Refe.get_w())/(Refe.get_step()))
-	-> [] 
+	-> []
     | (x,y) when x > ((Refe.get_h())/(Refe.get_step()))
 	-> mtlix 1 (y+1)
     | (x,y) -> get_f x y::(mtlix (x+1) y)
