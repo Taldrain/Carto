@@ -48,8 +48,8 @@ let scene_gl () =
     (GlDraw.polygon_mode `front `line;
     GlDraw.polygon_mode `back `line)
   else
-    GlDraw.polygon_mode `front `fill;
-    GlDraw.polygon_mode `back `fill; 
+    (GlDraw.polygon_mode `front `fill;
+    GlDraw.polygon_mode `back `fill);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
