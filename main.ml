@@ -36,7 +36,7 @@ let main () =
 	let _lbl2 = GMisc.label
 		~text:(Refe.get_filename ())
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
-    let btn_browse = GButton.button
+	let btn_browse = GButton.button
 		~label:"Browse"
 		~packing:(vbox#pack ~padding:5) () in
 	let btn_pre_treat = GButton.button
