@@ -16,6 +16,11 @@ IMG=img/car*
 
 all: lib assemble cleanso
 
+64: lib64 assemble cleanso
+
+lib64:
+	ln -s /usr/lib64/libglut.so.3 libglut.so
+
 lib:
 	ln -s /usr/lib/libglut.so.3 libglut.so
 
@@ -29,10 +34,10 @@ assemble: ${CMX}
 	${CC} ${WALL} -c $<
 
 cleanall: clean
-	${RM} ${OUT} InfoCarto.txt out.bmp
+	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj
 cleanimg:
 	${RM} ${IMG}
-clean:
+clean: cleanso
 	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END

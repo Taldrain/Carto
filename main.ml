@@ -39,9 +39,9 @@ let main () =
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
-	let _lbl = GMisc.label
+	let lbl = ref (GMisc.label
 		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
-		~packing:(vbox#pack ~expand:false ~fill:false) () in
+		~packing:(vbox#pack ~expand:false ~fill:false) ()) in
 	let _lbl2 = GMisc.label
 		~text:(Refe.get_filename ())
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
@@ -61,7 +61,8 @@ let main () =
 	let btn_quit = GButton.button
 		~label:"Quit"
 		~packing:(vbox#pack ~padding:5) () in
-	ignore (btn_quit#connect#clicked ~callback:(quit));
+	ignore (btn_quit#connect#clicked ~callback:((fun _ -> !lbl#set_text "Test")));
+	(*ignore (btn_quit#connect#clicked ~callback:(quit));*)
   	w#show ();
   	GMain.main ()
 (* BEGIN -- Main and various functions for the GTK interface *)
