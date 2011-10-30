@@ -21,7 +21,6 @@ let save_alt () =
 		} in
 		list_tbx := List.tl !list_tbx;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
-		Refe.pos := 3
 	done;
 
     Post.post_treat ();
@@ -33,8 +32,7 @@ let fixstep () =
 		| e::_ -> let t = e in
 				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
 					| _ -> Refe.step := 5;
-		Pre.pre_trait ();
-		Refe.pos := 2
+		Pre.pre_trait ()
 
 
 (* old name: firstwin *)

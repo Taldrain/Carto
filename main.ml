@@ -16,6 +16,10 @@ let exec_fst_treat btn =
 let exec_assist () =
 	Assist.winalt ()
 
+let exec_brow win b =
+	Browser.browser win;
+	b#misc#set_sensitive true
+
 let main () =
 	ignore (GtkMain.Main.init ());
   	let w = GWindow.window
@@ -53,13 +57,16 @@ let main () =
 	btn_assist#misc#set_sensitive false;
 
   	ignore (w#connect#destroy ~callback:GMain.quit);
-	ignore (btn_browse#connect#clicked ~callback:(Browser.browser w btn_pre_treat));
-	ignore (btn_pre_treat#connect#clicked ~callback:(fun _ -> exec_fst_treat btn_assist));
-	ignore (btn_assist#connect#clicked ~callback:(exec_assist));
-	ignore (btn_quit#connect#clicked ~callback:(quit));
+	ignore (btn_browse#connect#clicked
+		~callback:(fun () -> exec_brow w btn_pre_treat));
+	ignore (btn_pre_treat#connect#clicked
+		~callback:(fun () -> exec_fst_treat btn_assist));
+	ignore (btn_assist#connect#clicked
+		~callback:exec_assist);
+	ignore (btn_quit#connect#clicked
+		~callback:quit);
 
   	w#show ();
   	GMain.main ()
-(* BEGIN -- Main and various functions for the GTK interface *)
 
 let _ = main ()
