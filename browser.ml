@@ -20,7 +20,7 @@ let image_filter () =
 		is_string_prefix "image/" mime);
 	f
 
-let browser parent () =
+let browser parent btn() =
 	let dialog = GWindow.file_chooser_dialog
 		~action: `OPEN
 		~title: "Open File"
@@ -31,10 +31,10 @@ let browser parent () =
 	dialog#add_filter (all_files ());
 	begin match dialog#run () with
 	| `OPEN -> Refe.filename := (default "<none>" dialog#filename);
-				prerr_endline (Refe.get_filename ())
+				prerr_endline (Refe.get_filename ());
+				btn#misc#set_sensitive true
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;
-	Refe.pos := 1;
 	dialog#destroy ()
 (* END -- Functions for the browser *)
 

@@ -19,9 +19,6 @@ let get_list_alt () = !list_alt
 let step = ref 5
 let get_step() = !step
 
-let pos = ref 0
-let get_pos() = !pos
-
 let w = ref 600
 let get_w() = !w
 

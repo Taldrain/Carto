@@ -33,10 +33,12 @@ let fixstep () =
 		| e::_ -> let t = e in
 				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
 					| _ -> Refe.step := 5;
-		Pre.pre_trait ()
+		Pre.pre_trait ();
+		Refe.pos := 2
 
 
-let firstwin () =
+(* old name: firstwin *)
+let winstep () =
 	let win = GWindow.window
 		~title:"Welcome" ()
 		~width:300
@@ -62,7 +64,8 @@ let firstwin () =
 	ignore (btn_ok#connect#clicked ~callback:(win#destroy));
 	win#show ()
 
-let first () =
+(* old name : first*)
+let winalt () =
 	let win1 = GWindow.window
 		~title:"Assist first step" ()
 		~width:800

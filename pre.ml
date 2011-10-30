@@ -211,6 +211,5 @@ let pre_trait () =
 	wait_key ();
 	(* on quitte *)
 	Sdl.quit ();
-	Refe.pos := 2
   end
 (* END -- Functions for the pre traitement *)
