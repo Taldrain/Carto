@@ -17,7 +17,7 @@ let setup () =
   (* couleur de fond *)
   GlClear.color (0.0, 0.0, 0.0);
   (* profondeur *)
-  GlClear.depth 10.;
+  GlClear.depth 1.;
   GlClear.clear [`color; `depth];
   Gl.enable `depth_test;
   GlFunc.depth_func `lequal;
@@ -97,33 +97,33 @@ let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
     27 -> exit 0
   (* touche "i" *)
-  | 105 -> rx := !rx +. 5.0
+  | 105 | 73  -> rx := !rx +. 5.0
   (* touche "k" *)
-  | 107 -> rx:= !rx -. 5.0
+  | 107 | 75 -> rx:= !rx -. 5.0
   (* touche "j" *)
-  | 106 -> ry := !ry +. 5.0
+  | 106 | 74 -> ry := !ry +. 5.0
   (* touche "l" *)
-  | 108 -> ry := !ry -. 5.0
+  | 108 | 76 -> ry := !ry -. 5.0
   (* touche "u" *)
-  | 117 -> rz := !rz -. 5.0
+  | 117 | 85 -> rz := !rz -. 5.0
   (* touche "o" *)
-  | 111 -> rz := !rz +. 5.0
+  | 111 | 79 -> rz := !rz +. 5.0
   (* touche "t" *)
-  | 116 -> line := (xor !line true)
+  | 116 | 84 -> line := (xor !line true)
   (* touche "a" *)
-  | 97  -> tx := !tx -. 5.0
+  | 97  | 65 -> tx := !tx -. 5.0
   (* touche "d" *)
-  | 100 -> tx := !tx +. 5.0
+  | 100 | 68 -> tx := !tx +. 5.0
   (* touche "w" *)
-  | 119 -> ty := !ty +. 5.0
+  | 119 | 87 -> ty := !ty +. 5.0
   (* touche "s"*)
-  | 115 -> ty := !ty -. 5.0
+  | 115 | 83 -> ty := !ty -. 5.0
   (* touche "q" *)
-  | 113 -> tz := !tz +. 5.0
+  | 113 | 81 -> tz := !tz +. 5.0
   (* touche "e" *)
-  | 101 -> tz := !tz -. 5.0
+  | 101 | 69 -> tz := !tz -. 5.0
   (* touche "r" *)
-  | 114 -> reset ()
+  | 114 | 82 -> reset ()
   | _ -> ()
 
 
