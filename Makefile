@@ -1,43 +1,23 @@
 .SUFFIXES: .ml .cmx
 
-CC=ocamlopt
-RM=rm -f
+VPATH=src/
 OUT=carto
-ML=refe.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
-CMX=${ML:.ml=.cmx}
-WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
-lablgl.cmxa \
-lablgtk.cmxa \
-bigarray.cmxa \
-sdl.cmxa \
-sdlloader.cmxa \
-lablglut.cmxa
 IMG=img/car*
 
-all: lib assemble cleanso
+all: assemble
 
-64: lib64 assemble cleanso
+64: assemble64
 
-lib64:
-	ln -s /usr/lib64/libglut.so.3 libglut.so
+assemble:
+	cd ${VPATH} && ${MAKE}
 
-lib:
-	ln -s /usr/lib/libglut.so.3 libglut.so
+assemble64:
+	cd ${VPATH} && ${MAKE} 64
 
-cleanso:
-	${RM} libglut.so
-
-assemble: ${CMX}
-	${CC} ${WALL} ${CMX} -o ${OUT}
-
-.ml.cmx:
-	${CC} ${WALL} -c $<
+clean:
+	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean
 
 cleanall: clean
 	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj
-cleanimg:
-	${RM} ${IMG}
-clean: cleanso
-	${RM} *.cm* *.o .*.swp ~* '#'* ${IMG}
 
 #END
