@@ -29,6 +29,22 @@ let main () =
 		~position:`CENTER in
 	let vbox = GPack.vbox
 		~packing:w#add () in
+
+	(* Menu *)
+	let menufile = GMenu.menu () in
+	let mf_open = GMenu.menu_item
+		~label:"Open image"
+		~packing:menufile#append () in
+	let mf_quit = GMenu.menu_item
+		~label:"Quit"
+		~packing:menufile#append () in
+	let menubar = GMenu.menu_bar
+		~packing:vbox#pack () in
+	let item1 = GMenu.menu_item
+		~label:"File"
+		~packing:menubar#append () in
+	item1#set_submenu menufile;
+
 	let _lbl = GMisc.label
 		~text:"Projet Carto -- Topo team"
 		~packing:(vbox#pack ~expand:false ~fill:false) () in
@@ -56,6 +72,17 @@ let main () =
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
 
+	(* --------- *)
+	(* CALLBACKS *)
+	(* --------- *)
+	
+	(*menu*)
+	ignore (mf_open#connect#activate
+		~callback:(fun () -> exec_brow w btn_pre_treat));
+	ignore (mf_quit#connect#activate
+		~callback:quit); 
+	
+	(*buttons*)
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
 		~callback:(fun () -> exec_brow w btn_pre_treat));
