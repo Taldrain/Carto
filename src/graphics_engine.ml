@@ -148,4 +148,3 @@ let main_engine () =
     setup ();
     Glut.mainLoop ()
 
-(* let _ = main () *)
