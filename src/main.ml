@@ -21,11 +21,18 @@ let exec_brow win b =
 	b#misc#set_sensitive true
 
 let main () =
+
 	ignore (GtkMain.Main.init ());
+
+	(* Recuperation de la taille de l'ecran *)
+	let screen = Gdk.Screen.default () in
+	let screen_hei = Gdk.Screen.height ~screen:screen () in
+	let screen_wid = Gdk.Screen.width ~screen:screen () in
+
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
-		~width:200
-		~height:400
+		~width:screen_wid
+		~height:screen_hei
 		~position:`CENTER in
 	let vbox = GPack.vbox
 		~packing:w#add () in
