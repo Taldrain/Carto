@@ -1,6 +1,6 @@
 .SUFFIXES: .ml .cmx
 
-CC=ocamlopt
+CC=ocamlopt.opt
 RM=rm -f
 OUT=carto
 ML=refe.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml

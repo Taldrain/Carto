@@ -84,6 +84,8 @@ let main () =
 	(* Panel right *)
 	let box = GPack.vbox
 		~packing:pan#add2 () in
+	(*let area = GlGtk.area []
+		~packing:box#add () in*)
 	let btn_test = GButton.button
 		~label:"Test"
 		~packing:box#add () in

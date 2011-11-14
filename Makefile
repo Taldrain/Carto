@@ -4,11 +4,11 @@ VPATH=src/
 OUT=carto
 IMG=img/car*
 
-all: assemble
+all: assemble64
 
-64: assemble64
+32: assemble32
 
-assemble:
+assemble32:
 	cd ${VPATH} && ${MAKE}
 
 assemble64:
