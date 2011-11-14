@@ -2,16 +2,23 @@
 
 let width = 640
 let height = 480
-let rx = ref 0.0
-let ry = ref 0.0
-let rz = ref 0.0
-let tx = ref 0.
+let rx = ref (-40.)
+let ry = ref 0.
+let rz = ref 0.
+let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
+let tx = ref (dtx())
+let dty() = (float (-(Refe.get_w()/(5*Refe.get_step()))))
 let ty = ref 0.
-let tz = ref (-10.)
+let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
+let tz = ref 0.
 let line = ref true
 
 
 let setup () =
+  (* init des valeurs de camera *)
+  tx := dtx();
+  ty := dty();
+  tz := dtz();
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
@@ -84,12 +91,12 @@ let xor a b =
 
 
 let reset () =
-  rx := 0.;
+  rx := -40.;
   ry := 0.;
   rz := 0.;
-  tx := 0.;
-  ty := 0.;
-  tz := -10.
+  tx := dtx();
+  ty := dty();
+  tz := dtz()
 
 
 (* gestion des evenements du clavier *)
@@ -124,6 +131,10 @@ let keyboard_event ~key ~x ~y = match key with
   | 101 | 69 -> tz := !tz -. 5.0
   (* touche "r" *)
   | 114 | 82 -> reset ()
+  (* valeur de test *)
+  | 53 -> print_endline(string_of_float !rx)
+  | 54 -> print_endline(string_of_float !ty)
+  | 55 -> print_endline(string_of_float !tz)
   | _ -> ()
 
 
