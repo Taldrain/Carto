@@ -12,7 +12,7 @@ assemble32:
 	cd ${VPATH} && ${MAKE}
 
 assemble64:
-	cd ${VPATH} && ${MAKE} 64
+	cd ${VPATH} && ${MAKE} 32
 
 clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean
