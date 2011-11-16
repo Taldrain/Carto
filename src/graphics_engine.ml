@@ -1,12 +1,12 @@
 (* Graphics engine *)
 
-let width = 640
-let height = 480
+let width = 1240
+let height = 1240
 let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
 let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
-let tx = ref (dtx())
+let tx = ref 0.
 let dty() = (float (-(Refe.get_w()/(5*Refe.get_step()))))
 let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
@@ -19,12 +19,17 @@ let setup () =
   tx := dtx();
   ty := dty();
   tz := dtz();
+  (* creation du mode d'affichage *)
+  Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
+  (* Init de la fenetre, a remplacer par une fenetre gtk *)
+  Glut.initWindowSize width height;
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
   GlClear.color (0.0, 0.0, 0.0);
   (* profondeur *)
   GlClear.depth 1.;
+  (* precaution *)
   GlClear.clear [`color; `depth];
   Gl.enable `depth_test;
   GlFunc.depth_func `lequal;
@@ -145,17 +150,14 @@ let idle () =
 
 let main_engine () =
     ignore (Glut.init Sys.argv);
-    (* creation du mode d'affichage *)
-    Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-    (* Init de la fenetre, a remplacer par une fenetre gtk *)
-    Glut.initWindowSize width height;
     ignore (Glut.createWindow "hello");
+    (* init - pas dans la boucle *)
+    setup();
     (* creation de la scene *)
     Glut.displayFunc scene_gl;
     (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
     Glut.reshapeFunc reshape;
     Glut.idleFunc(Some idle);
-    setup ();
     Glut.mainLoop ()
 
