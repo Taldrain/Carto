@@ -9,10 +9,10 @@ all: assemble64
 32: assemble32
 
 assemble32:
-	cd ${VPATH} && ${MAKE}
+	cd ${VPATH} && ${MAKE} 32
 
 assemble64:
-	cd ${VPATH} && ${MAKE} 32
+	cd ${VPATH} && ${MAKE}
 
 clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean
