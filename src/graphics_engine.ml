@@ -12,6 +12,12 @@ let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
 let tz = ref 0.
 let line = ref true
+let lr = ref 0.
+let lg = ref 0.
+let lb = ref 0.
+let lx = ref 0.
+let ly = ref 0.
+let lz = ref 0.
 
 
 let setup () =
@@ -35,10 +41,28 @@ let setup () =
   GlFunc.depth_func `lequal;
   GlMisc.hint `perspective_correction `nicest
 
+let init_light () =
+  let light_ambient = !lr, !lg, !lb, 1.0
+  and light_diffuse = 1., 0., 0., 1.
+  and light_specular = 1., 0., 0., 1.
+  and light_position = !lx, !ly, !lz, 1.
+  in
+  List.iter (GlLight.light ~num:0)
+    [ `ambient light_ambient;
+      `diffuse light_diffuse;
+      `specular light_specular;
+      `position light_position ];
+  GlFunc.depth_func `less;
+  List.iter Gl.enable [`lighting; `light0; `depth_test];
+  GlDraw.shade_model `smooth
+
+let findcolor = function
+  | (a,b,c) -> lr:= a; lg:= b; lb:= c
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> GlDraw.color (snd e);
+  | e::l -> findcolor (snd e);
+            (*GlDraw.color (snd e);*)
             GlDraw.vertex3 (fst e);
             create_tri l
 
@@ -66,10 +90,7 @@ let scene_gl () =
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
-  Glut.swapBuffers ()(*;
-  rx := !rx +. 5.;
-  ry := !ry +. 5.;
-  rz := !rz +. 5.*)
+  Glut.swapBuffers ()
 
 
 (* redimensionner et lancement du programme *)
@@ -136,15 +157,18 @@ let keyboard_event ~key ~x ~y = match key with
   | 101 | 69 -> tz := !tz -. 5.0
   (* touche "r" *)
   | 114 | 82 -> reset ()
-  (* valeur de test *)
-  | 53 -> print_endline(string_of_float !rx)
-  | 54 -> print_endline(string_of_float !ty)
-  | 55 -> print_endline(string_of_float !tz)
+  | 50 -> ly := !ly -. 5.0
+  | 51 -> lz := !lz -. 5.0
+  | 52 -> lx := !lx -. 5.0
+  | 54 -> lx := !lx +. 5.0
+  | 56 -> ly := !ly +. 5.0
+  | 57 -> lz := !lz +. 5.0
   | _ -> ()
 
 
 (* fonction d'idle *)
 let idle () =
+  init_light();
   scene_gl ()
 
 
@@ -153,8 +177,6 @@ let main_engine () =
     ignore (Glut.createWindow "hello");
     (* init - pas dans la boucle *)
     setup();
-    (* creation de la scene *)
-    Glut.displayFunc scene_gl;
     (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
     Glut.reshapeFunc reshape;
