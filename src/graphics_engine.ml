@@ -25,10 +25,6 @@ let setup () =
   tx := dtx();
   ty := dty();
   tz := dtz();
-  (* creation du mode d'affichage *)
-  Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-  (* Init de la fenetre, a remplacer par une fenetre gtk *)
-  Glut.initWindowSize width height;
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
@@ -174,12 +170,12 @@ let idle () =
 
 let main_engine () =
     ignore (Glut.init Sys.argv);
-    ignore (Glut.createWindow "hello");
     (* init - pas dans la boucle *)
     setup();
     (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
     Glut.reshapeFunc reshape;
     Glut.idleFunc(Some idle);
-    Glut.mainLoop ()
+    Glut.mainLoop ();
+	()
 

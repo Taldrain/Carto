@@ -2,8 +2,6 @@
 (*    Carto - TopoTeam                                                    *)
 (**************************************************************************)
 
-let num = ref 0
-
 (* BEGIN -- Main and various functions for the GTK interface *)
 let quit () =
 	GMain.quit ();
@@ -23,6 +21,12 @@ let exec_brow win b =
 	(*Parser_obj.open_obj ();*)
 	(*Parser_obj.put_color ();*)
 	(*Graphics_engine.main_engine ()*)
+
+let launch3d () =
+	print_endline "Message1";
+	Graphics_engine.main_engine ();
+	print_endline "Message2";
+	()
 
 let main () =
 
@@ -55,7 +59,6 @@ let main () =
 	let _lbl = GMisc.label
 		~text:"Projet Carto -- Topo team"
 		~packing:main_box#pack () in
-	
 	let _lbl = GMisc.label
 		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
 		~packing:main_box#pack () in
@@ -68,17 +71,23 @@ let main () =
 	let btn_assist = GButton.button
 		~label:"Assist"
 		~packing:main_box#pack () in
+	let btn_3d = GButton.button
+		~label:"3D"
+		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
 
-	(* Panel right *)
-	(*let btn_test = GButton.button
-		~label:"Test"
-		~packing:box#add () in*)
+	let area = GlGtk.area [`RGBA]
+		~width:400
+		~height:400
+		~packing:main_box#pack () in
 
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
+	
+	area#connect#display
+			~callback:(fun () -> launch3d ()) ;
 
 	(* --------- *)
 	(* CALLBACKS *)
@@ -98,6 +107,9 @@ let main () =
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
+	ignore (btn_3d#connect#clicked
+		~callback:(fun () -> print_endline "message 0"; ignore (area#connect#display
+			~callback:(fun () -> launch3d ()) )));
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
