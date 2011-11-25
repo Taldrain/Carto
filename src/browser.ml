@@ -20,6 +20,13 @@ let image_filter () =
 		is_string_prefix "image/" mime);
 	f
 
+let obj_filter () =
+	let f = GFile.filter ~name:"OBJ" () in
+	f#add_pattern "*.obj";
+	f#add_pattern "*.OBJ";
+	f
+	
+
 let browser parent =
 	let dialog = GWindow.file_chooser_dialog
 		~action: `OPEN
@@ -28,10 +35,17 @@ let browser parent =
 	dialog#add_button_stock `CANCEL `CANCEL;
 	dialog#add_select_button_stock `OPEN `OPEN;
 	dialog#add_filter (image_filter ());
+	dialog#add_filter (obj_filter ());
 	dialog#add_filter (all_files ());
 	begin match dialog#run () with
 	| `OPEN -> Refe.filename := (default "<none>" dialog#filename);
-				prerr_endline (Refe.get_filename ())
+				if (Str.string_match (Str.regexp "*.obj*") 
+					(Refe.get_file_type ()) 0) then
+						Refe.file_type := "obj"
+				else
+					Refe.file_type := "img";
+				print_endline (Refe.get_filename ());
+				print_endline (Refe.get_file_type ())
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;
 	dialog#destroy ()

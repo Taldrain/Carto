@@ -19,6 +19,10 @@ let exec_assist () =
 let exec_brow win b =
 	Browser.browser win;
 	b#misc#set_sensitive true
+	(* PETAGE DU MOTEUR 3D *)
+	(*Parser_obj.open_obj ();*)
+	(*Parser_obj.put_color ();*)
+	(*Graphics_engine.main_engine ()*)
 
 let main () =
 

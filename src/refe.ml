@@ -1,6 +1,9 @@
 let filename = ref ("")
 let get_filename () = !filename
 
+let file_type = ref ("")
+let get_file_type () = !file_type
+
 let nb_colors = ref 7
 let get_nb_colors () = !nb_colors
 
