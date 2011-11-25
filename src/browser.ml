@@ -39,8 +39,7 @@ let browser parent =
 	dialog#add_filter (all_files ());
 	begin match dialog#run () with
 	| `OPEN -> Refe.filename := (default "<none>" dialog#filename);
-				if (Str.string_match (Str.regexp "*.obj*") 
-					(Refe.get_file_type ()) 0) then
+				if (Filename.check_suffix (Refe.get_filename ()) "obj") then
 						Refe.file_type := "obj"
 				else
 					Refe.file_type := "img";
