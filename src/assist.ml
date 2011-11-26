@@ -23,8 +23,8 @@ let save_alt () =
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
 
-    Post.post_treat ()
-    (*Graphics_engine.main_engine ()*)
+    Post.post_treat ();
+    Graphics_engine.main_engine ()
 
 let fixstep () =
 	match !list_inutile_tbx with
