@@ -73,27 +73,27 @@ let main () =
 		~label:"Quit"
 	 	~packing:main_box#pack () in
 
-	let area = GlGtk.area [`RGBA]
+	let area = GlGtk.area [`RGBA;`DOUBLEBUFFER]
 		~width:400
 		~height:400
 		~packing:main_box#pack () in
 
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
-	
+
 	(*area#connect#display
 			~callback:(fun () -> launch3d ()) ;*)
 
 	(* --------- *)
 	(* CALLBACKS *)
 	(* --------- *)
-	
+
 	(*menu*)
 	ignore (mf_open#connect#activate
 		~callback:(fun () -> exec_brow w btn_pre_treat));
 	ignore (mf_quit#connect#activate
-		~callback:quit); 
-	
+		~callback:quit);
+
 	(*buttons*)
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
@@ -104,8 +104,10 @@ let main () =
 		~callback:exec_assist);
 	ignore (btn_3d#connect#clicked
 		~callback:(fun () -> print_endline "message 0";
-			ignore (area#connect#display
-				~callback:(fun () -> Graphics_engine.main_engine () ) )));
+              area#connect#realize ~callback:(Graphics_engine.init);
+              area#connect#reshape ~callback:(Graphics_engine.reshape ~width:400 ~height:400);
+              area#connect#display ~callback:(Graphics_engine.main_engine);
+              area#swap_buffers ()));
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
