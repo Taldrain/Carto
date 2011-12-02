@@ -44,6 +44,10 @@ let matrice_ret = ref (Array.make_matrix
 		     ((!h)/(!step) + 1) ((0,0,0),(0,0,0)))
 let get_matrice_ret() = !matrice_ret
 
+let matrice_fin = ref (Array.make_matrix
+		     ((!w)/(!step) + 1)
+		     ((!h)/(!step) + 1) ((0,0,0),(0,0,0)))
+let get_matrice_fin() = !matrice_fin
 
 let list_3d = ref [((0.,0.,0.),(0.,0.,0.))]
 let get_list_3d() = !list_3d

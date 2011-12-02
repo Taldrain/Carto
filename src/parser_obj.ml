@@ -29,7 +29,7 @@ let stock_list_face l1 l2 =
 
 
 let open_obj () =
-let obj_file = open_in "supermap.obj" in
+let obj_file = open_in (Refe.get_filename ()) in
 	let rec parser_obj ()  =
 	let line = input_line obj_file in
 	print_endline line;

@@ -25,7 +25,85 @@ let get_alt() =
     done;
   end
 
-let get_f x y = (Refe.get_matrice_ret()).(x).(y)
+
+
+
+
+(* [[DEBUT]] SUITE DE FONCTIONS POUR LISSAGE DES ALTITUDES *)
+(* 0 1 2
+   7 x 3
+   6 5 4 *)
+
+let red_pill matrix x y =
+	if ((x < (Array.length matrix)) &&
+	    (x >= 0) &&
+	    (y < (Array.length matrix.(0))) &&
+	    (y >= 0)) then true
+	else false
+
+let get_h = function
+	| (a, b, h),e -> h
+	| _ -> 0
+
+let set_newH newh = function
+	| ((a, b, _), (r, g, bb)) -> ((a, b, newh), (r, g, bb))
+	| _ -> ((0, 0, 0), (1, 1, 1))
+
+let liss () =
+	let matrix = Refe.get_matrice_ret () in
+	let new_matrix = Refe.get_matrice_fin () in
+    for y = 0 to (Refe.get_h())/( Refe.get_step()) do
+      for x = 0 to (Refe.get_w())/(Refe.get_step()) do
+	   begin
+	   		let sum = ref 0 in
+			let nb = ref 0 in
+			begin
+				if (red_pill matrix (x-1) (y-1)) then
+					sum := !sum + (get_h matrix.(x-1).(y-1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix x (y-1)) then
+					sum := !sum + (get_h matrix.(x).(y-1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix (x+1) (y-1)) then
+					sum := !sum + (get_h matrix.(x+1).(y-1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix (x+1) y) then
+					sum := !sum + (get_h matrix.(x+1).(y));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix (x+1) (y+1)) then
+					sum := !sum + (get_h matrix.(x+1).(y+1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix x (y+1)) then
+					sum := !sum + (get_h matrix.(x).(y+1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix (x-1) (y-1)) then
+					sum := !sum + (get_h matrix.(x-1).(y-1));
+					nb := !nb + 1;
+			end;
+			begin
+				if (red_pill matrix (x-1) y) then
+					sum := !sum + (get_h matrix.(x-1).(y));
+					nb := !nb + 1;
+			end;
+		Array.set new_matrix.(x) (y) (set_newH ((!sum)/(!nb)) matrix.(x).(y));
+       end;
+	  done;
+    done
+(* [[FIN]] SUITE DE FONCTIONS POUR LISSAGE DES ALTITUDES *)
+
+let get_f x y = (Refe.get_matrice_fin()).(x).(y)
 
 (* ((int*int*int)*(int*int*int))array array ->
    (int*int*int)list *)
@@ -129,6 +207,7 @@ let write_obj() =
 let post_treat() =
   begin
     get_alt();
+	liss ();
     Refe.list_3d := i_2_f (mat_to_li());
     Refe.list_xyz := (mat_to_lixyz());
     li_ord := list_tolist2 (Refe.get_list_xyz());

@@ -14,13 +14,18 @@ let exec_fst_treat btn =
 let exec_assist () =
 	Assist.winalt ()
 
-let exec_brow win b =
+let exec_brow win b_img b_obj =
 	Browser.browser win;
-	b#misc#set_sensitive true
+	if ((Refe.get_file_type ()) = "obj") then
+		b_obj#misc#set_sensitive true
+	else
+		b_img#misc#set_sensitive true
+
+let exec_3d_obj () =
 	(* PETAGE DU MOTEUR 3D *)
-	(*Parser_obj.open_obj ();*)
-	(*Parser_obj.put_color ();*)
-	(*Graphics_engine.main_engine ()*)
+	Parser_obj.open_obj ();
+	Parser_obj.put_color ();
+	Graphics_engine.main_engine ()
 
 
 let main () =
@@ -69,6 +74,9 @@ let main () =
 	let btn_3d = GButton.button
 		~label:"3D"
 		~packing:main_box#pack () in
+	let btn_3d_obj = GButton.button
+		~label:"3D OBJ"
+		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
@@ -80,6 +88,8 @@ let main () =
 
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
+	btn_3d_obj#misc#set_sensitive false;
+
 	
 	(*area#connect#display
 			~callback:(fun () -> launch3d ()) ;*)
@@ -90,14 +100,14 @@ let main () =
 	
 	(*menu*)
 	ignore (mf_open#connect#activate
-		~callback:(fun () -> exec_brow w btn_pre_treat));
+		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (mf_quit#connect#activate
 		~callback:quit); 
 	
 	(*buttons*)
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
-		~callback:(fun () -> exec_brow w btn_pre_treat));
+		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (btn_pre_treat#connect#clicked
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
@@ -106,6 +116,9 @@ let main () =
 		~callback:(fun () -> print_endline "message 0";
 			ignore (area#connect#display
 				~callback:(fun () -> Graphics_engine.main_engine () ) )));
+
+	ignore (btn_3d_obj#connect#clicked
+		~callback:exec_3d_obj);
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
