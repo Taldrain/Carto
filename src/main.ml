@@ -22,11 +22,6 @@ let exec_brow win b =
 	(*Parser_obj.put_color ();*)
 	(*Graphics_engine.main_engine ()*)
 
-let launch3d () =
-	print_endline "Message1";
-	Graphics_engine.main_engine ();
-	print_endline "Message2";
-	()
 
 let main () =
 
@@ -86,8 +81,8 @@ let main () =
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
 	
-	area#connect#display
-			~callback:(fun () -> launch3d ()) ;
+	(*area#connect#display
+			~callback:(fun () -> launch3d ()) ;*)
 
 	(* --------- *)
 	(* CALLBACKS *)
@@ -108,8 +103,9 @@ let main () =
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
 	ignore (btn_3d#connect#clicked
-		~callback:(fun () -> print_endline "message 0"; ignore (area#connect#display
-			~callback:(fun () -> launch3d ()) )));
+		~callback:(fun () -> print_endline "message 0";
+			ignore (area#connect#display
+				~callback:(fun () -> Graphics_engine.main_engine () ) )));
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
