@@ -43,11 +43,9 @@ let red_pill matrix x y =
 
 let get_h = function
 	| (a, b, h),e -> h
-	| _ -> 0
 
 let set_newH newh = function
 	| ((a, b, _), (r, g, bb)) -> ((a, b, newh), (r, g, bb))
-	| _ -> ((0, 0, 0), (1, 1, 1))
 
 let liss () =
 	let matrix = Refe.get_matrice_ret () in

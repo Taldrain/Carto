@@ -71,20 +71,12 @@ let main () =
 	let btn_assist = GButton.button
 		~label:"Assist"
 		~packing:main_box#pack () in
-	let btn_3d = GButton.button
-		~label:"3D"
-		~packing:main_box#pack () in
 	let btn_3d_obj = GButton.button
 		~label:"3D OBJ"
 		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
-
-	let area = GlGtk.area [`RGBA]
-		~width:400
-		~height:400
-		~packing:main_box#pack () in
 
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
@@ -112,11 +104,6 @@ let main () =
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
-	ignore (btn_3d#connect#clicked
-		~callback:(fun () -> print_endline "message 0";
-			ignore (area#connect#display
-				~callback:(fun () -> Graphics_engine.main_engine () ) )));
-
 	ignore (btn_3d_obj#connect#clicked
 		~callback:exec_3d_obj);
 	ignore (btn_quit#connect#clicked
