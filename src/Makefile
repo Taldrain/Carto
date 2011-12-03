@@ -13,6 +13,7 @@ WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
      bigarray.cmxa \
      sdl.cmxa \
      sdlloader.cmxa \
+	 unix.cmxa \
      lablglut.cmxa
 
 all: lib64 assemble post

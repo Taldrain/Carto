@@ -27,6 +27,17 @@ let exec_3d_obj () =
 	Parser_obj.put_color ();
 	Graphics_engine.main_engine ()
 
+let exec_3d_inst () =
+	(* 3D POUR LES PRESSES *)
+	begin
+	if ((Sys.command "./genperlin -save > rand_map.bmp") != 0) then
+		Refe.filename := "rand_map.bmp"
+	else
+		Refe.filename := "carte.bmp"
+	end;
+	Refe.rand_file := true
+	
+	
 
 let main () =
 
@@ -74,6 +85,9 @@ let main () =
 	let btn_3d_obj = GButton.button
 		~label:"3D OBJ"
 		~packing:main_box#pack () in
+	let btn_3d_inst = GButton.button
+		~label:"3D instantane"
+		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
@@ -102,6 +116,8 @@ let main () =
 		~callback:exec_assist);
 	ignore (btn_3d_obj#connect#clicked
 		~callback:exec_3d_obj);
+	ignore (btn_3d_inst#connect#clicked
+		~callback:exec_3d_inst);
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
