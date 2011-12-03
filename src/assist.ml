@@ -19,7 +19,6 @@ let rand_alt () =
 			Refe.alt = !alti;
 			Refe.rgb = elt
 		} in
-		print_endline (string_of_int !alti);
 		alti := !alti + 5;
 		colors := List.tl (!colors);
 		i := !i + 1;
@@ -41,9 +40,39 @@ let save_alt () =
 		list_tbx := List.tl !list_tbx;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-
     Post.post_treat ();
     Graphics_engine.main_engine ()
+	
+(* Fenetre de pre traitement *)
+let view_img () =
+	let win = GWindow.window
+		~title:"Welcome" ()
+		~width:560
+		~height:570
+		~position:`MOUSE in
+	ignore (win#connect#destroy ~callback:(fun () -> ()));
+	let box = GPack.vbox
+		~packing:win#add () in
+	let scrolled_window = GBin.scrolled_window
+		~border_width:10
+		~hpolicy:`AUTOMATIC
+		~vpolicy:`AUTOMATIC
+		~width:512
+		~height:512
+		~packing:box#add () in
+	let secbox = GPack.hbox
+		~packing:scrolled_window#add_with_viewport () in
+	let img = GMisc.image
+		~file:(Refe.get_filename ())
+		~packing:secbox#add () in
+	let btn = GButton.button
+		~label:"Close"
+		~packing:box#add () in
+	ignore (btn#connect#clicked ~callback:(win#destroy));
+	win#show ()
+	
+
+
 
 let fixstep () =
 	match !list_inutile_tbx with
@@ -51,8 +80,7 @@ let fixstep () =
 		| e::_ -> let t = e in
 				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
 					| _ -> Refe.step := 5;
-		Pre.pre_trait ();
-		rand_alt ()
+		Pre.pre_trait ()
 
 
 (* old name: firstwin *)

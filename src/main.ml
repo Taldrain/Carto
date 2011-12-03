@@ -16,6 +16,7 @@ let exec_assist () =
 
 let exec_brow win b_img b_obj =
 	Browser.browser win;
+  	Assist.view_img ();
 	if ((Refe.get_file_type ()) = "obj") then
 		b_obj#misc#set_sensitive true
 	else
@@ -35,6 +36,8 @@ let exec_3d_inst () =
 	else
 		Refe.filename := "carte.bmp"
 	end;
+	(*print_endline (Refe.get_filename ());*)
+  	Assist.view_img ();
 	Refe.file_type := "img";
 	Refe.step := 5;
 	Pre.pre_trait ();
