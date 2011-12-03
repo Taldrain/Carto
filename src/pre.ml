@@ -150,6 +150,10 @@ let contour_diag1 image interv =
 
 
 
+(* ------------------------------------ ------------------------------------- *)
+
+(* --------------------------- Matrix for post.ml --------------------------- *)
+
 (* Creation of matrix which has intersections points of the map *)
 let rec map_to_mat x y intx inty = match (intx, inty) with
   | (intx, inty) when intx > ((Refe.get_w())) ->
@@ -160,59 +164,53 @@ let rec map_to_mat x y intx inty = match (intx, inty) with
       map_to_mat (x+1) y (intx + Refe.get_step()) inty
 
 
-
- let matXY_to_matRGB img =
-   begin
-     for y = 0 to (((Refe.get_h()))/((Refe.get_step()))) do
-       for x = 0 to (((Refe.get_w()))/((Refe.get_step()))) do
- 	 let (a,b) = (Refe.get_matrice()).(x).(y) in
-           Array.set (Refe.get_matrice_rgb()).(x) (y)
- 	     ((x,y),(Sdlvideo.get_pixel_color img a b))
-       done;
-     done;
-   end
+(* image -> (int*int),(int*int*int) array array  & use (int*int) array array  *)
+let matXY_to_matRGB img =
+  for y = 0 to (Refe.get_h() / Refe.get_step()) do
+    for x = 0 to (Refe.get_w() / Refe.get_step()) do
+    	 let (a,b) = (Refe.get_matrice()).(x).(y) in
+        Array.set (Refe.get_matrice_rgb()).(x) (y) 
+         ((x,y),(Sdlvideo.get_pixel_color img a b))
+    done;
+  done
 
 
 
+(* ------------------------------------ ------------------------------------- *)
 
 (* main *)
 let pre_trait () =
-  begin
-    (* Nous voulons 1 argument *)
-    if (Refe.get_filename()) == "" then
-      failwith "Il manque le nom du fichier!";
-    (* Initialisation de SDL *)
-    sdl_init ();
-    (* Chargement d'une image *)
-    let img = Sdlloader.load_image (Refe.get_filename ()) in
-      (* On récupère les dimensions *)
-      get_dims img;
-      let img2 = Sdlvideo.create_RGB_surface_format
-	img [] (Refe.get_w()) (Refe.get_h()) in
-	(* On crée la surface d'affichage *)
-      let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
-	(* on affiche l'image avant traitement*)
-	show img display;
-	(* on attend une touche *)
+  (* we want 1 argument *)
+  if (Refe.get_filename()) == "" then
+    failwith "Il manque le nom du fichier!";
+  (* SDL initialization*)
+  sdl_init ();
+  (* Load of the image *)
+  let img = Sdlloader.load_image (Refe.get_filename ()) in
+  (* getting dimensions *)
+  get_dims img;
+  let img2 = Sdlvideo.create_RGB_surface_format
+  img [] (Refe.get_w()) (Refe.get_h()) in
+	  (* we create the display surface *)
+    let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
+	    (* on affiche l'image avant traitement*)
+	    show img display;
 	wait_key();
-	(* on appelle la fonction de pretraitement*)
+	(* we call the pretraitement function *)
 	contour img img2;
 	show img2 display;
 	wait_key ();
-	(* fonction de quadrillage *)
+	(* Grid function *)
 	contour_hor img2 (Refe.get_step());
 	contour_ver img2 (Refe.get_step());
 	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
-	(*  contour_diag2 img2 interv; *)
 	(* on affiche l'image apres traitement*)
 	show img2 display;
-	(* enregistrement *)
+	(* recording the image *)
 	Sdlvideo.save_BMP img2 "out.bmp";
-	(* on attend une touche *)
 	wait_key ();
-	(* on quitte *)
-	Sdl.quit ();
-  end
+	Sdl.quit ()
+  
 (* END -- Functions for the pre traitement *)
