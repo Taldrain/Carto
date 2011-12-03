@@ -6,7 +6,7 @@ OUT=carto
 ML=refe.ml parser_obj.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
 WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
-	str.cmxa \
+	 str.cmxa \
      lablgl.cmxa \
      lablgtk.cmxa \
      bigarray.cmxa \
