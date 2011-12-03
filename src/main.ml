@@ -82,20 +82,16 @@ let main () =
 	btn_assist#misc#set_sensitive false;
 	btn_3d_obj#misc#set_sensitive false;
 
-	
-	(*area#connect#display
-			~callback:(fun () -> launch3d ()) ;*)
-
 	(* --------- *)
 	(* CALLBACKS *)
 	(* --------- *)
-	
+
 	(*menu*)
 	ignore (mf_open#connect#activate
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (mf_quit#connect#activate
-		~callback:quit); 
-	
+		~callback:quit);
+
 	(*buttons*)
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
