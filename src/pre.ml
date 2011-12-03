@@ -1,5 +1,5 @@
 (* BEGIN -- Functions for the pre traitement *)
-(* PROJET CARTOGRAPHIE  *)
+(* PROJECT *)
 (* pre-treatment & quadrillage *)
 
 
