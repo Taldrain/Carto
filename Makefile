@@ -14,6 +14,9 @@ assemble32:
 assemble64:
 	cd ${VPATH} && ${MAKE}
 
+mli:
+	cd ${VPATH} && ${MAKE} mli
+
 clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean
 
