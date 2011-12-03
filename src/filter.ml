@@ -26,13 +26,40 @@ let atb_p img x y atb =
 
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
-(*let multi_pix_filter img x y filter = 
-  let r_out = 
-    
-  let g_out = ref 0 in
-  let b_out = ref 0 in
-  let 
-*)
+let multi_pix_filter img x y filter = 
+  let r_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "r" ) + 
+               filter.(1).(0) * (atb_p img (x) (y-1) "r" ) +
+               filter.(2).(0) * (atb_p img (x+1) (y-1) "r" ) +
+               filter.(0).(1) * (atb_p img (x-1) (y) "r" ) +
+               filter.(1).(1) * (atb_p img (x) (y) "r" ) +
+               filter.(2).(1) * (atb_p img (x+1) (y) "r" ) +
+               filter.(0).(2) * (atb_p img (x-1) (y+1) "r" ) +
+               filter.(1).(2) * (atb_p img (x) (y+1) "r" ) +
+               filter.(2).(2) * (atb_p img (x+1) (y+1) "r" )) / 9 in 
+  
+  let g_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "g" ) + 
+               filter.(1).(0) * (atb_p img (x) (y-1) "g" ) +
+               filter.(2).(0) * (atb_p img (x+1) (y-1) "g" ) +
+               filter.(0).(1) * (atb_p img (x-1) (y) "g" ) +
+               filter.(1).(1) * (atb_p img (x) (y) "g" ) +
+               filter.(2).(1) * (atb_p img (x+1) (y) "g" ) +
+               filter.(0).(2) * (atb_p img (x-1) (y+1) "g" ) +
+               filter.(1).(2) * (atb_p img (x) (y+1) "g" ) +
+               filter.(2).(2) * (atb_p img (x+1) (y+1) "g" )) / 9 in 
+
+  let b_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "b" ) + 
+               filter.(1).(0) * (atb_p img (x) (y-1) "b" ) +
+               filter.(2).(0) * (atb_p img (x+1) (y-1) "b" ) +
+               filter.(0).(1) * (atb_p img (x-1) (y) "b" ) +
+               filter.(1).(1) * (atb_p img (x) (y) "b" ) +
+               filter.(2).(1) * (atb_p img (x+1) (y) "b" ) +
+               filter.(0).(2) * (atb_p img (x-1) (y+1) "b" ) +
+               filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
+               filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
+
+  let pixel = (r_out, g_out, b_out) in
+  pixel
+
 (* multiplication of filter and the matrix *)
 
 
