@@ -16,6 +16,7 @@ let exec_assist () =
 
 let exec_brow win b_img b_obj =
 	Browser.browser win;
+  	Assist.view_img ();
 	if ((Refe.get_file_type ()) = "obj") then
 		b_obj#misc#set_sensitive true
 	else
@@ -30,12 +31,17 @@ let exec_3d_obj () =
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
 	begin
-	if ((Sys.command "./genperlin -save > rand_map.bmp") != 0) then
+	if ((Sys.command "./genperlin -save > rand_map.bmp") = 0) then
 		Refe.filename := "rand_map.bmp"
 	else
 		Refe.filename := "carte.bmp"
 	end;
-	Refe.rand_file := true
+	(*print_endline (Refe.get_filename ());*)
+  	Assist.view_img ();
+	Refe.file_type := "img";
+	Refe.step := 5;
+	Pre.pre_trait ();
+	Assist.rand_alt ()
 	
 	
 

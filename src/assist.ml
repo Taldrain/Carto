@@ -8,24 +8,24 @@ type struct_tbx = {
 }
 let list_tbx = ref ([] : struct_tbx list)
 let list_inutile_tbx = ref ([] : GEdit.entry list)
-(*
+
 let rand_alt () =
 	let alti = ref 0 in
 	let i = ref 0 in
 	let colors = ref (Refe.get_li ()) in
 	while (!i < List.length (Refe.get_li ())) do
-		let elt = List.hd colors in
+		let elt = List.hd !colors in
 		let str = {
 			Refe.alt = !alti;
 			Refe.rgb = elt
-		}
-		alit := !alti + 5;
+		} in
+		alti := !alti + 5;
 		colors := List.tl (!colors);
 		i := !i + 1;
+		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
     Post.post_treat ();
     Graphics_engine.main_engine ()
-*)		
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
@@ -40,9 +40,39 @@ let save_alt () =
 		list_tbx := List.tl !list_tbx;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-
     Post.post_treat ();
     Graphics_engine.main_engine ()
+	
+(* Fenetre de pre traitement *)
+let view_img () =
+	let win = GWindow.window
+		~title:"Welcome" ()
+		~width:560
+		~height:570
+		~position:`MOUSE in
+	ignore (win#connect#destroy ~callback:(fun () -> ()));
+	let box = GPack.vbox
+		~packing:win#add () in
+	let scrolled_window = GBin.scrolled_window
+		~border_width:10
+		~hpolicy:`AUTOMATIC
+		~vpolicy:`AUTOMATIC
+		~width:512
+		~height:512
+		~packing:box#add () in
+	let secbox = GPack.hbox
+		~packing:scrolled_window#add_with_viewport () in
+	let img = GMisc.image
+		~file:(Refe.get_filename ())
+		~packing:secbox#add () in
+	let btn = GButton.button
+		~label:"Close"
+		~packing:box#add () in
+	ignore (btn#connect#clicked ~callback:(win#destroy));
+	win#show ()
+	
+
+
 
 let fixstep () =
 	match !list_inutile_tbx with

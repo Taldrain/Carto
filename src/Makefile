@@ -5,6 +5,7 @@ RM=rm -f
 OUT=carto
 ML=refe.ml parser_obj.ml pre.ml filter.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
+MLI=${ML:.ml=.mli}
 WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	 str.cmxa \
      lablgl.cmxa \
@@ -30,13 +31,14 @@ lib64:
 assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
 
+# TODO
+#.ml.mli:
+#	${CC} -i ${WALL} $<
+
 post:
 	cp ${OUT} .. && ${RM} ${OUT}
 
 clean:
-	${RM} *.cm* *.o .*.swp ~* '#'* *.so
-
-cleanall: clean
-	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj
+	${RM} *.cm* *.o .*.swp ~* '#'* *.so *.mli
 
 #END
