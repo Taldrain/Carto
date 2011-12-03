@@ -8,24 +8,25 @@ type struct_tbx = {
 }
 let list_tbx = ref ([] : struct_tbx list)
 let list_inutile_tbx = ref ([] : GEdit.entry list)
-(*
+
 let rand_alt () =
 	let alti = ref 0 in
 	let i = ref 0 in
 	let colors = ref (Refe.get_li ()) in
 	while (!i < List.length (Refe.get_li ())) do
-		let elt = List.hd colors in
+		let elt = List.hd !colors in
 		let str = {
 			Refe.alt = !alti;
 			Refe.rgb = elt
-		}
-		alit := !alti + 5;
+		} in
+		print_endline (string_of_int !alti);
+		alti := !alti + 5;
 		colors := List.tl (!colors);
 		i := !i + 1;
+		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
     Post.post_treat ();
     Graphics_engine.main_engine ()
-*)		
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
@@ -50,7 +51,8 @@ let fixstep () =
 		| e::_ -> let t = e in
 				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
 					| _ -> Refe.step := 5;
-		Pre.pre_trait ()
+		Pre.pre_trait ();
+		rand_alt ()
 
 
 (* old name: firstwin *)
