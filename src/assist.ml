@@ -9,6 +9,21 @@ type struct_tbx = {
 let list_tbx = ref ([] : struct_tbx list)
 let list_inutile_tbx = ref ([] : GEdit.entry list)
 
+(*let rand_alt () =
+	let alti = ref 0 in
+	let i = ref 0 in
+	while (!i < List.length (Refe.get_li ())) do
+		let str = {
+			Refe.alt = !alti
+			Refe.rgb = 
+		}
+		alit := !alti + 5;
+		i := !i + 1
+	done;
+    Post.post_treat ();
+    Graphics_engine.main_engine ()*)
+		
+
 (* Formulaire de demande d'altitude *)
 let save_alt () =
 	(*print_endline (string_of_int (List.length !list_tbx));*)
@@ -95,6 +110,7 @@ let winalt () =
 	let img_ref = Sdlloader.load_image "img/ref.png" in
 	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w,
 				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
+	let sugar = ref 0 in
 	for i=1 to List.length (Refe.get_li ()) do
 	ignore (
 		let carname = ("img/car"^(string_of_int i)^".bmp") in
@@ -114,6 +130,7 @@ let winalt () =
 			~file:carname
 			~packing:vbox1#add () in
 		let tbx = GEdit.entry
+			~text:(string_of_int !sugar)
 			~max_length:4
 			~width:4
 			~packing:vbox2#add () in
@@ -122,10 +139,9 @@ let winalt () =
 			color = e
 		} in
 		list_tbx := str::(!list_tbx);
-		print_endline "Une tbx ajoute"
+		sugar := !sugar + 5;
 	)
 	done;
-	print_endline (string_of_int (List.length !list_tbx));
 	let btn_ok = GButton.button
 		~label:"OK"
 		~packing:(vbox#pack ~padding:5) () in

@@ -4,6 +4,9 @@ let get_filename () = !filename
 let file_type = ref ("")
 let get_file_type () = !file_type
 
+let rand_file = ref false
+let get_rand_file () = !rand_file
+
 let nb_colors = ref 7
 let get_nb_colors () = !nb_colors
 
