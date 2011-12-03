@@ -47,12 +47,25 @@ let save_alt () =
 let view_img () =
 	let win = GWindow.window
 		~title:"Welcome" ()
-		~width:560
+		~width:800
 		~height:570
 		~position:`MOUSE in
 	ignore (win#connect#destroy ~callback:(fun () -> ()));
+	(*let hbox = GPack.hbox
+		~packing = win#add () in*)
+	(*let box2 = GPack.vbox
+		~packing = hbox#pack in*)
 	let box = GPack.vbox
 		~packing:win#add () in
+	(*let btn_1 = GButton.button
+		~label:"1"
+		~packing:box2#pack () in
+	let btn_2 = GButton.button
+		~label:"2"
+		~packing:box2#pack () in
+	let btn_3 = GButton.button
+		~label:"3"
+		~packing:box2#pack () in*)
 	let scrolled_window = GBin.scrolled_window
 		~border_width:10
 		~hpolicy:`AUTOMATIC

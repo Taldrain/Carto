@@ -53,8 +53,8 @@ let liss () =
     for y = 0 to (Refe.get_h())/( Refe.get_step()) do
       for x = 0 to (Refe.get_w())/(Refe.get_step()) do
 	   begin
-	   		let sum = ref 0 in
-			let nb = ref 0 in
+	   		let sum = ref (get_h matrix.(x).(y)) in
+			let nb = ref 1 in
 			begin
 				if (red_pill matrix (x-1) (y-1)) then
 					sum := !sum + (get_h matrix.(x-1).(y-1));
