@@ -13,7 +13,37 @@ let img_to_mat img =
     done;
   mat
 
+(* ------------------------------- Filters ---------------------------------- *)
+
 (* initialization of the matrix filter *)
+let sobel1() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- 1;
+  mat.(1).(0) <- 0;
+  mat.(2).(0) <-(-1);
+  mat.(0).(1) <- 2;
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <-(-2);
+  mat.(0).(2) <- 1;
+  mat.(1).(2) <- 0;
+  mat.(2).(2) <-(-1);
+  mat
+
+let sobel2() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- 1;
+  mat.(1).(0) <- 2;
+  mat.(2).(0) <- 1;
+  mat.(0).(1) <- 0;
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <- 0;
+  mat.(0).(2) <-(-1);
+  mat.(1).(2) <-(-2);
+  mat.(2).(2) <-(-1);
+  mat
+
+
+(* ------------------------------------ ------------------------------------- *)
 
 (* micro function that show a r/g/b element of a pixel *)
 let atb_p img x y atb = 
@@ -23,7 +53,17 @@ let atb_p img x y atb =
     let (_,g_out,_) = Sdlvideo.get_pixel_color img x y in g_out
   else let (_,_,b_out) = Sdlvideo.get_pixel_color img x y in b_out
 
-
+(* normalize function *)
+let rec normalize pix = 
+  let (r,g,b) = pix in
+    match (r,g,b) with
+    | (r,g,b) when r > 255 -> normalize (255,g,b); 
+    | (r,g,b) when r < 0   -> normalize (0,g,b); 
+    | (r,g,b) when g > 255 -> normalize (r,255,b); 
+    | (r,g,b) when g < 0   -> normalize (r,0,b); 
+    | (r,g,b) when b > 255 -> normalize (r,g,255); 
+    | (r,g,b) when b < 0   -> normalize (r,g,0);
+    | (r,g,b)              -> (r,g,b)
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
 let multi_pix_filter img x y filter = 
@@ -57,13 +97,15 @@ let multi_pix_filter img x y filter =
                filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
   let pixel = (r_out, g_out, b_out) in
-  pixel
+  normalize pixel
 
 (* multiplication of filter and the matrix *)
-let multi_mat_filter mat filter img = 
-  let mat_out = Array.make_matrix (Array.length mat) (Array.length mat.(0)) (0,0,0) in
-    for x = 0 to (Array.length mat - 1) do
-     for y = 0 to (Array.length mat.(0) - 1) do
+let multi_mat_filter filter img = 
+  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w, 
+              (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let mat_out = Array.make_matrix w h (0,0,0) in
+    for x = 0 to w - 1 do
+     for y = 0 to h - 1 do
        mat_out.(x).(y) <- multi_pix_filter img x y filter;
      done;
     done;
@@ -81,10 +123,45 @@ let mat_to_img mat img =
     done;
   image
 
-(* image to image filtered *)
-let filtr_img img filter = 
-  let mat_f = multi_mat_filter (img_to_mat img) filter img in
+(* image to image simple filtered *)
+let filtr_simpl_img img filter = 
+  let mat_f = multi_mat_filter filter img in
     mat_to_img mat_f img
+
+(* e1 = elt of mat1...    ef = sqrt (square e1 + square e2)  *)
+let mat1_mat2 mat1 mat2 img = 
+  let mat_f = 
+    Array.make_matrix (Array.length mat1) (Array.length mat1.(0)) (0,0,0) in
+      for x = 0 to (Array.length mat1) do
+        for y = 0 to (Array.length mat1.(0)) do
+          let (r1,g1,b1) = mat1.(x).(y) in
+          let (r2,g2,b2) = mat2.(x).(y) in
+          mat_f.(x).(y) <- normalize ((int_of_float
+            (Pervasives.sqrt (( (float_of_int r1) ** 2.) +.
+            ((float_of_int r2) ** 2.)))),(int_of_float
+            (Pervasives.sqrt (( (float_of_int g1) ** 2.) +.
+            ((float_of_int g2) ** 2.)))),(int_of_float
+            (Pervasives.sqrt (( (float_of_int b1) ** 2.) +.
+            ((float_of_int b2) ** 2.)))));
+        done;
+      done;
+  mat_f 
+
+(* image to image double filtered *)
+let filtr_doubl_img img filter1 filter2 = 
+  let mat1 = multi_mat_filter filter1 img in
+  let mat2 = multi_mat_filter filter2 img in
+  mat_to_img (mat1_mat2 mat1 mat2 img)
+
+
+
+(* ------------------------------------ ------------------------------------- *)
+
+(* ---------------------------- Filter functions ---------------------------- *)
+
+(* Soble filter   image -> image   *)
+let sobel_filter img = 
+  filtr_doubl_img img (sobel1()) (sobel2())
 
 (* ------------------------------------ ------------------------------------- *)
 
