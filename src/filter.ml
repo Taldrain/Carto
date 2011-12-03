@@ -56,13 +56,18 @@ let multi_pix_filter img x y filter =
                filter.(0).(2) * (atb_p img (x-1) (y+1) "b" ) +
                filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
-
   let pixel = (r_out, g_out, b_out) in
   pixel
 
 (* multiplication of filter and the matrix *)
-
-
+let multi_mat_filter mat filter img = 
+  let mat_out = Array.make_matrix (Array.length mat) (Array.length mat.(0)) (0,0,0) in
+    for x = 0 to (Array.length mat - 1) do
+     for y = 0 to (Array.length mat.(0) - 1) do
+       mat_out.(x).(y) <- multi_pix_filter img x y filter;
+     done;
+    done;
+  mat_out
 
 (* matrix to image *)
 let mat_to_img mat img = 
@@ -75,6 +80,11 @@ let mat_to_img mat img =
       done;
     done;
   image
+
+(* image to image filtered *)
+let filtr_img img filter = 
+  let mat_f = multi_mat_filter (img_to_mat img) filter img in
+    mat_to_img mat_f img
 
 (* ------------------------------------ ------------------------------------- *)
 
