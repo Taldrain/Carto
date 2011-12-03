@@ -1,7 +1,5 @@
 (* Graphics engine *)
 
-let width = 1240
-let height = 1240
 let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
@@ -20,15 +18,15 @@ let ly = ref 0.
 let lz = ref 0.
 
 
-let setup () =
+let init () =
   (* init des valeurs de camera *)
   tx := dtx();
   ty := dty();
   tz := dtz();
   (* creation du mode d'affichage *)
-  Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
+  (*Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();*)
   (* Init de la fenetre, a remplacer par une fenetre gtk *)
-  Glut.initWindowSize width height;
+  (*Glut.initWindowSize width height;*)
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
@@ -41,7 +39,7 @@ let setup () =
   GlFunc.depth_func `lequal;
   GlMisc.hint `perspective_correction `nicest
 
-let init_light () =
+(*let init_light () =
   let light_ambient = !lr, !lg, !lb, 1.0
   and light_diffuse = 1., 0., 0., 1.
   and light_specular = 1., 0., 0., 1.
@@ -54,15 +52,15 @@ let init_light () =
       `position light_position ];
   GlFunc.depth_func `less;
   List.iter Gl.enable [`lighting; `light0; `depth_test];
-  GlDraw.shade_model `smooth
+  GlDraw.shade_model `smooth*)
 
 let findcolor = function
   | (a,b,c) -> lr:= a; lg:= b; lb:= c
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> findcolor (snd e);
-            (*GlDraw.color (snd e);*)
+  | e::l -> (*findcolor (snd e);*)
+            GlDraw.color (snd e);
             GlDraw.vertex3 (fst e);
             create_tri l
 
@@ -89,20 +87,20 @@ let scene_gl () =
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
-  GlDraw.ends ();
-  Glut.swapBuffers ()
+  GlDraw.ends ()
+  (*Glut.swapBuffers ()*)
 
 
 (* redimensionner et lancement du programme *)
-let reshape ~w ~h =
-  let ratio = (float_of_int w) /. (float_of_int h) in
+let reshape ~width:w ~height:h =
+  (*let ratio = (float_of_int w) /. (float_of_int h) in*)
     (* limite d'affichage *)
-    GlDraw.viewport 0 0 w h;
+    GlDraw.viewport ~x:0 ~y:0 ~w ~h;
     (* mode projection ? *)
     GlMat.mode `projection;
     (* chargement de la matrice identite *)
     GlMat.load_identity ();
-    GluMat.perspective 45.0 ratio (0.1, 500.0);
+    (*GluMat.perspective 45.0 ratio (0.1, 500.0);*)
     (* changement de mode ? *)
     GlMat.mode `modelview;
     GlMat.load_identity ()
@@ -168,19 +166,19 @@ let keyboard_event ~key ~x ~y = match key with
 
 (* fonction d'idle *)
 let idle () =
-  init_light();
+  (*init_light();*)
   scene_gl ()
 
 
 let main_engine () =
     ignore (Glut.init Sys.argv);
-    ignore (Glut.createWindow "hello");
+    (*ignore (Glut.createWindow "hello");*)
     (* init - pas dans la boucle *)
-    setup();
+    (*init();*)
     (* gestion du clavier *)
+    print_endline "a";
     Glut.keyboardFunc keyboard_event;
-    Glut.reshapeFunc reshape;
+    (*Glut.reshapeFunc reshape;*)
     Glut.idleFunc(Some idle);
-    Glut.mainLoop ();
-	()
+    Glut.mainLoop ()
 

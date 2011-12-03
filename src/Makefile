@@ -20,10 +20,8 @@ all: lib64 assemble post
 
 lib32:
 	ln -fs /usr/lib/libglut.so.3 libglut.so
-	ln -fs /usr/lib/libgtkgl-2.0.so.1 libgtkgl-2.0.so
 lib64:
 	ln -fs /usr/lib64/libglut.so.3 libglut.so
-	ln -fs /usr/lib64/libgtkgl-2.0.so.1 libgtkgl-2.0.so
 
 .ml.cmx:
 	${CC} ${WALL} -c $<
