@@ -62,7 +62,7 @@ let view_img () =
 		~packing:box#add () in
 	let secbox = GPack.hbox
 		~packing:scrolled_window#add_with_viewport () in
-	let img = GMisc.image
+	let _img = GMisc.image
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 	let btn = GButton.button
