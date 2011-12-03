@@ -43,7 +43,6 @@ let save_alt () =
     Post.post_treat ();
     Graphics_engine.main_engine ()
 	
-(* Fenetre de pre traitement *)
 let view_img () =
 	let win = GWindow.window
 		~title:"Welcome" ()
@@ -51,28 +50,30 @@ let view_img () =
 		~height:570
 		~position:`MOUSE in
 	ignore (win#connect#destroy ~callback:(fun () -> ()));
-	(*let hbox = GPack.hbox
-		~packing = win#add () in*)
-	(*let box2 = GPack.vbox
-		~packing = hbox#pack in*)
-	let box = GPack.vbox
+	let hbox = GPack.hbox
 		~packing:win#add () in
-	(*let btn_1 = GButton.button
+
+	let box = GPack.vbox
+		~packing:hbox#add () in
+	let _btn_1 = GButton.button
 		~label:"1"
-		~packing:box2#pack () in
-	let btn_2 = GButton.button
+		~packing:box#add () in
+	let _btn_2 = GButton.button
 		~label:"2"
-		~packing:box2#pack () in
-	let btn_3 = GButton.button
+		~packing:box#add () in
+	let _btn_3 = GButton.button
 		~label:"3"
-		~packing:box2#pack () in*)
+		~packing:box#add () in
+
+	let box2 = GPack.vbox
+		~packing:hbox#add () in
 	let scrolled_window = GBin.scrolled_window
 		~border_width:10
 		~hpolicy:`AUTOMATIC
 		~vpolicy:`AUTOMATIC
 		~width:512
 		~height:512
-		~packing:box#add () in
+		~packing:box2#add () in
 	let secbox = GPack.hbox
 		~packing:scrolled_window#add_with_viewport () in
 	let _img = GMisc.image
