@@ -1,7 +1,5 @@
 (* Graphics engine *)
 
-let width = 1024
-let height = 1024
 let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
@@ -25,10 +23,12 @@ let init () =
   tx := dtx();
   ty := dty();
   tz := dtz();
+  ignore (Glut.init Sys.argv);
   (* creation du mode d'affichage *)
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
   (* Init de la fenetre, a remplacer par une fenetre gtk *)
-  Glut.initWindowSize width height;
+  Glut.initWindowSize ~w:800 ~h:600;
+  ignore (Glut.createWindow "hello");
   (* permettre le degrade de couleur *)
   GlDraw.shade_model `smooth;
   (* couleur de fond *)
@@ -173,8 +173,6 @@ let idle () =
 
 
 let main_engine () =
-    ignore (Glut.init Sys.argv);
-    ignore (Glut.createWindow "hello");
     (* init - pas dans la boucle *)
     init();
     (* gestion du clavier *)
