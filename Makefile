@@ -1,7 +1,8 @@
 .SUFFIXES: .ml .cmx
 
 VPATH=src/
-OUT=carto
+GPATH=generator/
+OUT=carto genperlin
 IMG=img/car*
 
 all: assemble64
@@ -18,7 +19,7 @@ mli:
 	cd ${VPATH} && ${MAKE} mli
 
 clean:
-	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean
+	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean && cd ${GPATH} && ${MAKE} clean
 
 cleanall: clean
 	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj

@@ -192,10 +192,10 @@ let pre_trait () =
   let img2 = Sdlvideo.create_RGB_surface_format
   img [] (Refe.get_w()) (Refe.get_h()) in
 	  (* we create the display surface *)
-  let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
+  (*let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
 	    (* on affiche l'image avant traitement*)
 	    show img display;
-	wait_key();
+	wait_key();*)
 	(* Grid function *)
 	let img3 = (Filter.sobel_filter img) in
   Sdlvideo.save_BMP img3 "contour1.bmp";
@@ -203,8 +203,8 @@ let pre_trait () =
   Sdlvideo.save_BMP img4 "contour2.bmp";
   (*  we call the pretraitement function *)
 	contour img img2;
-	show img2 display;
-	wait_key ();
+	(*show img2 display;
+	wait_key ();*)
   (* contour sobel test *)
 	contour_hor img2 (Refe.get_step());
 	contour_ver img2 (Refe.get_step());
@@ -212,10 +212,10 @@ let pre_trait () =
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
   	(* on affiche l'image apres traitement*)
-	show img2 display;
+	(*show img2 display;*)
 	(* recording the image *)
 	Sdlvideo.save_BMP img2 "out.bmp";
-	wait_key ();
+	(*wait_key ();*)
 	Sdl.quit ()
   
 (* END -- Functions for the pre traitement *)

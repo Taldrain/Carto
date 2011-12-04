@@ -16,7 +16,7 @@ WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	 unix.cmxa \
      lablglut.cmxa
 
-all: lib64 assemble post
+all: lib64 assemble genperlin post
 
 32: lib32 assemble post
 
@@ -30,6 +30,9 @@ lib64:
 
 assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
+
+genperlin:
+	cd generator/ && ${MAKE} &&	mv genperlin ../../
 
 # TODO
 #.ml.mli:

@@ -1,0 +1,93 @@
+######################################################################
+######### Générateur de carte pour le projet cartographie 3D #########
+#########             2007/2008 Marwan Burelle               #########
+######################################################################
+
+1) Auteurs et droits
+--------------------
+
+Ce logiciel est distribué sans garantie aucune, les différentes
+parties restent la propriété de leurs auteurs respectives, notamment
+les fichiers perlin.c et perlin.h dont la propriété intellectuelle
+revient à Ken Perlin.
+
+Ce logiciel ne peut faire l'objet d'une diffusion hors de l'école
+EPITA sans l'avis préalable de son auteur (Marwan Burelle.)
+
+2) Compilation
+--------------
+
+Le fichier Makefile fournit fonctionne indifféremment avec les version
+GNU et BSD de make.
+
+Pour compiler le logiciel, vous avez besoin d'une distribution
+standard de gcc avec les fichiers d'includes standards. Vous avez
+également besoin de la distribution standard d'OCaml avec le support
+X11 (ou équivalent pour Windows) et le compilateur natif ocamlopt (la
+procédure de compilation nécessite quelques retouches si vous n'avez
+pas le support natif.)
+
+Il n'y a aucune garantie que le logiciel compile ou fonctionne sous
+Windows, à vous de tester.
+
+La compilation est relativement simple, après avoir décompressé
+l'archive, allez dans le répertoire principal et taper:
+
+> make all
+
+Cette commande devrait produire un exécutable nommé genperlin.
+
+Si vous disposez de la commande convert (fournit avec ImageMagick)
+vous pouvez produire un exemple de carte en tapant:
+
+> make POVScenes/carte-pov.png
+
+Qui affichera une carte (en nuance de gris) et la sauvera dans le
+fichier POVScenes/carte-pov.png (vous pouvez modifier les paramètres
+de génération dans le fichier POVScenes/Makefile.)
+
+Si vous disposez du logiciel POV-Ray (http://www.povray.org/) vous
+pouvez engendrer un aperçu en "raytracing" de la carte avec la
+commande:
+
+> make POVScenes/map.png
+
+Qui affichera une carte (en nuance de gris) et la sauvera dans le
+fichier POVScenes/carte-pov.png et produira la scène en 3D dans le
+fichier POVScenes/map.png (les paramètres de génération de la carte et
+de l'image sont dans POVScenes/Makefile et la scène est décrite par le
+fichier map.pov.)
+
+3) Utilisation
+--------------
+
+Par défaut, le logiciel initialise le générateur de nombre aléatoire
+(la graine) avec la date courante et affiche la carte obtenue avec les
+paramètre par défaut.
+
+Les options modifiant la génération de la carte sont les suivantes:
+
+Les paramètres du bruit de Perlin (pour les détails, aller lire les
+sources !):
+  -alpha     Alpha parameter   (default = 2.0)
+  -beta      Beta parameter    (default = 2.0)
+  -octave    Number of octaves (default = 10)
+
+Mode de couleur, par défaut la carte est générée avec une palette de
+couleur fixe pour chaque "altitude", mais il est possible de passer en
+mode POV-Ray. La première option remplace la palette par des nuances
+de gris adaptées à l'utilisation des HF de POV-Ray (mais engendrant
+des escaliers) et la seconde engendre une image en niveau de gris
+continue donnant de meilleur résultat avec les HF.  -povcolor Use
+color for POVray HF -grey Smooth grey level
+
+L'option "-seed" permet de fixer la graine du générateur aléatoire. Si
+celle-ci n'est pas fournit ou vaut 0, la date courante est
+utilisée. Le programme générera la même image avec la même graine de
+départ (et les mêmes paramètres) vous permettant de faire des essais
+avant de sauver le résultat.
+
+Enfin, il est possible de produire un BMP sur la sortie standard avec
+l'option "-save". Dans ce cas, vous devrez rediriger la sortie dans un
+fichier (ou une commande.) Cette option ne désactive pas l'affichage
+de la carte. L'image produite est un BMP 24bit en 512x512.
