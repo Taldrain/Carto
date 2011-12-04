@@ -21,7 +21,7 @@ all: assemble genperlin post
 32: lib32 assemble post
 
 ocamlbuild:
-	rm -f *.cm* *.so *.a
+	rm -f *.cm* *.so *.a *.o
 	ocamlbuild -use-ocamlfind main.native
 	mv main.native carto.native
 
