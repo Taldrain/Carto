@@ -22,12 +22,6 @@ mli:
 assemble32:
 	cd ${VPATH} && ${MAKE} 32
 
-assemble64:
-	cd ${VPATH} && ${MAKE}
-
-mli:
-	cd ${VPATH} && ${MAKE} mli
-
 clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean && cd ${GPATH} && ${MAKE} clean
 
