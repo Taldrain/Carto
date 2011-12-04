@@ -50,6 +50,6 @@ post:
 	cp ${OUT} .. && ${RM} ${OUT}
 
 clean:
-	${RM} *.cm* *.o .*.swp ~* '#'* *.so *.mli
+	${RM} -rf *.cm* *.o .*.swp ~* '#'* *.so *.mli _build/
 
 #END
