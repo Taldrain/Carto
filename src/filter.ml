@@ -42,6 +42,31 @@ let sobel2() =
   mat.(2).(2) <-(-1);
   mat
 
+let sobelv2_1() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- (-1);
+  mat.(1).(0) <- 0;
+  mat.(2).(0) <-1;
+  mat.(0).(1) <- (-2);
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <-2;
+  mat.(0).(2) <- (-1);
+  mat.(1).(2) <- 0;
+  mat.(2).(2) <-1;
+  mat
+
+let sobelv2_2() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- (-1);
+  mat.(1).(0) <- (-2);
+  mat.(2).(0) <- (-1);
+  mat.(0).(1) <- 0;
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <- 0;
+  mat.(0).(2) <-1;
+  mat.(1).(2) <-2;
+  mat.(2).(2) <-1;
+  mat
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -66,7 +91,8 @@ let rec normalize pix =
     | (r,g,b)              -> (r,g,b)
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
-let multi_pix_filter img x y filter = 
+let multi_pix_filter img x y filter =
+ try 
   let r_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "r" ) + 
                filter.(1).(0) * (atb_p img (x) (y-1) "r" ) +
                filter.(2).(0) * (atb_p img (x+1) (y-1) "r" ) +
@@ -97,7 +123,8 @@ let multi_pix_filter img x y filter =
                filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
   let pixel = (r_out, g_out, b_out) in
-  normalize pixel
+  normalize pixel;
+ with _ -> (0,0,0)
 
 (* multiplication of filter and the matrix *)
 let multi_mat_filter filter img = 
@@ -132,8 +159,8 @@ let filtr_simpl_img img filter =
 let mat1_mat2 mat1 mat2 img = 
   let mat_f = 
     Array.make_matrix (Array.length mat1) (Array.length mat1.(0)) (0,0,0) in
-      for x = 0 to (Array.length mat1) do
-        for y = 0 to (Array.length mat1.(0)) do
+      for x = 0 to (Array.length mat1 - 1) do
+        for y = 0 to (Array.length mat1.(0) - 1) do
           let (r1,g1,b1) = mat1.(x).(y) in
           let (r2,g2,b2) = mat2.(x).(y) in
           mat_f.(x).(y) <- normalize ((int_of_float
@@ -151,7 +178,7 @@ let mat1_mat2 mat1 mat2 img =
 let filtr_doubl_img img filter1 filter2 = 
   let mat1 = multi_mat_filter filter1 img in
   let mat2 = multi_mat_filter filter2 img in
-  mat_to_img (mat1_mat2 mat1 mat2 img)
+  mat_to_img (mat1_mat2 mat1 mat2 img) img 
 
 
 
@@ -162,6 +189,10 @@ let filtr_doubl_img img filter1 filter2 =
 (* Soble filter   image -> image   *)
 let sobel_filter img = 
   filtr_doubl_img img (sobel1()) (sobel2())
+
+let sobel_filter2 img = 
+  filtr_doubl_img img (sobelv2_1()) (sobelv2_2())
+
 
 (* ------------------------------------ ------------------------------------- *)
 
