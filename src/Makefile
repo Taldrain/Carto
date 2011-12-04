@@ -16,9 +16,17 @@ WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	 unix.cmxa \
      lablglut.cmxa
 
-all: lib64 assemble genperlin post
+all: assemble genperlin post
 
 32: lib32 assemble post
+
+ocamlbuild:
+	rm -f *.cm* *.so *.a
+	ocamlbuild -use-ocamlfind main.native
+	mv main.native carto.native
+
+.ml.cmx:
+	${CC} ${WALL} -c $<
 
 lib32:
 	ln -fs /usr/lib/libglut.so.3 libglut.so

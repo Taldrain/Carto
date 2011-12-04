@@ -5,7 +5,14 @@ GPATH=generator/
 OUT=carto genperlin
 IMG=img/car*
 
-all: assemble64
+all:
+	cd ${VPATH} && ${MAKE}
+
+ocamlbuild:
+	cd ${VPATH} && ${MAKE} ocamlbuild
+
+mli:
+	cd ${VPATH} && ${MAKE} mli
 
 32: assemble32
 
