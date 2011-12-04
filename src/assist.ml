@@ -1,13 +1,206 @@
-(***************************************************************************)
-(*		L'assistant pour les couleurs dans un premier temps	   *)
-(***************************************************************************)
+(* ASSIST.ML *)
+(* It seems like a draft but there are a lot of function for all windows that
+display exept the main window *)
+
+
+(* -------------------------------------------------------------------------- *)
+(* WAITING WINDOW *)
+(* -------------------------------------------------------------------------- *)
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+(* -------------------------------------------------------------------------- *)
+(* FENETRE DE FILTRES *)
+(* -------------------------------------------------------------------------- *)
+(*La fenetre d'attente *)
+let wait_win () =
+	let win = GWindow.window
+		~title:"Waiting" ()
+		~width:50
+		~height:50
+		~position:`CENTER in
+	let _lbl = GMisc.label
+		~text:"Waiting"
+		~packing:win#add () in
+	win#show
+
+let exec_nop pict_view =
+	pict_view#set_file (Refe.get_filename ())
+
+let exec_so level pict_view =
+	(*let thr = Thread.create wait_win () in*)
+	let win = GWindow.window
+		~title:"Waiting" ()
+		~width:50
+		~height:50
+		~kind:`POPUP
+		~position:`CENTER in
+	ignore (win#connect#destroy ~callback:(fun () -> ()));
+	let _lbl = GMisc.label
+		~text:"Waiting"
+		~packing:win#add () in
+	win#show;
+	if level = 1 then
+		begin
+  		let img = Sdlloader.load_image (Refe.get_filename ()) in
+		let img_so = (Filter.sobel_filter img) in
+		Sdlvideo.save_BMP img_so "contour1.bmp";
+		pict_view#set_file "contour1.bmp";
+		end
+	else (*level = 2 *)
+		begin
+  		let img = Sdlloader.load_image (Refe.get_filename ()) in
+		let img_so = (Filter.sobel_filter2 img) in
+		Sdlvideo.save_BMP img_so "contour1.bmp";
+		pict_view#set_file "contour1.bmp";
+		end;
+	(*Thread.kill thr*)
+	win#destroy;
+	()
+	
+
+let view_img () =
+	(*La fenetre de filtre *)
+	let win = GWindow.window
+		~title:"Welcome" ()
+		~width:800
+		~height:570
+		~position:`MOUSE in
+	ignore (win#connect#destroy ~callback:(fun () -> ()));
+	let hbox = GPack.hbox
+		~packing:win#add () in
+	(*les boutons de la fenetre de filtre*)
+	let box = GPack.vbox
+		~spacing:5
+		~border_width:9
+		~packing:hbox#add () in
+	(*pour les encadrer*)
+	let fram = GBin.frame
+		~label:"Filters"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram#add () in
+	(*pas de filtre*)
+	let btn_nop = GButton.button
+		~label:"Disable filter"
+		~packing:box_fram#add () in
+	let box_so = GPack.hbox
+		~spacing:5
+		~packing:box_fram#add () in
+	let btn_so1 = GButton.button
+		~label:"Sobel 1"
+		~packing:box_so#add () in
+	let btn_so2 = GButton.button
+		~label:"Sobel 2"
+		~packing:box_so#add () in
+	let _btn_3 = GButton.button
+		~label:"3"
+		~packing:box_fram#add () in
+	let _btn_4 = GButton.button
+		~label:"4"
+		~packing:box_fram#add () in
+	let _separator = GMisc.separator `HORIZONTAL
+		~packing:box#add () in
+	let btn = GButton.button
+		~label:"Close"
+		~packing:box#pack () in
+
+	let box2 = GPack.vbox
+		~packing:hbox#add () in
+	let scrolled_window = GBin.scrolled_window
+		~border_width:10
+		~hpolicy:`AUTOMATIC
+		~vpolicy:`AUTOMATIC
+		~width:512
+		~height:512
+		~packing:box2#add () in
+	let secbox = GPack.hbox
+		~packing:scrolled_window#add_with_viewport () in
+	let picture = GMisc.image
+		~file:(Refe.get_filename ())
+		~packing:secbox#add () in
+
+
+	(* -- CALLBACK -- *)
+	ignore (btn_nop#connect#clicked
+		~callback:(fun () -> (exec_nop picture)));
+	ignore (btn_so1#connect#clicked
+		~callback:(fun () -> (exec_so 1 picture)));
+	ignore (btn_so2#connect#clicked
+		~callback:(fun () -> (exec_so 2 picture)));
+	ignore (btn#connect#clicked ~callback:(win#destroy));
+
+
+	win#show ()
+	
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+
+
+
+(* -------------------------------------------------------------------------- *)
+(* LITTLE POP UP TO ENTER THE STEP *)
+(* -------------------------------------------------------------------------- *)
+let list_inutile_tbx = ref ([] : GEdit.entry list)
+
+let fixstep () =
+	match !list_inutile_tbx with
+		| [] -> failwith "Error"
+		| e::_ -> let t = e in
+				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
+					| _ -> Refe.step := 5;
+		Pre.pre_trait ()
+
+
+(* WINDOW TO ENTER THE STEP *)
+let winstep () =
+	let win = GWindow.window
+		~title:"Welcome" ()
+		~width:300
+		~height:100
+		~position:`CENTER in
+	ignore (win#connect#destroy ~callback:(fixstep));
+	let box = GPack.vbox
+		~packing:win#add () in
+	let nd_box = GPack.hbox
+		~packing:box#add () in
+	let _lbl = GMisc.label
+		~text:"Entry the step"
+		~packing:nd_box#add () in
+	(* Textbox *)
+	let tbx = GEdit.entry
+			~max_length:4
+			~width:4
+			~packing:nd_box#add () in
+	ignore (list_inutile_tbx := tbx::!list_inutile_tbx);
+	let btn_ok = GButton.button
+		~label:"OK"
+		~packing:box#add () in
+	ignore (btn_ok#connect#clicked ~callback:(win#destroy));
+	win#show ()
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+
+
+
+
+(* -------------------------------------------------------------------------- *)
+(* ALL FUNCTIONS FOR ENTER ALTITUDES *)
+(* -------------------------------------------------------------------------- *)
 type str_alt = Refe.struct_alt
 type struct_tbx = {
 	tbx : GEdit.entry;
 	color : (int*int*int)
 }
 let list_tbx = ref ([] : struct_tbx list)
-let list_inutile_tbx = ref ([] : GEdit.entry list)
 
 let rand_alt () =
 	let alti = ref 0 in
@@ -42,101 +235,8 @@ let save_alt () =
 	done;
     Post.post_treat ();
     Graphics_engine.main_engine ()
-	
-let view_img () =
-	let win = GWindow.window
-		~title:"Welcome" ()
-		~width:800
-		~height:570
-		~position:`MOUSE in
-	ignore (win#connect#destroy ~callback:(fun () -> ()));
-	let hbox = GPack.hbox
-		~packing:win#add () in
 
-	let box = GPack.vbox
-		~spacing:5
-		~border_width:9
-		~packing:hbox#add () in
-	let fram = GBin.frame
-		~label:"Filters"
-		~border_width:5
-		~packing:box#pack () in
-	let box_fram = GPack.vbox
-		~spacing:5
-		~border_width:5
-		~packing:fram#add () in
-	let _btn_1 = GButton.button
-		~label:"1"
-		~packing:box_fram#add () in
-	let _btn_2 = GButton.button
-		~label:"2"
-		~packing:box_fram#add () in
-	let _btn_3 = GButton.button
-		~label:"3"
-		~packing:box_fram#add () in
-	let _separator = GMisc.separator `HORIZONTAL
-		~packing:box#add () in
-	let btn = GButton.button
-		~label:"Close"
-		~packing:box#pack () in
-
-	let box2 = GPack.vbox
-		~packing:hbox#add () in
-	let scrolled_window = GBin.scrolled_window
-		~border_width:10
-		~hpolicy:`AUTOMATIC
-		~vpolicy:`AUTOMATIC
-		~width:512
-		~height:512
-		~packing:box2#add () in
-	let secbox = GPack.hbox
-		~packing:scrolled_window#add_with_viewport () in
-	let _img = GMisc.image
-		~file:(Refe.get_filename ())
-		~packing:secbox#add () in
-	ignore (btn#connect#clicked ~callback:(win#destroy));
-	win#show ()
-	
-
-
-
-let fixstep () =
-	match !list_inutile_tbx with
-		| [] -> failwith "Error"
-		| e::_ -> let t = e in
-				try Refe.step := int_of_string (t#text);Pre.pre_trait () with
-					| _ -> Refe.step := 5;
-		Pre.pre_trait ()
-
-
-(* old name: firstwin *)
-let winstep () =
-	let win = GWindow.window
-		~title:"Welcome" ()
-		~width:300
-		~height:100
-		~position:`CENTER in
-	ignore (win#connect#destroy ~callback:(fixstep));
-	let box = GPack.vbox
-		~packing:win#add () in
-	let nd_box = GPack.hbox
-		~packing:box#add () in
-	let _lbl = GMisc.label
-		~text:"Entry the step"
-		~packing:nd_box#add () in
-	(* Textbox *)
-	let tbx = GEdit.entry
-			~max_length:4
-			~width:4
-			~packing:nd_box#add () in
-	ignore (list_inutile_tbx := tbx::!list_inutile_tbx);
-	let btn_ok = GButton.button
-		~label:"OK"
-		~packing:box#add () in
-	ignore (btn_ok#connect#clicked ~callback:(win#destroy));
-	win#show ()
-
-(* old name : first*)
+(* WINDOW TO ENTER THE ALTS *)
 let winalt () =
 	let win1 = GWindow.window
 		~title:"Assist first step" ()

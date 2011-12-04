@@ -6,15 +6,16 @@ OUT=carto
 ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
 MLI=${ML:.ml=.mli}
-WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
+WALL=-thread -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
+	 unix.cmxa \
+	 threads.cmxa \
 	 str.cmxa \
      lablgl.cmxa \
      lablgtk.cmxa \
      bigarray.cmxa \
      sdl.cmxa \
      sdlloader.cmxa \
-	 unix.cmxa \
-     lablglut.cmxa
+	 lablglut.cmxa
 
 all: assemble genperlin post
 
