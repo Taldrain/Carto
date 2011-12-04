@@ -22,7 +22,7 @@ all: assemble genperlin post
 
 ocamlbuild:
 	rm -f *.cm* *.so *.a *.o
-	ocamlbuild -use-ocamlfind main.native
+	ocamlbuild -use-ocamlfind -X generator main.native
 	mv main.native carto.native
 
 .ml.cmx:

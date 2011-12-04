@@ -8,7 +8,10 @@ IMG=img/car*
 all:
 	cd ${VPATH} && ${MAKE}
 
-ocamlbuild:
+genperlin:
+	cd ${VPATH} && ${MAKE} genperlin
+
+ocamlbuild: genperlin
 	cd ${VPATH} && ${MAKE} ocamlbuild
 
 mli:
