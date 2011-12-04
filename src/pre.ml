@@ -79,7 +79,7 @@ let contour image image2 =
         down := Sdlvideo.get_pixel_color image x (y+1);
         if (!center <> !right &&  x < (Refe.get_w())-1
         || !center <> !down &&  y < (Refe.get_h())-1 ) then
-          Sdlvideo.put_pixel_color image2 x y (255,0,0) else
+          Sdlvideo.put_pixel_color image2 x y (0,0,0) else
           Sdlvideo.put_pixel_color image2 x y !center;
         if (!center <> !right || !center <> !down) then 
           listcolor := p_list !listcolor !center
@@ -198,7 +198,9 @@ let pre_trait () =
 	wait_key();
 	(* Grid function *)
 	let img3 = (Filter.sobel_filter img) in
-  Sdlvideo.save_BMP img3 "contour.bmp";
+  Sdlvideo.save_BMP img3 "contour1.bmp";
+  let img4 = (Filter.sobel_filter2 img) in
+  Sdlvideo.save_BMP img4 "contour2.bmp";
   (*  we call the pretraitement function *)
 	contour img img2;
 	show img2 display;

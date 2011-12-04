@@ -42,6 +42,31 @@ let sobel2() =
   mat.(2).(2) <-(-1);
   mat
 
+let sobelv2_1() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- (-1);
+  mat.(1).(0) <- 0;
+  mat.(2).(0) <-1;
+  mat.(0).(1) <- (-2);
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <-2;
+  mat.(0).(2) <- (-1);
+  mat.(1).(2) <- 0;
+  mat.(2).(2) <-1;
+  mat
+
+let sobelv2_2() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- (-1);
+  mat.(1).(0) <- (-2);
+  mat.(2).(0) <- (-1);
+  mat.(0).(1) <- 0;
+  mat.(1).(1) <- 0;
+  mat.(2).(1) <- 0;
+  mat.(0).(2) <-1;
+  mat.(1).(2) <-2;
+  mat.(2).(2) <-1;
+  mat
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -164,6 +189,10 @@ let filtr_doubl_img img filter1 filter2 =
 (* Soble filter   image -> image   *)
 let sobel_filter img = 
   filtr_doubl_img img (sobel1()) (sobel2())
+
+let sobel_filter2 img = 
+  filtr_doubl_img img (sobelv2_1()) (sobelv2_2())
+
 
 (* ------------------------------------ ------------------------------------- *)
 
