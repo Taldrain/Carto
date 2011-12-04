@@ -33,9 +33,6 @@ lib32:
 lib64:
 	ln -fs /usr/lib64/libglut.so.3 libglut.so
 
-.ml.cmx:
-	${CC} ${WALL} -c $<
-
 assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
 

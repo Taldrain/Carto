@@ -7,10 +7,10 @@ Commandes :
 Zoom : q -> -
        e -> +
 
-Deplacer la carte : w -> vers le haut
-                    s -> vers le bas
-                    a -> vers la droite
-                    d -> vers la gauche
+Deplacer la carte : UP    -> vers le haut
+                    DOWN  -> vers le bas
+                    RIGHT -> vers la droite
+                    LEFT  -> vers la gauche
 
 Rotation de la carte : i -> sur l'axe des x, en positif
                        k -> sur l'axe des x, en negatif
@@ -19,4 +19,9 @@ Rotation de la carte : i -> sur l'axe des x, en positif
                        o -> sur l'axe des z, en positif
                        u -> sur l'axe des z, en negatif
 
+Differents modes : w -> fil de fer (wire)
+                   f -> surface plein (fill)
+                   p -> nuage de points
+
+Lumiere : g -> activer/desactiver
 

@@ -1,5 +1,25 @@
 (* Graphics engine *)
 
+(* mouse var *)
+let xold = ref 0
+let yold = ref 0
+let bl_down = ref false
+
+let anglex = ref 0
+let angley = ref 0
+
+let pas = ref 2.
+
+type mode = Fill | Line | Point
+let mode_ = ref Line
+
+let g_mode = function
+  | Fill -> `fill
+  | Line -> `line
+  | Point -> `point
+
+let light_b = ref false
+
 let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
@@ -9,7 +29,6 @@ let dty() = (float (-(Refe.get_w()/(5*Refe.get_step()))))
 let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
 let tz = ref 0.
-let line = ref true
 let lr = ref 0.
 let lg = ref 0.
 let lb = ref 0.
@@ -37,37 +56,52 @@ let init () =
   GlClear.depth 1.;
   (* precaution *)
   GlClear.clear [`color; `depth];
-  Gl.enable `depth_test;
-  GlFunc.depth_func `lequal;
+  List.iter Gl.enable [`depth_test; `lighting; `light0];
+  (*GlFunc.depth_func `lequal;*)
+  GlFunc.depth_func `less;
   GlMisc.hint `perspective_correction `nicest
 
-let init_light () =
-  let light_ambient = !lr, !lg, !lb, 1.0
-  and light_diffuse = 1., 0., 0., 1.
-  and light_specular = 1., 0., 0., 1.
+
+(*let init_light () =
+  let light_ambient = !lr, !lg, !lb, 1.
+  and light_diffuse = 1., 0., 0., 1.(*!lr*.2., !lg*.2., !lb*.2., 1.*)
+  and light_specular = 0., 1., 0., 1.(*!lr*.4., !lg*.4., !lb*.4., 1.*)
   and light_position = !lx, !ly, !lz, 1.
   in
   List.iter (GlLight.light ~num:0)
     [ `ambient light_ambient;
       `diffuse light_diffuse;
       `specular light_specular;
-      `position light_position ];
-  GlFunc.depth_func `less;
-  List.iter Gl.enable [`lighting; `light0; `depth_test];
-  GlDraw.shade_model `smooth
+      `position light_position ]
+  (*GlDraw.shade_model `smooth*)*)
 
-let findcolor = function
-  | (a,b,c) -> lr:= a; lg:= b; lb:= c
+
+(*let findcolor = function
+  | (a,b,c) -> lr:= a; lg:= b; lb:= c*)
+
+
+(*let distance_lp (x2,y2,z2) =
+  sqrt ((x2-.(!lx))*.(x2-.(!lx))+.(y2-.(!ly))*.(y2-.(!ly))+.(z2-.(!lz))*.(z2-.(!lz)))
+
+let attenuation (x2,y2,z2) =
+  max(0.,1. -. ((distance_lp (x2,y2,z2))/.z2))
+
+let light (x2,y2,z2) =
+  let a = attenuation (x2,y2,z2) in
+    (x2*.a, y2*.a, z2*.a)
+ *) 
+
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> findcolor (snd e);
-            (*GlDraw.color (snd e);*)
+  | e::l -> (*GlDraw.color ((attenuation (snd e))*(snd e));
+             *)
+            GlDraw.color (snd e);
             GlDraw.vertex3 (fst e);
             create_tri l
 
 
-(* affichage de la scene *)
+(* affichage de la scene - display *)
 let scene_gl () =
   (* precaution *)
   GlClear.clear [`color; `depth];
@@ -80,16 +114,15 @@ let scene_gl () =
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
   GlMat.rotate3 !rz (0.0, 0.0, 2.0);
   (* Modifier le mode d'affichage *)
-  if !line then
-    (GlDraw.polygon_mode `front `line;
-    GlDraw.polygon_mode `back `line)
-  else
-    (GlDraw.polygon_mode `front `fill;
-    GlDraw.polygon_mode `back `fill);
+  GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
+  if !light_b then
+    Gl.enable `lighting
+  else
+    Gl.disable `lighting;
   Glut.swapBuffers ()
 
 
@@ -99,13 +132,18 @@ let reshape ~w ~h =
     (* limite d'affichage *)
     GlDraw.viewport 0 0 w h;
     (* mode projection ? *)
-    GlMat.mode `projection;
+    (*GlMat.mode `projection;*)
     (* chargement de la matrice identite *)
-    GlMat.load_identity ();
-    GluMat.perspective 45.0 ratio (0.1, 500.0);
+    (*GlMat.load_identity ();*)
     (* changement de mode ? *)
+    GlMat.mode `projection;
+    GlMat.load_identity ();
+    GlMat.rotate ~angle:(float(- !anglex)) ~x:0. ~y:0. ~z:1. ();
+    GlMat.rotate ~angle:(float(- !angley)) ~x:1. ~y:0. ~z:0. ();
+    GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(0.1,500.);
     GlMat.mode `modelview;
-    GlMat.load_identity ()
+    GlMat.load_identity ();
+    Gl.flush()
 
 
 (* fonction xor *)
@@ -125,50 +163,63 @@ let reset () =
   tz := dtz()
 
 
+let motion ~x ~y =
+  if !bl_down then
+    begin
+      anglex := !anglex + (!xold - x);
+      angley := !angley + (!yold -y);
+      Glut.postRedisplay();
+    end;
+  xold := x;
+  yold := y
+
+
+
+let mouse_event ~button ~state ~x ~y = match button, state with
+  | Glut.LEFT_BUTTON, Glut.DOWN -> bl_down := true;
+                                        xold := x;
+                                        yold := y;
+  | Glut.LEFT_BUTTON, Glut.UP -> bl_down := false;
+  | _ -> ()
+
+
 (* gestion des evenements du clavier *)
 let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
-    27 -> exit 0
-  (* touche "i" *)
-  | 105 | 73  -> rx := !rx +. 2.0
-  (* touche "k" *)
-  | 107 | 75 -> rx:= !rx -. 2.0
-  (* touche "j" *)
-  | 106 | 74 -> ry := !ry +. 2.0
-  (* touche "l" *)
-  | 108 | 76 -> ry := !ry -. 2.0
-  (* touche "u" *)
-  | 117 | 85 -> rz := !rz -. 2.0
-  (* touche "o" *)
-  | 111 | 79 -> rz := !rz +. 2.0
-  (* touche "t" *)
-  | 116 | 84 -> line := (xor !line true)
-  (* touche "a" *)
-  | 97  | 65 -> tx := !tx -. 2.0
-  (* touche "d" *)
-  | 100 | 68 -> tx := !tx +. 2.0
-  (* touche "w" *)
-  | 119 | 87 -> ty := !ty +. 2.0
-  (* touche "s"*)
-  | 115 | 83 -> ty := !ty -. 2.0
-  (* touche "q" *)
-  | 113 | 81 -> tz := !tz +. 2.0
-  (* touche "e" *)
-  | 101 | 69 -> tz := !tz -. 2.0
-  (* touche "r" *)
-  | 114 | 82 -> reset ()
-  | 50 -> ly := !ly -. 2.0
-  | 51 -> lz := !lz -. 2.0
-  | 52 -> lx := !lx -. 2.0
-  | 54 -> lx := !lx +. 2.0
-  | 56 -> ly := !ly +. 2.0
-  | 57 -> lz := !lz +. 2.0
+    027 -> exit 0
+  | 105 | 151  -> rx := !rx +. !pas
+  | 107 | 153 -> rx:= !rx -. !pas
+  | 106 | 152 -> ry := !ry +. !pas
+  | 108 | 154 -> ry := !ry -. !pas
+  | 117 | 165 -> rz := !rz -. !pas
+  | 111 | 157 -> rz := !rz +. !pas
+  | 119 | 167 -> mode_ := Line
+  | 102 | 146 -> mode_ := Fill
+  | 112 | 160 -> mode_ := Point
+  | 113 | 161 -> tz := !tz +. !pas
+  | 101 | 145 -> tz := !tz -. !pas
+  | 114 | 162 -> reset ()
+  | 50 -> ly := !ly -. !pas
+  | 51 -> lz := !lz -. !pas
+  | 52 -> lx := !lx -. !pas
+  | 54 -> lx := !lx +. !pas
+  | 56 -> ly := !ly +. !pas
+  | 57 -> lz := !lz +. !pas
+  | 103 -> light_b := (xor !light_b true)
+  | _ -> ()
+
+let keyboard_special_event ~key ~x ~y = match key with
+  | Glut.KEY_LEFT -> tx := !tx -. !pas
+  | Glut.KEY_RIGHT -> tx := !tx +. !pas
+  | Glut.KEY_DOWN -> ty := !ty -. !pas
+  | Glut.KEY_UP -> ty := !ty +. !pas
   | _ -> ()
 
 
 (* fonction d'idle *)
 let idle () =
-  init_light();
+  (*init_light ();*)
+  Glut.postRedisplay();
   scene_gl ()
 
 
@@ -177,6 +228,9 @@ let main_engine () =
     init();
     (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
+    Glut.specialFunc keyboard_special_event;
+    Glut.mouseFunc mouse_event;
+    Glut.motionFunc motion;
     Glut.reshapeFunc reshape;
     Glut.idleFunc(Some idle);
     Glut.mainLoop ()
