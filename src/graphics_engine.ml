@@ -4,6 +4,8 @@
 let xold = ref 0
 let yold = ref 0
 let bl_down = ref false
+let zold = ref 0
+let br_down = ref true
 
 let anglex = ref 0
 let angley = ref 0
@@ -20,15 +22,20 @@ let g_mode = function
 
 let light_b = ref false
 
+(* rotation var *)
 let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
+
+(* translation var *)
 let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
 let tx = ref 0.
-let dty() = (float (-(Refe.get_w()/(5*Refe.get_step()))))
+let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
 let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
 let tz = ref 0.
+
+(* light var *)
 let lr = ref 0.
 let lg = ref 0.
 let lb = ref 0.
@@ -38,23 +45,19 @@ let lz = ref 0.
 
 
 let init () =
-  (* init des valeurs de camera *)
+  (* init of some variable translation *)
   tx := dtx();
   ty := dty();
   tz := dtz();
   ignore (Glut.init Sys.argv);
-  (* creation du mode d'affichage *)
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-  (* Init de la fenetre, a remplacer par une fenetre gtk *)
   Glut.initWindowSize ~w:800 ~h:600;
-  ignore (Glut.createWindow "hello");
-  (* permettre le degrade de couleur *)
+  ignore (Glut.createWindow "OpenGl");
+  (* color gradient *)
   GlDraw.shade_model `smooth;
-  (* couleur de fond *)
-  GlClear.color (0.0, 0.0, 0.0);
-  (* profondeur *)
+  (* background color *)
+  GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
-  (* precaution *)
   GlClear.clear [`color; `depth];
   List.iter Gl.enable [`depth_test; `lighting; `light0];
   (*GlFunc.depth_func `lequal;*)
@@ -103,17 +106,14 @@ let rec create_tri = function
 
 (* affichage de la scene - display *)
 let scene_gl () =
-  (* precaution *)
   GlClear.clear [`color; `depth];
-  (* creer une matrice *)
   GlMat.load_identity ();
-  (* changement "d'origine" de la matrice *)
-  GlMat.translate3 (!tx, !ty, !tz);
   (* translation *)
+  GlMat.translate3 (!tx, !ty, !tz);
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
   GlMat.rotate3 !rz (0.0, 0.0, 2.0);
-  (* Modifier le mode d'affichage *)
+  (* for the different mode *)
   GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
@@ -126,10 +126,8 @@ let scene_gl () =
   Glut.swapBuffers ()
 
 
-(* redimensionner et lancement du programme *)
 let reshape ~w ~h =
   let ratio = (float_of_int w) /. (float_of_int h) in
-    (* limite d'affichage *)
     GlDraw.viewport 0 0 w h;
     (* mode projection ? *)
     (*GlMat.mode `projection;*)
@@ -138,8 +136,8 @@ let reshape ~w ~h =
     (* changement de mode ? *)
     GlMat.mode `projection;
     GlMat.load_identity ();
-    GlMat.rotate ~angle:(float(- !anglex)) ~x:0. ~y:0. ~z:1. ();
-    GlMat.rotate ~angle:(float(- !angley)) ~x:1. ~y:0. ~z:0. ();
+    (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
+    GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
     GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(0.1,500.);
     GlMat.mode `modelview;
     GlMat.load_identity ();
@@ -163,27 +161,35 @@ let reset () =
   tz := dtz()
 
 
+(* deal with the mouse event *)
 let motion ~x ~y =
   if !bl_down then
     begin
-      anglex := !anglex + (!xold - x);
-      angley := !angley + (!yold -y);
-      Glut.postRedisplay();
+      tx := (!tx -. (float(!xold - x)));
+      ty := (!ty +. (float(!yold - y)));
+    end;
+  if !br_down then
+    begin
+      tz := (!tz +. (float(!yold - y)));
     end;
   xold := x;
+  zold := y;
   yold := y
 
 
-
+(* get the mouse_event *)
 let mouse_event ~button ~state ~x ~y = match button, state with
   | Glut.LEFT_BUTTON, Glut.DOWN -> bl_down := true;
-                                        xold := x;
-                                        yold := y;
+                                   xold := x;
+                                   yold := y;
   | Glut.LEFT_BUTTON, Glut.UP -> bl_down := false;
+  | Glut.RIGHT_BUTTON, Glut.DOWN -> br_down := true;
+                                    zold := x;
+  | Glut.RIGHT_BUTTON, Glut.UP -> br_down := false;
   | _ -> ()
 
 
-(* gestion des evenements du clavier *)
+(* get the keyboard_event *)
 let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
     027 -> exit 0
@@ -208,6 +214,7 @@ let keyboard_event ~key ~x ~y = match key with
   | 103 -> light_b := (xor !light_b true)
   | _ -> ()
 
+(* same with special key *)
 let keyboard_special_event ~key ~x ~y = match key with
   | Glut.KEY_LEFT -> tx := !tx -. !pas
   | Glut.KEY_RIGHT -> tx := !tx +. !pas
@@ -216,7 +223,7 @@ let keyboard_special_event ~key ~x ~y = match key with
   | _ -> ()
 
 
-(* fonction d'idle *)
+(* idle fonction *)
 let idle () =
   (*init_light ();*)
   Glut.postRedisplay();
@@ -224,9 +231,7 @@ let idle () =
 
 
 let main_engine () =
-    (* init - pas dans la boucle *)
     init();
-    (* gestion du clavier *)
     Glut.keyboardFunc keyboard_event;
     Glut.specialFunc keyboard_special_event;
     Glut.mouseFunc mouse_event;
