@@ -99,7 +99,7 @@ let multi_pix_filter img x y filter =
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
   let pixel = (r_out, g_out, b_out) in
   normalize pixel;
- with _ -> Sdlvideo.get_pixel_color img x y
+ with _ -> (0,0,0)
 
 (* multiplication of filter and the matrix *)
 let multi_mat_filter filter img = 
