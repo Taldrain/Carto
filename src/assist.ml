@@ -30,17 +30,15 @@ let exec_nop pict_view =
 
 let exec_so level pict_view =
 	(*let thr = Thread.create wait_win () in*)
-	let win = GWindow.window
+	let dialog = GWindow.dialog
 		~title:"Waiting" ()
 		~width:50
 		~height:50
-		~kind:`POPUP
 		~position:`CENTER in
-	ignore (win#connect#destroy ~callback:(fun () -> ()));
 	let _lbl = GMisc.label
 		~text:"Waiting"
-		~packing:win#add () in
-	win#show;
+		~packing:dialog#vbox#add () in
+	dialog#run;
 	if level = 1 then
 		begin
   		let img = Sdlloader.load_image (Refe.get_filename ()) in
@@ -56,7 +54,6 @@ let exec_so level pict_view =
 		pict_view#set_file "contour1.bmp";
 		end;
 	(*Thread.kill thr*)
-	win#destroy;
 	()
 	
 
@@ -99,10 +96,10 @@ let view_img () =
 		~label:"Sobel 2"
 		~packing:box_so#add () in
 	let _btn_3 = GButton.button
-		~label:"3"
+		~label:"unused"
 		~packing:box_fram#add () in
 	let _btn_4 = GButton.button
-		~label:"4"
+		~label:"unused"
 		~packing:box_fram#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
