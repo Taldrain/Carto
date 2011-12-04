@@ -14,9 +14,6 @@ genperlin:
 ocamlbuild: genperlin
 	cd ${VPATH} && ${MAKE} ocamlbuild
 
-mli:
-	cd ${VPATH} && ${MAKE} mli
-
 32: assemble32
 
 assemble32:

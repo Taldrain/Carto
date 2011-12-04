@@ -3,9 +3,9 @@
 CC=ocamlopt.opt
 RM=rm -f
 OUT=carto
-ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml main.ml
+ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml\
+   graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
-MLI=${ML:.ml=.mli}
 WALL=-thread -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	 unix.cmxa \
 	 threads.cmxa \
@@ -39,10 +39,6 @@ assemble: ${CMX}
 
 genperlin:
 	cd generator/ && ${MAKE} &&	mv genperlin ../../
-
-# TODO
-#.ml.mli:
-#	${CC} -i ${WALL} $<
 
 post:
 	cp ${OUT} .. && ${RM} ${OUT}
