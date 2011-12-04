@@ -57,15 +57,20 @@ let view_img () =
 		~spacing:5
 		~border_width:9
 		~packing:hbox#add () in
+	let fram = GBin.frame
+		~label:"Filters"
+		~packing:box#pack () in
 	let _btn_1 = GButton.button
 		~label:"1"
-		~packing:box#pack () in
+		~packing:fram#add () in
 	let _btn_2 = GButton.button
 		~label:"2"
-		~packing:box#pack () in
+		~packing:fram#add () in
 	let _btn_3 = GButton.button
 		~label:"3"
-		~packing:box#pack () in
+		~packing:fram#add () in
+	let _separator = GMisc.separator `HORIZONTAL
+		~packing:box#add () in
 	let btn = GButton.button
 		~label:"Close"
 		~packing:box#pack () in
