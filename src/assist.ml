@@ -54,16 +54,21 @@ let view_img () =
 		~packing:win#add () in
 
 	let box = GPack.vbox
+		~spacing:5
+		~border_width:9
 		~packing:hbox#add () in
 	let _btn_1 = GButton.button
 		~label:"1"
-		~packing:box#add () in
+		~packing:box#pack () in
 	let _btn_2 = GButton.button
 		~label:"2"
-		~packing:box#add () in
+		~packing:box#pack () in
 	let _btn_3 = GButton.button
 		~label:"3"
-		~packing:box#add () in
+		~packing:box#pack () in
+	let btn = GButton.button
+		~label:"Close"
+		~packing:box#pack () in
 
 	let box2 = GPack.vbox
 		~packing:hbox#add () in
@@ -79,9 +84,6 @@ let view_img () =
 	let _img = GMisc.image
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
-	let btn = GButton.button
-		~label:"Close"
-		~packing:box#add () in
 	ignore (btn#connect#clicked ~callback:(win#destroy));
 	win#show ()
 	
