@@ -66,7 +66,8 @@ let rec normalize pix =
     | (r,g,b)              -> (r,g,b)
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
-let multi_pix_filter img x y filter = 
+let multi_pix_filter img x y filter =
+ try 
   let r_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "r" ) + 
                filter.(1).(0) * (atb_p img (x) (y-1) "r" ) +
                filter.(2).(0) * (atb_p img (x+1) (y-1) "r" ) +
@@ -97,7 +98,8 @@ let multi_pix_filter img x y filter =
                filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
   let pixel = (r_out, g_out, b_out) in
-  normalize pixel
+  normalize pixel;
+ with _ -> Sdlvideo.get_pixel_color img x y
 
 (* multiplication of filter and the matrix *)
 let multi_mat_filter filter img = 
@@ -132,8 +134,8 @@ let filtr_simpl_img img filter =
 let mat1_mat2 mat1 mat2 img = 
   let mat_f = 
     Array.make_matrix (Array.length mat1) (Array.length mat1.(0)) (0,0,0) in
-      for x = 0 to (Array.length mat1) do
-        for y = 0 to (Array.length mat1.(0)) do
+      for x = 0 to (Array.length mat1 - 1) do
+        for y = 0 to (Array.length mat1.(0) - 1) do
           let (r1,g1,b1) = mat1.(x).(y) in
           let (r2,g2,b2) = mat2.(x).(y) in
           mat_f.(x).(y) <- normalize ((int_of_float
@@ -151,7 +153,7 @@ let mat1_mat2 mat1 mat2 img =
 let filtr_doubl_img img filter1 filter2 = 
   let mat1 = multi_mat_filter filter1 img in
   let mat2 = multi_mat_filter filter2 img in
-  mat_to_img (mat1_mat2 mat1 mat2 img)
+  mat_to_img (mat1_mat2 mat1 mat2 img) img 
 
 
 
