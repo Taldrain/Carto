@@ -43,7 +43,12 @@ let exec_3d_inst () =
 	Pre.pre_trait ();
 	Assist.rand_alt ()
 	
-	
+let exec_test w =
+	let win = GWindow.color_selection_dialog
+		~parent:w
+		~position:`CENTER_ON_PARENT () in
+	win#run ();
+	()
 
 let main () =
 
@@ -94,6 +99,9 @@ let main () =
 	let btn_3d_inst = GButton.button
 		~label:"3D instantane"
 		~packing:main_box#pack () in
+	let btn_test = GButton.button
+		~label:"Test"
+		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
@@ -113,6 +121,8 @@ let main () =
 		~callback:quit);
 
 	(*buttons*)
+	ignore (btn_test#connect#clicked
+		~callback:(fun () -> exec_test w ));
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));

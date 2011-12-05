@@ -4,17 +4,10 @@ display exept the main window *)
 
 
 (* -------------------------------------------------------------------------- *)
-(* WAITING WINDOW *)
-(* -------------------------------------------------------------------------- *)
-
-(* -------------------------------------------------------------------------- *)
-(* -------------------------------------------------------------------------- *)
-
-(* -------------------------------------------------------------------------- *)
 (* FENETRE DE FILTRES *)
 (* -------------------------------------------------------------------------- *)
 (*La fenetre d'attente *)
-let wait_win () =
+(*let wait_win () =
 	let win = GWindow.window
 		~title:"Waiting" ()
 		~width:50
@@ -23,7 +16,7 @@ let wait_win () =
 	let _lbl = GMisc.label
 		~text:"Waiting"
 		~packing:win#add () in
-	win#show
+	win#show*)
 
 let exec_nop pict_view =
 	pict_view#set_file (Refe.get_filename ())
@@ -31,14 +24,16 @@ let exec_nop pict_view =
 let exec_so level pict_view =
 	(*let thr = Thread.create wait_win () in*)
 	let dialog = GWindow.dialog
-		~title:"Waiting" ()
+		~title:"Waiting"
 		~width:50
 		~height:50
-		~position:`CENTER in
+		(*~show:true*)
+		~modal:true
+		~position:`CENTER () in
 	let _lbl = GMisc.label
 		~text:"Waiting"
 		~packing:dialog#vbox#add () in
-	dialog#run;
+	dialog#show ();
 	if level = 1 then
 		begin
   		let img = Sdlloader.load_image (Refe.get_filename ()) in
@@ -50,9 +45,10 @@ let exec_so level pict_view =
 		begin
   		let img = Sdlloader.load_image (Refe.get_filename ()) in
 		let img_so = (Filter.sobel_filter2 img) in
-		Sdlvideo.save_BMP img_so "contour1.bmp";
-		pict_view#set_file "contour1.bmp";
+		Sdlvideo.save_BMP img_so "contour2.bmp";
+		pict_view#set_file "contour2.bmp";
 		end;
+	(*ignore (dialog#destroy ());*)
 	(*Thread.kill thr*)
 	()
 	
