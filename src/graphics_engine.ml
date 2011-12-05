@@ -5,7 +5,8 @@ let xold = ref 0
 let yold = ref 0
 let bl_down = ref false
 let zold = ref 0
-let br_down = ref true
+let rzold = ref 0
+let br_down = ref false
 
 let anglex = ref 0
 let angley = ref 0
@@ -170,11 +171,13 @@ let motion ~x ~y =
     end;
   if !br_down then
     begin
-      tz := (!tz +. (float(!yold - y)));
+      tz := (!tz +. (float(!zold - y)));
+      rz := (!rz -. (float(!rzold - x)));
     end;
   xold := x;
   zold := y;
-  yold := y
+  yold := y;
+  rzold := x
 
 
 (* get the mouse_event *)
@@ -184,7 +187,8 @@ let mouse_event ~button ~state ~x ~y = match button, state with
                                    yold := y;
   | Glut.LEFT_BUTTON, Glut.UP -> bl_down := false;
   | Glut.RIGHT_BUTTON, Glut.DOWN -> br_down := true;
-                                    zold := x;
+                                    zold := y;
+                                    rzold := x;
   | Glut.RIGHT_BUTTON, Glut.UP -> br_down := false;
   | _ -> ()
 
