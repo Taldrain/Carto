@@ -1,6 +1,9 @@
 let filename = ref ("")
 let get_filename () = !filename
 
+let orig_file = ref ("")
+let get_orig_file () = !orig_file
+
 let file_type = ref ("")
 let get_file_type () = !file_type
 

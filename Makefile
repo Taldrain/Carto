@@ -23,6 +23,6 @@ clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean && cd ${GPATH} && ${MAKE} clean
 
 cleanall: clean
-	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj rand_map.bmp contour?.bmp
+	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj rand_map.bmp contour?.bmp tmp.bmp
 
 #END
