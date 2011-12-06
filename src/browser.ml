@@ -37,13 +37,17 @@ let browser parent =
 	dialog#add_filter (image_filter ());
 	dialog#add_filter (obj_filter ());
 	dialog#add_filter (all_files ());
-	begin match dialog#run () with
+	begin
+	match dialog#run () with
 	| `OPEN -> Refe.filename := (default "<none>" dialog#filename);
+			begin
 				if (Filename.check_suffix (Refe.get_filename ()) "obj") then
 						Refe.file_type := "obj"
 				else
-					Refe.file_type := "img";
-	| `DELETE_EVENT | `CANCEL -> ()
+					Refe.file_type := "img"
+			end;
+				Refe.if_file := true
+	| `DELETE_EVENT | `CANCEL -> Refe.if_file := false
 	end;
 	dialog#destroy ()
 (* END -- Functions for the browser *)

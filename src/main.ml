@@ -16,11 +16,14 @@ let exec_assist () =
 
 let exec_brow win b_img b_obj =
 	Browser.browser win;
-  	Assist.view_img ();
-	if ((Refe.get_file_type ()) = "obj") then
-		b_obj#misc#set_sensitive true
-	else
-		b_img#misc#set_sensitive true
+	if (Refe.get_if_file ()) then
+	begin
+  		Assist.view_img ();
+		if ((Refe.get_file_type ()) = "obj") then
+			b_obj#misc#set_sensitive true
+		else
+			b_img#misc#set_sensitive true
+	end
 
 let exec_3d_obj () =
 	(* PETAGE DU MOTEUR 3D *)

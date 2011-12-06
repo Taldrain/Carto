@@ -28,6 +28,8 @@ let exec_so level pict_view =
 
 let view_img () =
 	(*La fenetre de filtre *)
+	if (Refe.get_filename ()) != "" then
+	begin
 	let win = GWindow.window
 		~title:"Welcome" ()
 		~width:800
@@ -103,6 +105,9 @@ let view_img () =
 
 
 	win#show ()
+	end
+	else
+		()
 	
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)

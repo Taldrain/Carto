@@ -4,6 +4,9 @@ let get_filename () = !filename
 let file_type = ref ("")
 let get_file_type () = !file_type
 
+let if_file = ref false
+let get_if_file () = !if_file
+
 let rand_file = ref false
 let get_rand_file () = !rand_file
 
