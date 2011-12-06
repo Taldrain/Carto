@@ -257,29 +257,20 @@ let winalt () =
 	let vbox2 = GPack.vbox
 		~packing:secbox#add () in
 
-	(* begin -- Generation des boutons en fonction de !nb_colors *)
-	Pre.sdl_init ();
-	let img_ref = Sdlloader.load_image "img/ref.png" in
-	let (w, h) = ((Sdlvideo.surface_info img_ref).Sdlvideo.w,
-				((Sdlvideo.surface_info img_ref).Sdlvideo.h)) in
 	let sugar = ref 0 in
 	for i=1 to List.length (Refe.get_li ()) do
-	ignore (
-		let carname = ("img/car"^(string_of_int i)^".bmp") in
-		let cartouche =
-			Sdlvideo.create_RGB_surface_format img_ref [] w h in
 		match (Refe.get_li ()) with
-		| [] -> failwith "Critical error"
-		| e::q -> let rgb = e and queue = q in
+			| [] -> failwith "Critical error"
+			| (r, g, b)::q -> let queue = q and
+								  normal_r = r and
+								  normal_g = g and
+								  normal_b = b in
 		Refe.li := queue;
-		for y=0 to (h-1) do
-		for x=0 to (w-1) do
-			Sdlvideo.put_pixel_color cartouche x y rgb;
-		done;
-		done;
-		Sdlvideo.save_BMP cartouche carname;
-		let _img = GMisc.image
-			~file:carname
+
+		let btn_clr = GButton.color_button
+			~color:(GDraw.color (`RGB ((normal_r*65535/255),
+									   (normal_g*65535/255),
+									   (normal_b*65535/255))))
 			~packing:vbox1#add () in
 		let tbx = GEdit.entry
 			~text:(string_of_int !sugar)
@@ -288,11 +279,10 @@ let winalt () =
 			~packing:vbox2#add () in
 		let str = {
 			tbx = tbx;
-			color = e
+			color = (normal_r, normal_g, normal_b)
 		} in
 		list_tbx := str::(!list_tbx);
 		sugar := !sugar + 5;
-	)
 	done;
 	let btn_ok = GButton.button
 		~label:"OK"
@@ -300,4 +290,3 @@ let winalt () =
 	ignore (btn_ok#connect#clicked ~callback:(win1#destroy));
 	win1#show ();
 	(* end -- Generation des boutons en fonction de !nb_colors *)
-
