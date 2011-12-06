@@ -1,5 +1,7 @@
 (* Graphics engine *)
 
+(* --- Variable --- *)
+
 (* mouse var *)
 let xold = ref 0
 let yold = ref 0
@@ -8,11 +10,14 @@ let zold = ref 0
 let rzold = ref 0
 let br_down = ref false
 
+(* temp var for the mouse *)
 let anglex = ref 0
 let angley = ref 0
 
+(* for the movement of the map with keys *)
 let pas = ref 2.
 
+(* display mode the the map *)
 type mode = Fill | Line | Point
 let mode_ = ref Line
 
@@ -22,6 +27,8 @@ let g_mode = function
   | Point -> `point
 
 let light_b = ref false
+
+let fullscreen = ref true
 
 (* rotation var *)
 let rx = ref (-40.)
@@ -44,6 +51,7 @@ let lx = ref 0.
 let ly = ref 0.
 let lz = ref 0.
 
+(* --- Function --- *)
 
 let init () =
   (* init of some variable translation *)
@@ -52,15 +60,16 @@ let init () =
   tz := dtz();
   ignore (Glut.init Sys.argv);
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-  Glut.initWindowSize ~w:800 ~h:600;
+  (*Glut.initWindowSize ~w:800 ~h:600;*)
   ignore (Glut.createWindow "OpenGl");
+  Glut.fullScreen ();
   (* color gradient *)
   GlDraw.shade_model `smooth;
   (* background color *)
   GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
   GlClear.clear [`color; `depth];
-  List.iter Gl.enable [`depth_test; `lighting; `light0];
+  List.iter Gl.enable [`depth_test; `light0;];
   (*GlFunc.depth_func `lequal;*)
   GlFunc.depth_func `less;
   GlMisc.hint `perspective_correction `nicest
