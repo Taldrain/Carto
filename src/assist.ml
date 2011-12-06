@@ -6,34 +6,11 @@ display exept the main window *)
 (* -------------------------------------------------------------------------- *)
 (* FENETRE DE FILTRES *)
 (* -------------------------------------------------------------------------- *)
-(*La fenetre d'attente *)
-(*let wait_win () =
-	let win = GWindow.window
-		~title:"Waiting" ()
-		~width:50
-		~height:50
-		~position:`CENTER in
-	let _lbl = GMisc.label
-		~text:"Waiting"
-		~packing:win#add () in
-	win#show*)
 
 let exec_nop pict_view =
 	pict_view#set_file (Refe.get_filename ())
 
 let exec_so level pict_view =
-	(*let thr = Thread.create wait_win () in*)
-	let dialog = GWindow.dialog
-		~title:"Waiting"
-		~width:50
-		~height:50
-		(*~show:true*)
-		~modal:true
-		~position:`CENTER () in
-	let _lbl = GMisc.label
-		~text:"Waiting"
-		~packing:dialog#vbox#add () in
-	dialog#show ();
 	if level = 1 then
 		begin
   		let img = Sdlloader.load_image (Refe.get_filename ()) in
@@ -47,11 +24,7 @@ let exec_so level pict_view =
 		let img_so = (Filter.sobel_filter2 img) in
 		Sdlvideo.save_BMP img_so "contour2.bmp";
 		pict_view#set_file "contour2.bmp";
-		end;
-	(*ignore (dialog#destroy ());*)
-	(*Thread.kill thr*)
-	()
-	
+		end
 
 let view_img () =
 	(*La fenetre de filtre *)
@@ -191,7 +164,8 @@ let winstep () =
 type str_alt = Refe.struct_alt
 type struct_tbx = {
 	tbx : GEdit.entry;
-	color : (int*int*int)
+	btn : GButton.color_button;
+	orig_color : (int*int*int)
 }
 let list_tbx = ref ([] : struct_tbx list)
 
@@ -203,7 +177,8 @@ let rand_alt () =
 		let elt = List.hd !colors in
 		let str = {
 			Refe.alt = !alti;
-			Refe.rgb = elt
+			Refe.rgb = elt;
+			Refe.orig_color = elt
 		} in
 		alti := !alti + 5;
 		colors := List.tl (!colors);
@@ -215,13 +190,28 @@ let rand_alt () =
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
-	(*print_endline (string_of_int (List.length !list_tbx));*)
+	print_string "----------------\nSeconde serie:\n\n";
 	while List.length !list_tbx != 0 do
 		let elt = List.hd !list_tbx in
+		let gcolor = elt.btn#color in
+		let r = (Gdk.Color.red gcolor) * 255 / 65535 and
+		    g = (Gdk.Color.green gcolor) * 255 / 65535 and
+			b = (Gdk.Color.blue gcolor) * 255 / 65535 in
+
+		print_endline "-----------------";
+		print_int r;
+		print_string " ";
+		print_int g;
+		print_string " ";
+		print_int b;
+		print_string " \n";
+		print_endline "-----------------";
+
 		let str = {
 			Refe.alt = (try int_of_string(elt.tbx#text) with
 				| _ -> -1);
-			Refe.rgb = elt.color
+			Refe.rgb = (r, g, b);
+			Refe.orig_color = elt.orig_color
 		} in
 		list_tbx := List.tl !list_tbx;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
@@ -258,6 +248,7 @@ let winalt () =
 		~packing:secbox#add () in
 
 	let sugar = ref 0 in
+	print_string "----------------\nPremiere serie:\n\n";
 	for i=1 to List.length (Refe.get_li ()) do
 		match (Refe.get_li ()) with
 			| [] -> failwith "Critical error"
@@ -272,6 +263,16 @@ let winalt () =
 									   (normal_g*65535/255),
 									   (normal_b*65535/255))))
 			~packing:vbox1#add () in
+
+		print_endline "-----------------";
+		print_int normal_r;
+		print_string " ";
+		print_int normal_g;
+		print_string " ";
+		print_int normal_b;
+		print_string " \n";
+		print_endline "-----------------";
+
 		let tbx = GEdit.entry
 			~text:(string_of_int !sugar)
 			~max_length:4
@@ -279,7 +280,8 @@ let winalt () =
 			~packing:vbox2#add () in
 		let str = {
 			tbx = tbx;
-			color = (normal_r, normal_g, normal_b)
+			btn = btn_clr;
+			orig_color = (normal_r, normal_g, normal_b)
 		} in
 		list_tbx := str::(!list_tbx);
 		sugar := !sugar + 5;

@@ -16,7 +16,8 @@ let get_li () = !li
 type struct_alt =
 {
   alt : int;
-  rgb : (int*int*int)
+  rgb : (int*int*int);
+  orig_color : (int*int*int)
 }
 
 let list_alt = ref ([] : struct_alt list)

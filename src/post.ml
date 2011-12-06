@@ -7,8 +7,8 @@ let li_ord = ref []
 (*fonctions generales *)
 let altitude pix =
   let rec alt pi li = match li with
-  | [] -> 0
-  | e::_ when e.Refe.rgb = pi -> e.Refe.alt
+  | [] -> failwith "Pas d'altitude";
+  | e::_ when e.Refe.orig_color = pi -> (e.Refe.alt, e.Refe.rgb)
   | e::l -> alt pi l in
   alt pix (Refe.get_list_alt())
 
@@ -19,7 +19,9 @@ let get_alt() =
 	   begin
 		 let ((d,e), b) = (Refe.get_matrice_rgb()).(x).(y) in
 		 let alti = altitude b in
-	     Array.set (Refe.get_matrice_ret()).(x) (y) ((d, e, alti),b)
+		 match alti with
+		 	| (al, co) ->
+	     Array.set (Refe.get_matrice_ret()).(x) (y) ((d, e, al),co)
        end
 	  done;
     done;
