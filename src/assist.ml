@@ -167,7 +167,7 @@ type struct_tbx = {
 	btn : GButton.color_button;
 	orig_color : (int*int*int)
 }
-let list_tbx = ref ([] : struct_tbx list)
+let stack = Stack.create ()
 
 let rand_alt () =
 	let alti = ref 0 in
@@ -190,8 +190,8 @@ let rand_alt () =
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
-	while List.length !list_tbx != 0 do
-		let elt = List.hd !list_tbx in
+	while not (Stack.is_empty stack) do
+		let elt = Stack.pop stack in
 		let gcolor = elt.btn#color in
 		let r = (Gdk.Color.red gcolor) * 255 / 65535 and
 		    g = (Gdk.Color.green gcolor) * 255 / 65535 and
@@ -203,7 +203,6 @@ let save_alt () =
 			Refe.rgb = (r, g, b);
 			Refe.orig_color = elt.orig_color
 		} in
-		list_tbx := List.tl !list_tbx;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
     Post.post_treat ();
@@ -263,7 +262,7 @@ let winalt () =
 			btn = btn_clr;
 			orig_color = (normal_r, normal_g, normal_b)
 		} in
-		list_tbx := str::(!list_tbx);
+		Stack.push str stack;
 		sugar := !sugar + 5;
 	done;
 	let btn_ok = GButton.button
