@@ -190,22 +190,12 @@ let rand_alt () =
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
-	print_string "----------------\nSeconde serie:\n\n";
 	while List.length !list_tbx != 0 do
 		let elt = List.hd !list_tbx in
 		let gcolor = elt.btn#color in
 		let r = (Gdk.Color.red gcolor) * 255 / 65535 and
 		    g = (Gdk.Color.green gcolor) * 255 / 65535 and
 			b = (Gdk.Color.blue gcolor) * 255 / 65535 in
-
-		print_endline "-----------------";
-		print_int r;
-		print_string " ";
-		print_int g;
-		print_string " ";
-		print_int b;
-		print_string " \n";
-		print_endline "-----------------";
 
 		let str = {
 			Refe.alt = (try int_of_string(elt.tbx#text) with
@@ -248,7 +238,6 @@ let winalt () =
 		~packing:secbox#add () in
 
 	let sugar = ref 0 in
-	print_string "----------------\nPremiere serie:\n\n";
 	for i=1 to List.length (Refe.get_li ()) do
 		match (Refe.get_li ()) with
 			| [] -> failwith "Critical error"
@@ -263,15 +252,6 @@ let winalt () =
 									   (normal_g*65535/255),
 									   (normal_b*65535/255))))
 			~packing:vbox1#add () in
-
-		print_endline "-----------------";
-		print_int normal_r;
-		print_string " ";
-		print_int normal_g;
-		print_string " ";
-		print_int normal_b;
-		print_string " \n";
-		print_endline "-----------------";
 
 		let tbx = GEdit.entry
 			~text:(string_of_int !sugar)

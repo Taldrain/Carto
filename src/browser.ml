@@ -43,8 +43,6 @@ let browser parent =
 						Refe.file_type := "obj"
 				else
 					Refe.file_type := "img";
-				print_endline (Refe.get_filename ());
-				print_endline (Refe.get_file_type ())
 	| `DELETE_EVENT | `CANCEL -> ()
 	end;
 	dialog#destroy ()
