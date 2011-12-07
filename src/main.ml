@@ -25,6 +25,17 @@ let exec_brow win b_img b_obj =
 			b_img#misc#set_sensitive true
 	end
 
+let exec_random btn =
+	begin
+	if ((Sys.command "./genperlin -save > rand_map.bmp") = 0) then
+		Refe.filename := "rand_map.bmp"
+	else
+		failwith "Fatal error sur genperlin"
+	end;
+	btn#misc#set_sensitive true;
+    print_endline "Nouvelle image chargee"
+
+
 let exec_3d_obj () =
 	(* PETAGE DU MOTEUR 3D *)
 	Parser_obj.open_obj ();
@@ -45,7 +56,7 @@ let exec_3d_inst () =
 	Refe.step := 5;
 	Pre.pre_trait ();
 	Assist.rand_alt ()
-	
+
 let main () =
 
 	ignore (GtkMain.Main.init ());
@@ -80,9 +91,16 @@ let main () =
 	let _lbl = GMisc.label
 		~text:"\nEffectuer le pre traitement\navant de lancer l'assistant\n"
 		~packing:main_box#pack () in
+	let box_open = GPack.hbox
+		~spacing:5
+		~border_width:5
+		~packing:main_box#pack () in
 	let btn_browse = GButton.button
 		~label:"Browse"
-		~packing:main_box#pack () in
+		~packing:box_open#add () in
+	let btn_rand = GButton.button
+		~label:"Random"
+		~packing:box_open#add () in
 	let btn_pre_treat = GButton.button
 		~label:"Execute"
 		~packing:main_box#pack () in
@@ -117,6 +135,8 @@ let main () =
   	ignore (w#connect#destroy ~callback:GMain.quit);
 	ignore (btn_browse#connect#clicked
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
+	ignore (btn_rand#connect#clicked
+		~callback:(fun () -> exec_random btn_pre_treat));
 	ignore (btn_pre_treat#connect#clicked
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
