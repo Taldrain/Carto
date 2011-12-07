@@ -197,9 +197,9 @@ let pre_trait () =
 	    show img display;
 	wait_key();*)
 	(* Grid function *)
-	let img3 = (Filter.sobel_filter img) in
+	let img3 = (Filter.average1 img) in
   Sdlvideo.save_BMP img3 "contour1.bmp";
-  let img4 = (Filter.sobel_filter2 img) in
+  let img4 = (Filter.average2 img) in
   Sdlvideo.save_BMP img4 "contour2.bmp";
   let img5 = (Filter.sobel_filter_f img) in
   Sdlvideo.save_BMP img5 "contourf.bmp";

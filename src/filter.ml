@@ -46,14 +46,14 @@ let sobel2() =
 let sobelv2_1() = 
   let mat = Array.make_matrix 3 3 0 in
   mat.(0).(0) <- (-1);
-  mat.(1).(0) <- 0;
-  mat.(2).(0) <-1;
+  mat.(1).(0) <-   0;
+  mat.(2).(0) <-   1;
   mat.(0).(1) <- (-2);
-  mat.(1).(1) <- 0;
-  mat.(2).(1) <-2;
+  mat.(1).(1) <-   0;
+  mat.(2).(1) <-   2;
   mat.(0).(2) <- (-1);
-  mat.(1).(2) <- 0;
-  mat.(2).(2) <-1;
+  mat.(1).(2) <-   0;
+  mat.(2).(2) <-   1;
   mat
 
 let sobelv2_2() = 
@@ -61,15 +61,55 @@ let sobelv2_2() =
   mat.(0).(0) <- (-1);
   mat.(1).(0) <- (-2);
   mat.(2).(0) <- (-1);
-  mat.(0).(1) <- 0;
-  mat.(1).(1) <- 0;
-  mat.(2).(1) <- 0;
-  mat.(0).(2) <-1;
-  mat.(1).(2) <-2;
-  mat.(2).(2) <-1;
+  mat.(0).(1) <-   0;
+  mat.(1).(1) <-   0;
+  mat.(2).(1) <-   0;
+  mat.(0).(2) <-   1;
+  mat.(1).(2) <-   2;
+  mat.(2).(2) <-   1;
   mat
 
+let average3() =
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- 1;
+  mat.(1).(0) <- 1;
+  mat.(2).(0) <- 1;
+  mat.(0).(1) <- 1;
+  mat.(1).(1) <- 1;
+  mat.(2).(1) <- 1;
+  mat.(0).(2) <- 1;
+  mat.(1).(2) <- 1;
+  mat.(2).(2) <- 1;
+  mat
 
+let average5() = 
+  let mat = Array.make_matrix 5 5 0 in
+  mat.(0).(0) <- 1;
+  mat.(1).(0) <- 1;
+  mat.(2).(0) <- 1;
+  mat.(3).(0) <- 1;
+  mat.(4).(0) <- 1;
+  mat.(0).(1) <- 1;
+  mat.(1).(1) <- 1;
+  mat.(2).(1) <- 1;
+  mat.(3).(1) <- 1;
+  mat.(4).(1) <- 1;
+  mat.(0).(2) <- 1;
+  mat.(1).(2) <- 1;
+  mat.(2).(2) <- 1;
+  mat.(3).(2) <- 1;
+  mat.(4).(2) <- 1;
+  mat.(0).(3) <- 1;
+  mat.(1).(3) <- 1;
+  mat.(2).(3) <- 1;
+  mat.(3).(3) <- 1;
+  mat.(4).(3) <- 1;
+  mat.(0).(4) <- 1;
+  mat.(1).(4) <- 1;
+  mat.(2).(4) <- 1;
+  mat.(3).(4) <- 1;
+  mat.(4).(4) <- 1;
+  mat 
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -247,6 +287,15 @@ let sobel_filter_f_color img =
   mat_edge_to_white (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()) 3)
                     (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3) img) img
 
+(* average3 filter *)
+let average1 img =
+  filtr_simpl_img img (average3()) 3
+
+(* average5 filter *)
+let average2 img =
+   filtr_simpl_img img (average5()) 5
+  
+                    
 
 (* ------------------------------------ ------------------------------------- *)
 
