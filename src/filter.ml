@@ -2,10 +2,10 @@
 
 
 (* image to matrix *)
-let img_to_mat img = 
-  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w, 
+let img_to_mat img =
+  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
               (Sdlvideo.surface_info img).Sdlvideo.h) in
-  let mat = (Array.make_matrix w h (0,0,0)) in 
+  let mat = (Array.make_matrix w h (0,0,0)) in
     for x = 0 to (w-1) do
       for y = 0 to (h-1) do
         mat.(x).(y) <- Sdlvideo.get_pixel_color img x y;
