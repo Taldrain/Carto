@@ -17,7 +17,7 @@ WALL= -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 
 all: assemble genperlin post
 
-32: lib32 assemble post
+32: assemble post
 
 ocamlbuild:
 	rm -f *.cm* *.so *.a *.o
@@ -26,11 +26,6 @@ ocamlbuild:
 
 .ml.cmx:
 	${CC} ${WALL} -c $<
-
-lib32:
-	ln -fs /usr/lib/libglut.so.3 libglut.so
-lib64:
-	ln -fs /usr/lib64/libglut.so.3 libglut.so
 
 assemble: ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
