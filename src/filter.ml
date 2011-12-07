@@ -15,6 +15,7 @@ let img_to_mat img =
 
 (* ------------------------------- Filters ---------------------------------- *)
 
+
 (* initialization of the matrix filter *)
 let sobel1() = 
   let mat = Array.make_matrix 3 3 0 in
@@ -68,7 +69,12 @@ let sobelv2_2() =
   mat.(2).(2) <-1;
   mat
 
+
+
 (* ------------------------------------ ------------------------------------- *)
+
+(* -------------------------- Pre filter functions -------------------------- *)
+
 
 (* micro function that show a r/g/b element of a pixel *)
 let atb_p img x y atb = 
@@ -90,50 +96,64 @@ let rec normalize pix =
     | (r,g,b) when b < 0   -> normalize (r,g,0);
     | (r,g,b)              -> (r,g,b)
 
+
+
+(* function needed for the next function *)    
+let mpf3 img x y filter color =
+  try 
+  (filter.(0).(0) * (atb_p img (x-1) (y-1) color ) + 
+   filter.(1).(0) * (atb_p img (x) (y-1) color ) +
+   filter.(2).(0) * (atb_p img (x+1) (y-1) color ) +
+   filter.(0).(1) * (atb_p img (x-1) (y) color ) +
+   filter.(1).(1) * (atb_p img (x) (y) color ) +
+   filter.(2).(1) * (atb_p img (x+1) (y) color ) +
+   filter.(0).(2) * (atb_p img (x-1) (y+1) color ) +
+   filter.(1).(2) * (atb_p img (x) (y+1) color ) +
+   filter.(2).(2) * (atb_p img (x+1) (y+1) color )) / 9  
+  with _ -> 0
+
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
-let multi_pix_filter img x y filter =
- try 
-  let r_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "r" ) + 
-               filter.(1).(0) * (atb_p img (x) (y-1) "r" ) +
-               filter.(2).(0) * (atb_p img (x+1) (y-1) "r" ) +
-               filter.(0).(1) * (atb_p img (x-1) (y) "r" ) +
-               filter.(1).(1) * (atb_p img (x) (y) "r" ) +
-               filter.(2).(1) * (atb_p img (x+1) (y) "r" ) +
-               filter.(0).(2) * (atb_p img (x-1) (y+1) "r" ) +
-               filter.(1).(2) * (atb_p img (x) (y+1) "r" ) +
-               filter.(2).(2) * (atb_p img (x+1) (y+1) "r" )) / 9 in 
-  
-  let g_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "g" ) + 
-               filter.(1).(0) * (atb_p img (x) (y-1) "g" ) +
-               filter.(2).(0) * (atb_p img (x+1) (y-1) "g" ) +
-               filter.(0).(1) * (atb_p img (x-1) (y) "g" ) +
-               filter.(1).(1) * (atb_p img (x) (y) "g" ) +
-               filter.(2).(1) * (atb_p img (x+1) (y) "g" ) +
-               filter.(0).(2) * (atb_p img (x-1) (y+1) "g" ) +
-               filter.(1).(2) * (atb_p img (x) (y+1) "g" ) +
-               filter.(2).(2) * (atb_p img (x+1) (y+1) "g" )) / 9 in 
+let multi3_pix_filter img x y filter =
+  let pixel = (mpf3 img x y filter "r",mpf3 img x y filter "g" 
+                                      , mpf3 img x y filter "b") in
+    normalize pixel
 
-  let b_out = (filter.(0).(0) * (atb_p img (x-1) (y-1) "b" ) + 
-               filter.(1).(0) * (atb_p img (x) (y-1) "b" ) +
-               filter.(2).(0) * (atb_p img (x+1) (y-1) "b" ) +
-               filter.(0).(1) * (atb_p img (x-1) (y) "b" ) +
-               filter.(1).(1) * (atb_p img (x) (y) "b" ) +
-               filter.(2).(1) * (atb_p img (x+1) (y) "b" ) +
-               filter.(0).(2) * (atb_p img (x-1) (y+1) "b" ) +
-               filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
-               filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
-  let pixel = (r_out, g_out, b_out) in
-  if normalize pixel <> (0,0,0) then (255,255,255) else (0,0,0);
- with _ -> (0,0,0)
 
-(* multiplication of filter and the matrix *)
-let multi_mat_filter filter img = 
+
+ 
+
+(* addition of pixel with all neighbours filtered (5x5) to make pixel filtered*)
+(*let multi5_pix_filter img x y filter =
+ try
+   let r_out = filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+filter.(0).(0) * (atb_p img (x-2) (y-2) "r" ) +
+*)
+
+(* multiplication of filter and the matrix (3x3) *)
+let multi3_mat_filter filter img = 
   let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w, 
               (Sdlvideo.surface_info img).Sdlvideo.h) in
   let mat_out = Array.make_matrix w h (0,0,0) in
     for x = 0 to w - 1 do
      for y = 0 to h - 1 do
-       mat_out.(x).(y) <- multi_pix_filter img x y filter;
+       mat_out.(x).(y) <- multi3_pix_filter img x y filter;
      done;
     done;
   mat_out
@@ -149,12 +169,6 @@ let mat_to_img mat img =
       done;
     done;
   image
-
-(* image to image simple filtered *)
-let filtr_simpl_img img filter = 
-  let mat_f = multi_mat_filter filter img in
-    mat_to_img mat_f img
-
 (* e1 = elt of mat1...    ef = sqrt (square e1 + square e2)  *)
 let mat1_mat2 mat1 mat2 img = 
   let mat_f = 
@@ -174,13 +188,29 @@ let mat1_mat2 mat1 mat2 img =
       done;
   mat_f 
 
-(* image to image double filtered *)
-let filtr_doubl_img img filter1 filter2 = 
-  let mat1 = multi_mat_filter filter1 img in
-  let mat2 = multi_mat_filter filter2 img in
+(* image to image simple filtered (3x3) *)
+let filtr3_simpl_img img filter = 
+  let mat_f = multi3_mat_filter filter img in
+    mat_to_img mat_f img
+
+(* image to image double filtered (3x3) *)
+let filtr3_doubl_img img filter1 filter2 = 
+  let mat1 = multi3_mat_filter filter1 img in
+  let mat2 = multi3_mat_filter filter2 img in
     mat1_mat2 mat1 mat2 img
 
-
+(* transform to white pixel all non-black pixels    mat -> image *)
+let mat_edge_to_white mat_i img =
+  let mat_f = 
+   Array.make_matrix (Array.length mat_i) (Array.length mat_i.(0)) (0,0,0) in 
+    for x = 0 to (Array.length mat_i - 1) do 
+      for y = 0 to (Array.length mat_i.(0) - 1) do
+       if mat_i.(x).(y) <> (0,0,0) then
+         mat_f.(x).(y) <- (255,255,255)
+       else mat_f.(x).(y) <- mat_i.(x).(y);
+      done;
+     done;
+     mat_to_img mat_f img
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -188,20 +218,20 @@ let filtr_doubl_img img filter1 filter2 =
 
 (* Soble filter   image -> image   *)
 let sobel_filter img = 
-  mat_to_img (filtr_doubl_img img (sobel1()) (sobel2())) img
+  mat_to_img (filtr3_doubl_img img (sobel1()) (sobel2())) img
 
 let sobel_filter2 img = 
-  mat_to_img (filtr_doubl_img img (sobelv2_1()) (sobelv2_2())) img
+  mat_to_img (filtr3_doubl_img img (sobelv2_1()) (sobelv2_2())) img
 
+(* complete sobel filter with colored edges*) 
 let sobel_filter_f img = 
-  mat_to_img (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()))
-                     (filtr_doubl_img img (sobelv2_1()) (sobelv2_2())) img) img
+  mat_to_img (mat1_mat2 (filtr3_doubl_img img (sobel1()) (sobel2()))
+                     (filtr3_doubl_img img (sobelv2_1()) (sobelv2_2())) img) img
 
-(* ------------------------------------ ------------------------------------- *)
-
-(* ---------------------------- EXTRA Sobel Filter -------------------------- *)
-
-
+(* sobel filter with white edges *)
+let sobel_filter_f_color img = 
+  mat_edge_to_white (mat1_mat2 (filtr3_doubl_img img (sobel1()) (sobel2()))
+                     (filtr3_doubl_img img (sobelv2_1()) (sobelv2_2())) img) img
 
 
 (* ------------------------------------ ------------------------------------- *)
