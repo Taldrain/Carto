@@ -7,6 +7,7 @@ let quit () =
 	GMain.quit ();
 	exit 0
 
+
 let exec_fst_treat btn =
 	Assist.winstep ();
 	btn#misc#set_sensitive true
@@ -18,11 +19,13 @@ let exec_brow win b_img b_obj =
 	Browser.browser win;
 	if (Refe.get_if_file ()) then
 	begin
-  		Assist.view_img ();
 		if ((Refe.get_file_type ()) = "obj") then
 			b_obj#misc#set_sensitive true
 		else
+            begin
+  	        Assist.win_flout ();
 			b_img#misc#set_sensitive true
+            end
 	end
 
 let exec_random btn =
@@ -32,8 +35,9 @@ let exec_random btn =
 	else
 		failwith "Fatal error sur genperlin"
 	end;
-	btn#misc#set_sensitive true;
-    print_endline "Nouvelle image chargee"
+  	Assist.win_flout ();
+	btn#misc#set_sensitive true
+
 
 
 let exec_3d_obj () =
@@ -117,6 +121,7 @@ let main () =
 		~label:"Quit"
 	 	~packing:main_box#pack () in
 
+
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
 	btn_3d_obj#misc#set_sensitive false;
@@ -137,6 +142,7 @@ let main () =
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (btn_rand#connect#clicked
 		~callback:(fun () -> exec_random btn_pre_treat));
+
 	ignore (btn_pre_treat#connect#clicked
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked

@@ -3,8 +3,9 @@
 display exept the main window *)
 
 
+
 (* -------------------------------------------------------------------------- *)
-(* FENETRE DE FILTRES *)
+(* FENETRE DE FILTRES COUTOURS *)
 (* -------------------------------------------------------------------------- *)
 
 let exec_nop pict_view =
@@ -15,14 +16,17 @@ let exec_so level pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
 	begin
 	if level = 1 then
-		let img_so = (Filter.sobel_filter img) in
+		let img_so = (Filter.sobel_filter_f img) in
 		Sdlvideo.save_BMP img_so "tmp.bmp";
 	else (*level = 2 *)
-		let img_so = (Filter.sobel_filter2 img) in
+		let img_so = (Filter.sobel_filter_f_color img) in
 		Sdlvideo.save_BMP img_so "tmp.bmp";
 	end;
 	Refe.filename := "tmp.bmp";
 	pict_view#set_file "tmp.bmp"
+
+let destrof () =
+    ()
 
 let view_img () =
 	(*La fenetre de filtre *)
@@ -33,10 +37,12 @@ let view_img () =
 		~title:"Welcome" ()
 		~width:800
 		~height:570
-		~position:`MOUSE in
-	ignore (win#connect#destroy ~callback:(fun () -> ()));
+		~position:`CENTER in
+	ignore (win#connect#destroy ~callback:destrof);
+    let big_vbox = GPack.vbox
+        ~packing:win#add () in
 	let hbox = GPack.hbox
-		~packing:win#add () in
+		~packing:big_vbox#add () in
 	(*les boutons de la fenetre de filtre*)
 	let box = GPack.vbox
 		~spacing:5
@@ -92,15 +98,122 @@ let view_img () =
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 
+	(* -- CALLBACK -- *)
+	ignore (btn_nop#connect#clicked
+		~callback:(fun () -> exec_nop picture));
+	ignore (btn_so1#connect#clicked
+		~callback:(fun () -> exec_so 1 picture));
+	ignore (btn_so2#connect#clicked
+		~callback:(fun () -> exec_so 2 picture));
+
+	ignore (btn#connect#clicked ~callback:(win#destroy));
+
+
+	win#show ()
+	end
+	else
+		()
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+
+
+(* -------------------------------------------------------------------------- *)
+(* FENETRE DE FILTRES FLOUTE *)
+(* -------------------------------------------------------------------------- *)
+let rank = ref 1
+
+let tmp_name i =
+    ("tmp"^(string_of_int i)^".bmp")
+
+let is_good () =
+    (!rank <= 5)
+
+let exec_aveg pict_view =
+    if (is_good ()) then
+    begin
+  	let img = Sdlloader.load_image (Refe.get_filename ()) in
+    let ret = Filter.average1 img in
+	Sdlvideo.save_BMP ret (tmp_name !rank);
+	pict_view#set_file (tmp_name !rank);
+    rank := !rank + 1
+    end
+    else
+    print_endline "BLoulp"
+
+let destro () =
+    view_img ()
+
+let win_flout () =
+	(*La fenetre de filtre *)
+	if (Refe.get_filename ()) != "" then
+	begin
+	Refe.orig_file := (Refe.get_filename ());
+	let win = GWindow.window
+		~title:"Apply some filters or not" ()
+		~width:800
+		~height:570
+		~position:`CENTER in
+	ignore (win#connect#destroy ~callback:(destro));
+    let big_vbox = GPack.vbox
+        ~packing:win#add () in
+	let hbox = GPack.hbox
+		~packing:big_vbox#add () in
+	(*les boutons de la fenetre de filtre*)
+	let box = GPack.vbox
+		~spacing:5
+		~border_width:9
+		~packing:hbox#add () in
+	(*pour les encadrer*)
+	let fram = GBin.frame
+		~label:"Filters"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram#add () in
+	(*pas de filtre*)
+	let btn_nop = GButton.button
+		~label:"Disable filter"
+		~packing:box_fram#add () in
+	let btn_aveg = GButton.button
+		~label:"Moyenne"
+		~packing:box_fram#add () in
+	let _btn_4 = GButton.button
+		~label:"unused"
+		~packing:box_fram#add () in
+	let _separator = GMisc.separator `HORIZONTAL
+		~packing:box#add () in
+	let btn_close = GButton.button
+		~label:"Next"
+		~packing:box#pack () in
+
+	let box2 = GPack.vbox
+		~packing:hbox#add () in
+	let scrolled_window = GBin.scrolled_window
+		~border_width:10
+		~hpolicy:`AUTOMATIC
+		~vpolicy:`AUTOMATIC
+		~width:512
+		~height:512
+		~packing:box2#add () in
+	let secbox = GPack.hbox
+		~packing:scrolled_window#add_with_viewport () in
+	let picture = GMisc.image
+		~file:(Refe.get_filename ())
+		~packing:secbox#add () in
+
+
 
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked
 		~callback:(fun () -> (exec_nop picture)));
-	ignore (btn_so1#connect#clicked
-		~callback:(fun () -> (exec_so 1 picture)));
-	ignore (btn_so2#connect#clicked
-		~callback:(fun () -> (exec_so 2 picture)));
-	ignore (btn#connect#clicked ~callback:(win#destroy));
+	ignore (btn_aveg#connect#clicked
+		~callback:(fun () -> (exec_aveg picture)));
+	ignore (btn_close#connect#clicked ~callback:(win#destroy));
 
 
 	win#show ()

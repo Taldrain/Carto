@@ -1,5 +1,6 @@
 (* Graphics engine *)
 
+
 (* --- Variable --- *)
 
 (* mouse var *)
@@ -43,6 +44,8 @@ let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
 let tz = ref 0.
 
+(* camera *)
+
 (* light var *)
 let lr = ref 0.
 let lg = ref 0.
@@ -50,6 +53,8 @@ let lb = ref 0.
 let lx = ref 0.
 let ly = ref 0.
 let lz = ref 0.
+
+
 
 (* --- Function --- *)
 
@@ -68,29 +73,33 @@ let init () =
   (* background color *)
   GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
-  GlClear.clear [`color; `depth];
-  List.iter Gl.enable [`depth_test; `light0;];
+  (*GlClear.clear [`color; `depth];*)
+  List.iter Gl.enable [`depth_test; `color_material; `light0;];
   (*GlFunc.depth_func `lequal;*)
+  GlDraw.shade_model `smooth;
   GlFunc.depth_func `less;
   GlMisc.hint `perspective_correction `nicest
 
 
-(*let init_light () =
-  let light_ambient = !lr, !lg, !lb, 1.
-  and light_diffuse = 1., 0., 0., 1.(*!lr*.2., !lg*.2., !lb*.2., 1.*)
-  and light_specular = 0., 1., 0., 1.(*!lr*.4., !lg*.4., !lb*.4., 1.*)
+let findcolor = function
+  | (a,b,c) -> lr:= a; lg:= b; lb:= c
+
+
+let init_light () =
+  GlLight.color_material ~face:`both `specular;
+  let nop = (1., 0., 1., 1.) in
+    List.iter (GlLight.material ~face:`both) [`specular nop];
+  let light_am = 0., 1., 0., 1.
+  and light_diffuse = 1., 0., 0., 1. (*!lr*.2., !lg*.2., !lb*.2., 1.*)
+  and light_specular = 0., 1., 0., 1. (*!lr*.4., !lg*.4., !lb*.4., 1*)
   and light_position = !lx, !ly, !lz, 1.
   in
   List.iter (GlLight.light ~num:0)
-    [ `ambient light_ambient;
+    [ `ambient light_am;
       `diffuse light_diffuse;
       `specular light_specular;
       `position light_position ]
-  (*GlDraw.shade_model `smooth*)*)
-
-
-(*let findcolor = function
-  | (a,b,c) -> lr:= a; lg:= b; lb:= c*)
+  (*GlLight.color_material ~face:`both `ambient*)
 
 
 (*let distance_lp (x2,y2,z2) =
@@ -102,23 +111,24 @@ let attenuation (x2,y2,z2) =
 let light (x2,y2,z2) =
   let a = attenuation (x2,y2,z2) in
     (x2*.a, y2*.a, z2*.a)
- *) 
+ *)
 
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> (*GlDraw.color ((attenuation (snd e))*(snd e));
-             *)
+  | e::l -> findcolor (snd e);
             GlDraw.color (snd e);
+            init_light ();
             GlDraw.vertex3 (fst e);
             create_tri l
 
 
 (* affichage de la scene - display *)
-let scene_gl () =
+let scene_gl ~area =
   GlClear.clear [`color; `depth];
   GlMat.load_identity ();
   (* translation *)
+  (*GluMat.look_at (!tx, !ty, 0.) (0., 0., 0.) (0., 0., !tz);*)
   GlMat.translate3 (!tx, !ty, !tz);
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
@@ -133,24 +143,21 @@ let scene_gl () =
     Gl.enable `lighting
   else
     Gl.disable `lighting;
+  Glut.postRedisplay ();
   Glut.swapBuffers ()
 
 
 let reshape ~w ~h =
   let ratio = (float_of_int w) /. (float_of_int h) in
-    GlDraw.viewport 0 0 w h;
-    (* mode projection ? *)
-    (*GlMat.mode `projection;*)
-    (* chargement de la matrice identite *)
-    (*GlMat.load_identity ();*)
-    (* changement de mode ? *)
     GlMat.mode `projection;
     GlMat.load_identity ();
+    GlDraw.viewport 0 0 w h;
     (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
     GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
     GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(0.1,500.);
     GlMat.mode `modelview;
     GlMat.load_identity ();
+    Glut.swapBuffers ();
     Gl.flush()
 
 
@@ -166,6 +173,9 @@ let reset () =
   rx := -40.;
   ry := 0.;
   rz := 0.;
+  (*tx := 0.;
+  ty := 0.;
+  tz := 0.*)
   tx := dtx();
   ty := dty();
   tz := dtz()
@@ -227,6 +237,7 @@ let keyboard_event ~key ~x ~y = match key with
   | 103 -> light_b := (xor !light_b true)
   | _ -> ()
 
+
 (* same with special key *)
 let keyboard_special_event ~key ~x ~y = match key with
   | Glut.KEY_LEFT -> tx := !tx -. !pas
@@ -238,8 +249,7 @@ let keyboard_special_event ~key ~x ~y = match key with
 
 (* idle fonction *)
 let idle () =
-  (*init_light ();*)
-  Glut.postRedisplay();
+  (*Glut.postRedisplay();*)
   scene_gl ()
 
 
