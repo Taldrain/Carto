@@ -197,8 +197,8 @@ let pre_trait () =
 	    show img display;
 	wait_key();*)
 	(* Grid function *)
-	let img3 = (Filter.average1 img) in
-  Sdlvideo.save_BMP img3 "contour1.bmp";
+	let img3 = (Filter.canny_filter img) in
+  Sdlvideo.save_BMP img3 "canny.bmp";
   let img4 = (Filter.average2 img) in
   Sdlvideo.save_BMP img4 "contour2.bmp";
   let img5 = (Filter.sobel_filter_f img) in

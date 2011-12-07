@@ -19,25 +19,25 @@ let img_to_mat img =
 (* initialization of the matrix filter *)
 let sobel1() =
   let mat = Array.make_matrix 3 3 0 in
-  mat.(0).(0) <- 1;
-  mat.(1).(0) <- 0;
+  mat.(0).(0) <-  1;
+  mat.(1).(0) <-  0;
   mat.(2).(0) <-(-1);
-  mat.(0).(1) <- 2;
-  mat.(1).(1) <- 0;
+  mat.(0).(1) <-  2;
+  mat.(1).(1) <-  0;
   mat.(2).(1) <-(-2);
-  mat.(0).(2) <- 1;
-  mat.(1).(2) <- 0;
+  mat.(0).(2) <-  1;
+  mat.(1).(2) <-  0;
   mat.(2).(2) <-(-1);
   mat
 
 let sobel2() =
   let mat = Array.make_matrix 3 3 0 in
-  mat.(0).(0) <- 1;
-  mat.(1).(0) <- 2;
-  mat.(2).(0) <- 1;
-  mat.(0).(1) <- 0;
-  mat.(1).(1) <- 0;
-  mat.(2).(1) <- 0;
+  mat.(0).(0) <-  1;
+  mat.(1).(0) <-  2;
+  mat.(2).(0) <-  1;
+  mat.(0).(1) <-  0;
+  mat.(1).(1) <-  0;
+  mat.(2).(1) <-  0;
   mat.(0).(2) <-(-1);
   mat.(1).(2) <-(-2);
   mat.(2).(2) <-(-1);
@@ -256,6 +256,8 @@ let mat_edge_to_white mat_i img =
      done;
      mat_to_img mat_f img
 
+
+
 (* ------------------------------------ ------------------------------------- *)
 
 (* ---------------------------- Filter functions ---------------------------- *)
@@ -285,7 +287,9 @@ let average1 img =
 let average2 img =
    filtr_simpl_img img (average5()) 5 25
 
-
+(* canny filter *)
+let canny_filter img =
+  filtr_simpl_img img (canny()) 5 159
 
 (* ------------------------------------ ------------------------------------- *)
 
