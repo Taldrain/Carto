@@ -8,28 +8,27 @@ display exept the main window *)
 (* -------------------------------------------------------------------------- *)
 
 let exec_nop pict_view =
+	Refe.filename := (Refe.get_orig_file ());
 	pict_view#set_file (Refe.get_filename ())
 
 let exec_so level pict_view =
+  	let img = Sdlloader.load_image (Refe.get_filename ()) in
+	begin
 	if level = 1 then
-		begin
-  		let img = Sdlloader.load_image (Refe.get_filename ()) in
 		let img_so = (Filter.sobel_filter img) in
-		Sdlvideo.save_BMP img_so "contour1.bmp";
-		pict_view#set_file "contour1.bmp";
-		end
+		Sdlvideo.save_BMP img_so "tmp.bmp";
 	else (*level = 2 *)
-		begin
-  		let img = Sdlloader.load_image (Refe.get_filename ()) in
 		let img_so = (Filter.sobel_filter2 img) in
-		Sdlvideo.save_BMP img_so "contour2.bmp";
-		pict_view#set_file "contour2.bmp";
-		end
+		Sdlvideo.save_BMP img_so "tmp.bmp";
+	end;
+	Refe.filename := "tmp.bmp";
+	pict_view#set_file "tmp.bmp"
 
 let view_img () =
 	(*La fenetre de filtre *)
 	if (Refe.get_filename ()) != "" then
 	begin
+	Refe.orig_file := (Refe.get_filename ());
 	let win = GWindow.window
 		~title:"Welcome" ()
 		~width:800
