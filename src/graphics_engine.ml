@@ -66,7 +66,7 @@ let rec create_tri = function
 
 
 (* affichage de la scene *)
-let scene_gl () =
+let display () =
   (* precaution *)
   GlClear.clear [`color; `depth];
   (* creer une matrice *)
@@ -114,17 +114,18 @@ let xor a b =
     b
 
 
-let reset () =
+(*let reset () =
   rx := -40.;
   ry := 0.;
   rz := 0.;
   tx := dtx();
   ty := dty();
   tz := dtz()
+ *)
 
 
 (* gestion des evenements du clavier *)
-let keyboard_event ~key ~x ~y = match key with
+(*let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
     27 -> exit 0
   (* touche "i" *)
@@ -162,23 +163,5 @@ let keyboard_event ~key ~x ~y = match key with
   | 56 -> ly := !ly +. 5.0
   | 57 -> lz := !lz +. 5.0
   | _ -> ()
-
-
-(* fonction d'idle *)
-let idle () =
-  (*init_light();*)
-  scene_gl ()
-
-
-let main_engine () =
-    ignore (Glut.init Sys.argv);
-    (*ignore (Glut.createWindow "hello");*)
-    (* init - pas dans la boucle *)
-    (*init();*)
-    (* gestion du clavier *)
-    print_endline "a";
-    Glut.keyboardFunc keyboard_event;
-    (*Glut.reshapeFunc reshape;*)
-    Glut.idleFunc(Some idle);
-    Glut.mainLoop ()
+ *)
 
