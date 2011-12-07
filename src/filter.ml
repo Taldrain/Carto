@@ -123,7 +123,7 @@ let multi_pix_filter img x y filter =
                filter.(1).(2) * (atb_p img (x) (y+1) "b" ) +
                filter.(2).(2) * (atb_p img (x+1) (y+1) "b" )) / 9 in 
   let pixel = (r_out, g_out, b_out) in
-  normalize pixel;
+  if normalize pixel <> (0,0,0) then (255,255,255) else (0,0,0);
  with _ -> (0,0,0)
 
 (* multiplication of filter and the matrix *)
@@ -178,7 +178,7 @@ let mat1_mat2 mat1 mat2 img =
 let filtr_doubl_img img filter1 filter2 = 
   let mat1 = multi_mat_filter filter1 img in
   let mat2 = multi_mat_filter filter2 img in
-  mat_to_img (mat1_mat2 mat1 mat2 img) img 
+    mat1_mat2 mat1 mat2 img
 
 
 
@@ -188,10 +188,20 @@ let filtr_doubl_img img filter1 filter2 =
 
 (* Soble filter   image -> image   *)
 let sobel_filter img = 
-  filtr_doubl_img img (sobel1()) (sobel2())
+  mat_to_img (filtr_doubl_img img (sobel1()) (sobel2())) img
 
 let sobel_filter2 img = 
-  filtr_doubl_img img (sobelv2_1()) (sobelv2_2())
+  mat_to_img (filtr_doubl_img img (sobelv2_1()) (sobelv2_2())) img
+
+let sobel_filter_f img = 
+  mat_to_img (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()))
+                     (filtr_doubl_img img (sobelv2_1()) (sobelv2_2())) img) img
+
+(* ------------------------------------ ------------------------------------- *)
+
+(* ---------------------------- EXTRA Sobel Filter -------------------------- *)
+
+
 
 
 (* ------------------------------------ ------------------------------------- *)

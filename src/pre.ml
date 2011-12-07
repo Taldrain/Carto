@@ -201,6 +201,8 @@ let pre_trait () =
   Sdlvideo.save_BMP img3 "contour1.bmp";
   let img4 = (Filter.sobel_filter2 img) in
   Sdlvideo.save_BMP img4 "contour2.bmp";
+  let img5 = (Filter.sobel_filter_f img) in
+  Sdlvideo.save_BMP img5 "contourf.bmp";
   (*  we call the pretraitement function *)
 	contour img img2;
 	(*show img2 display;
