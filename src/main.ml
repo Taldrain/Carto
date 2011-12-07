@@ -72,7 +72,6 @@ let main () =
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
-
 	let area = GlGtk.area [`RGBA;`DOUBLEBUFFER]
 		~width:400
 		~height:400
@@ -87,6 +86,9 @@ let main () =
 	(* --------- *)
 	(* CALLBACKS *)
 	(* --------- *)
+
+    area#connect#realize ~callback: Graphics_engine.init;
+    area#connect#display ~callback:(Graphics_engine.display; area#swap_buffers );
 
 	(*menu*)
 	ignore (mf_open#connect#activate
@@ -103,11 +105,10 @@ let main () =
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
 	ignore (btn_3d#connect#clicked
-		~callback:(fun () -> print_endline "message 0";
-              area#connect#realize ~callback:(Graphics_engine.init);
-              area#connect#reshape ~callback:(Graphics_engine.reshape ~width:400 ~height:400);
-              area#connect#display ~callback:(Graphics_engine.main_engine);
-              area#swap_buffers ()));
+		~callback:(fun () ->let hip ()
+               GMain.Main.main ();
+               GMain.Timeout.add ~ms:20 ~callback:(fun () -> Graphics_engine.display(); true )
+        ));
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
 
