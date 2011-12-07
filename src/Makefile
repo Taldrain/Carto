@@ -7,12 +7,12 @@ ML=refe.ml parser_obj.ml pre.ml post.ml graphics_engine.ml browser.ml assist.ml 
 CMX=${ML:.ml=.cmx}
 WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	str.cmxa \
-     lablgl.cmxa \
-     lablgtk.cmxa \
-     bigarray.cmxa \
-     sdl.cmxa \
-     sdlloader.cmxa \
-     lablglut.cmxa \
+    lablgl.cmxa \
+    lablgtk.cmxa \
+    bigarray.cmxa \
+    sdl.cmxa \
+    sdlloader.cmxa \
+    lablglut.cmxa \
 	lablgtkgl.cmxa
 
 all: lib64 assemble post
