@@ -124,23 +124,28 @@ let view_img () =
 (* -------------------------------------------------------------------------- *)
 let rank = ref 1
 
-let tmp_name i =
-    ("tmp"^(string_of_int i)^".bmp")
-
-let is_good () =
-    (!rank <= 5)
+let tmp_name () =
+    ("tmp"^(string_of_int !rank)^".bmp")
 
 let exec_aveg pict_view =
-    if (is_good ()) then
+    if (!rank <= 5) then
     begin
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
     let ret = Filter.average1 img in
-	Sdlvideo.save_BMP ret (tmp_name !rank);
-	pict_view#set_file (tmp_name !rank);
+	Sdlvideo.save_BMP ret (tmp_name ());
+	pict_view#set_file (tmp_name ());
+    Refe.filename := (tmp_name ());
     rank := !rank + 1
     end
     else
     print_endline "BLoulp"
+
+let exec_prec pict_view =
+    if (!rank > 1) then
+        begin
+            ()
+        end
+
 
 let destro () =
     view_img ()
@@ -179,6 +184,9 @@ let win_flout () =
 	let btn_nop = GButton.button
 		~label:"Disable filter"
 		~packing:box_fram#add () in
+	let btn_prec = GButton.button
+		~label:"Previous"
+		~packing:box_fram#add () in
 	let btn_aveg = GButton.button
 		~label:"Moyenne"
 		~packing:box_fram#add () in
@@ -211,6 +219,8 @@ let win_flout () =
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked
 		~callback:(fun () -> (exec_nop picture)));
+	ignore (btn_prec#connect#clicked
+		~callback:(fun () -> (exec_prec picture)));
 	ignore (btn_aveg#connect#clicked
 		~callback:(fun () -> (exec_aveg picture)));
 	ignore (btn_close#connect#clicked ~callback:(win#destroy));

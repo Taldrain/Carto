@@ -19,6 +19,7 @@ let exec_brow win b_img b_obj =
 	Browser.browser win;
 	if (Refe.get_if_file ()) then
 	begin
+        Refe.orig_file := (Refe.get_filename ());
 		if ((Refe.get_file_type ()) = "obj") then
 			b_obj#misc#set_sensitive true
 		else
