@@ -32,19 +32,28 @@ let light_b = ref false
 let fullscreen = ref true
 
 (* rotation var *)
-let rx = ref (-40.)
+let rx = ref (-90.)(*(-40.)*)
 let ry = ref 0.
 let rz = ref 0.
 
 (* translation var *)
-let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
+(*let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
+ *)
 let tx = ref 0.
-let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
+(*let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
+ *)
 let ty = ref 0.
-let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
-let tz = ref 0.
+(*let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
+ *)
+let tz = ref 10.
 
 (* camera *)
+let eye = new Camera.point3 1. 0. 10.
+let at = new Camera.point3  (float (-(Refe.get_w()/(2*Refe.get_step())))) 0. 0.
+let up = new Camera.point3  0. 1. 0.
+let cameraAngle = ref 0
+let cameraDist = ref 0
+let cameraOff = ref 0
 
 (* light var *)
 let lr = ref 0.
@@ -60,9 +69,9 @@ let lz = ref 0.
 
 let init () =
   (* init of some variable translation *)
-  tx := dtx();
+  (*tx := dtx();
   ty := dty();
-  tz := dtz();
+  tz := dtz();*)
   ignore (Glut.init Sys.argv);
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
   (*Glut.initWindowSize ~w:800 ~h:600;*)
@@ -73,6 +82,7 @@ let init () =
   (* background color *)
   GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
+  GlMat.translate3 (0., 0., -50.);
   (*GlClear.clear [`color; `depth];*)
   List.iter Gl.enable [`depth_test; `color_material; `light0;];
   (*GlFunc.depth_func `lequal;*)
@@ -124,16 +134,19 @@ let rec create_tri = function
 
 
 (* affichage de la scene - display *)
-let scene_gl ~area =
+let display ~area  =
   GlClear.clear [`color; `depth];
   GlMat.load_identity ();
-  (* translation *)
-  (*GluMat.look_at (!tx, !ty, 0.) (0., 0., 0.) (0., 0., !tz);*)
-  GlMat.translate3 (!tx, !ty, !tz);
+  eye#setX !tx;
+  eye#setY !ty;
+  eye#setZ !tz;
+  GluMat.look_at (eye#getX, eye#getY, eye#getZ)
+                 (at#getX, at#getY, at#getZ)
+                 (up#getX, up#getY, up#getZ);
+  (*GlMat.translate3 (!tx, !ty, !tz);*)
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
   GlMat.rotate3 !rz (0.0, 0.0, 2.0);
-  (* for the different mode *)
   GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
@@ -143,7 +156,6 @@ let scene_gl ~area =
     Gl.enable `lighting
   else
     Gl.disable `lighting;
-  Glut.postRedisplay ();
   Glut.swapBuffers ()
 
 
@@ -154,11 +166,9 @@ let reshape ~w ~h =
     GlDraw.viewport 0 0 w h;
     (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
     GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
-    GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(0.1,500.);
+    GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(10.,500.);
     GlMat.mode `modelview;
-    GlMat.load_identity ();
-    Glut.swapBuffers ();
-    Gl.flush()
+    GlMat.load_identity ()
 
 
 (* fonction xor *)
@@ -173,12 +183,12 @@ let reset () =
   rx := -40.;
   ry := 0.;
   rz := 0.;
-  (*tx := 0.;
+  tx := 0.;
   ty := 0.;
-  tz := 0.*)
-  tx := dtx();
+  tz := 5.
+  (*tx := dtx();
   ty := dty();
-  tz := dtz()
+  tz := dtz()*)
 
 
 (* deal with the mouse event *)
@@ -228,12 +238,21 @@ let keyboard_event ~key ~x ~y = match key with
   | 113 | 161 -> tz := !tz +. !pas
   | 101 | 145 -> tz := !tz -. !pas
   | 114 | 162 -> reset ()
-  | 50 -> ly := !ly -. !pas
+  (*| 50 -> ly := !ly -. !pas
   | 51 -> lz := !lz -. !pas
   | 52 -> lx := !lx -. !pas
   | 54 -> lx := !lx +. !pas
   | 56 -> ly := !ly +. !pas
-  | 57 -> lz := !lz +. !pas
+  | 57 -> lz := !lz +. !pas*)
+  | 50 -> ty := !ty -. !pas
+  | 51 -> tz := !tz -. !pas
+  | 52 -> tx := !tx -. !pas
+  | 54 -> tx := !tx +. !pas
+  | 56 -> ty := !ty +. !pas
+  | 57 -> tz := !tz +. !pas
+  | 49 -> print_endline ("eyeX = " ^(string_of_float !tx))
+  | 55 -> print_endline ("eyeY = " ^(string_of_float !ty))
+  | 48 -> print_endline ("eyeZ = " ^(string_of_float !tz))
   | 103 -> light_b := (xor !light_b true)
   | _ -> ()
 
@@ -246,12 +265,8 @@ let keyboard_special_event ~key ~x ~y = match key with
   | Glut.KEY_UP -> ty := !ty +. !pas
   | _ -> ()
 
-
-(* idle fonction *)
 let idle () =
-  (*Glut.postRedisplay();*)
-  scene_gl ()
-
+  display ()
 
 let main_engine () =
     init();
@@ -260,6 +275,7 @@ let main_engine () =
     Glut.mouseFunc mouse_event;
     Glut.motionFunc motion;
     Glut.reshapeFunc reshape;
-    Glut.idleFunc(Some idle);
+    (*Glut.displayFunc display;*)
+    Glut.idleFunc (Some idle);
     Glut.mainLoop ()
 
