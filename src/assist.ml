@@ -17,13 +17,13 @@ let exec_so level pict_view =
 	begin
 	if level = 1 then
 		let img_so = (Filter.sobel_filter_f img) in
-		Sdlvideo.save_BMP img_so "tmp.bmp";
+		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
 	else (*level = 2 *)
 		let img_so = (Filter.sobel_filter_f_color img) in
-		Sdlvideo.save_BMP img_so "tmp.bmp";
+		Sdlvideo.save_BMP img_so "tmp/tmp.bmp";
 	end;
-	Refe.filename := "tmp.bmp";
-	pict_view#set_file "tmp.bmp"
+	Refe.filename := "/tmp/tmp.bmp";
+	pict_view#set_file "/tmp/tmp.bmp"
 
 let destrof () =
     ()
@@ -125,25 +125,26 @@ let view_img () =
 let rank = ref 1
 
 let tmp_name () =
-    ("tmp"^(string_of_int !rank)^".bmp")
+    ("/tmp/tmp"^(string_of_int !rank)^".bmp")
 
 let exec_aveg pict_view =
     if (!rank <= 5) then
     begin
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
     let ret = Filter.average1 img in
+    rank := !rank + 1;
 	Sdlvideo.save_BMP ret (tmp_name ());
 	pict_view#set_file (tmp_name ());
-    Refe.filename := (tmp_name ());
-    rank := !rank + 1
+    Refe.filename := (tmp_name ())
     end
-    else
-    print_endline "BLoulp"
 
 let exec_prec pict_view =
+    print_endline (string_of_int !rank);
     if (!rank > 1) then
         begin
-            ()
+            rank := !rank - 1;
+	        pict_view#set_file (tmp_name ());
+            Refe.filename := (tmp_name ())
         end
 
 
