@@ -291,12 +291,12 @@ let sobel_filter2 img =
 (* complete sobel filter with colored edges*)
 let sobel_filter_f img =
   mat_to_img (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()) 3 9)
-                    (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
+                  (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
 
 (* sobel filter with white edges *)
 let sobel_filter_f_color img =
   mat_edge_to_white (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()) 3 9)
-                    (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
+                  (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
 
 (* average3 filter *)
 let average1 img =
@@ -310,27 +310,37 @@ let average2 img =
 let gauss3_filter img variance =
   filtr_simpl_img img (gauss3()) 3 16
 
-(* median filter, it has a different behaviour *)
+(* function needed for the next function *)
+let rec med_term lis i median = match lis with
+  | [] -> failwith "fail"
+  | m::lis when i = median -> m
+  | m::lis -> med_term lis (i+1) median 
+
+
+let red mat x y = 
+  let (r,_,_) = mat.(x).(y) in
+    r
+
+(* mdian filter, it has a different behaviour *)
 let median_filtr img =
   let mat = img_to_mat img in
-  let mat_f = Array.make_matrix (Array.length mat) 
+  let mat_f = Array.make_matrix (Array.length mat)
               (Array.length mat.(0)) (0,0,0) in
     for x = 0 to Array.length mat - 1 do
       for y = 0 to Array.length mat.(0) - 1 do
         try
-          let li = [] in
-            for j = (-1) to 1 do
-              for i = (-1) to 1 do
-                let (r,_,_) = mat.(x+i).(y+j) in
-                r::li;
-              done;
-            done;
-            List.fast_sort Pervasives.compare li;
-            let g = List.nth li 4 in
-              mat_f.(x).(y) <- (g,g,g);
-        with _ -> mat_f.(x).(y) <- mat.(x).(y);
+          let li = [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
+          red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
+          red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)] in
+          let li_f = List.fast_sort (fun x y -> compare x y) li in
+          let g = List.nth li_f 4 in
+          mat_f.(x).(y) <- (g,g,g);
+        with Invalid_argument "index out of bounds" ->
+               (mat_f.(x).(y) <- mat.(x).(y);
+                  print_endline "out";)
       done;
     done;
+    mat_to_img mat_f img
 
 (* ------------------------------------ ------------------------------------- *)
 

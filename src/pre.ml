@@ -218,6 +218,12 @@ let pre_trait () =
   let img5 = (Filter.sobel_filter_f img) in
   Sdlvideo.save_BMP img5 "contourf.bmp";*)
   (*  we call the pretraitement function *)
+  (*let img3 = img in
+  img_to_grey img3;
+  Sdlvideo.save_BMP img3 "grey.bmp";*)
+  let img4 = Filter.median_filtr img in 
+  Sdlvideo.save_BMP img4 "median.bmp";
+
 	contour img img2;
 	(*show img2 display;
 	wait_key ();*)
