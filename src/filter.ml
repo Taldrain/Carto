@@ -69,7 +69,26 @@ let sobelv2_2() =
   mat.(2).(2) <-   1;
   mat
 
-let canny() =
+
+let gauss3() (* var *) =
+  let mat = Array.make_matrix 3 3 0 in
+(*  let grad x y = int_of_float(( 1. /. ( 2. *. 3.1416 *. var ** 2.))
+                  *. exp ( -. ( (float)(x) ** 2. +. (float)(y) ** 2. ) /. 2. *.
+                  ( var ** 2.) )) in  *)
+  mat.(0).(0) <- 1;
+  mat.(1).(0) <- 2;
+  mat.(2).(0) <- 1;
+  mat.(0).(1) <- 2;
+  mat.(1).(1) <- 4;
+  mat.(2).(1) <- 2;
+  mat.(0).(2) <- 1;
+  mat.(1).(2) <- 2;
+  mat.(2).(2) <- 1;
+  mat
+
+
+
+let gauss5() =
   let mat = Array.make_matrix 5 5 0 in
   mat.(0).(0) <- 2;
   mat.(1).(0) <- 4;
@@ -287,9 +306,31 @@ let average1 img =
 let average2 img =
    filtr_simpl_img img (average5()) 5 25
 
-(* canny filter *)
-let canny_filter img =
-  filtr_simpl_img img (canny()) 5 159
+(* gauss3 filter *)
+let gauss3_filter img variance =
+  filtr_simpl_img img (gauss3()) 3 16
+
+(* median filter, it has a different behaviour *)
+let median_filtr img =
+  let mat = img_to_mat img in
+  let mat_f = Array.make_matrix (Array.length mat) 
+              (Array.length mat.(0)) (0,0,0) in
+    for x = 0 to Array.length mat - 1 do
+      for y = 0 to Array.length mat.(0) - 1 do
+        try
+          let li = [] in
+            for j = (-1) to 1 do
+              for i = (-1) to 1 do
+                let (r,_,_) = mat.(x+i).(y+j) in
+                r::li;
+              done;
+            done;
+            List.fast_sort Pervasives.compare li;
+            let g = List.nth li 4 in
+              mat_f.(x).(y) <- (g,g,g);
+        with _ -> mat_f.(x).(y) <- mat.(x).(y);
+      done;
+    done;
 
 (* ------------------------------------ ------------------------------------- *)
 

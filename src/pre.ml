@@ -62,11 +62,25 @@ let list_to_text li =
 
 
 
+(* ---------------------------- Put map to grey ----------------------------- *)
+
+let img_to_grey img = 
+  for x=0 to (Refe.get_w())-1 do
+	  for y=0 to (Refe.get_h())-1 do
+      let (r,g,b) = Sdlvideo.get_pixel_color img x y in
+        let g = int_of_float(0.299 *. (float)(r) +. 0.587 *. (float)(g) +. 
+                0.114 *. (float)(b)) in
+	      Sdlvideo.put_pixel_color img x y (g,g,g);
+	  done;
+  done
+
+
+
 (* ------------------------------------ ------------------------------------- *)
 
 (* ---------------------------- Edge detection ------------------------------ *)
 
-(* Edge function *)
+(* Basic Edge function *)
 let contour image image2 =
   let right = ref (0,0,0)
   and down = ref (0,0,0)
@@ -197,12 +211,12 @@ let pre_trait () =
 	    show img display;
 	wait_key();*)
 	(* Grid function *)
-	let img3 = (Filter.canny_filter img) in
-  Sdlvideo.save_BMP img3 "canny.bmp";
-  let img4 = (Filter.average2 img) in
-  Sdlvideo.save_BMP img4 "contour2.bmp";
+	(*let img3 = (Filter.gauss3_filter img 1.) in
+  Sdlvideo.save_BMP img3 "gauss.bmp";
+  let img4 = (Filter.average1 img) in
+  Sdlvideo.save_BMP img4 "contour.bmp";
   let img5 = (Filter.sobel_filter_f img) in
-  Sdlvideo.save_BMP img5 "contourf.bmp";
+  Sdlvideo.save_BMP img5 "contourf.bmp";*)
   (*  we call the pretraitement function *)
 	contour img img2;
 	(*show img2 display;
