@@ -32,6 +32,9 @@ let get_list_alt () = !list_alt
 let step = ref 5
 let get_step() = !step
 
+let save_color_txt = ref false
+let save_ornot_color () = !save_color_txt
+
 let w = ref 600
 let get_w() = !w
 

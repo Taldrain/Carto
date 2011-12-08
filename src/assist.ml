@@ -162,7 +162,9 @@ let exec_prec pict_view =
         end
 
 
-let destro () =
+let destro w chk =
+    Refe.save_color_txt := (chk#active);
+    w#destroy ();
     view_img ()
 
 let win_flout () =
@@ -175,7 +177,7 @@ let win_flout () =
 		~width:800
 		~height:570
 		~position:`CENTER in
-	ignore (win#connect#destroy ~callback:(destro));
+	ignore (win#connect#destroy ~callback:(fun () -> ()));
     let big_vbox = GPack.vbox
         ~packing:win#add () in
 	let hbox = GPack.hbox
@@ -208,6 +210,10 @@ let win_flout () =
 	let _btn_4 = GButton.button
 		~label:"unused"
 		~packing:box_fram#add () in
+	let chk_btn = GButton.check_button
+		~label:"Save colors in txt file"
+        ~active:false
+		~packing:box_fram#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
 	let btn_close = GButton.button
@@ -238,7 +244,7 @@ let win_flout () =
 		~callback:(fun () -> (exec_prec picture)));
 	ignore (btn_aveg#connect#clicked
 		~callback:(fun () -> (exec_aveg picture)));
-	ignore (btn_close#connect#clicked ~callback:(win#destroy));
+	ignore (btn_close#connect#clicked ~callback:(fun () -> destro win chk_btn));
 
 
 	win#show ()
