@@ -71,6 +71,10 @@ let view_img () =
 	let btn_so2 = GButton.button
 		~label:"Sobel 2"
 		~packing:box_so#add () in
+    let range = GRange.scale `HORIZONTAL
+        ~digits:0
+        ~value_pos:`RIGHT
+        ~packing:box_fram#add () in
 	let _btn_3 = GButton.button
 		~label:"unused"
 		~packing:box_fram#add () in
@@ -97,6 +101,16 @@ let view_img () =
 	let picture = GMisc.image
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
+
+    let adj = GData.adjustment () in
+    adj#set_bounds
+        ~lower:1.
+        ~upper:10.
+        ~step_incr:1.
+        ~page_incr:1.
+        ~page_size:1. ();
+    range#set_adjustment adj;
+
 
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked

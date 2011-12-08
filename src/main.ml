@@ -98,7 +98,6 @@ let main () =
 		~packing:main_box#pack () in
 	let box_open = GPack.hbox
 		~spacing:5
-		~border_width:5
 		~packing:main_box#pack () in
 	let btn_browse = GButton.button
 		~label:"Browse"
@@ -106,6 +105,12 @@ let main () =
 	let btn_rand = GButton.button
 		~label:"Random"
 		~packing:box_open#add () in
+    let _sep = GMisc.separator `HORIZONTAL
+		~packing:main_box#pack () in
+    let _sep = GMisc.separator `HORIZONTAL
+		~packing:main_box#pack () in
+    let _sep = GMisc.separator `HORIZONTAL
+		~packing:main_box#pack () in
 	let btn_pre_treat = GButton.button
 		~label:"Execute"
 		~packing:main_box#pack () in
@@ -114,6 +119,12 @@ let main () =
 		~packing:main_box#pack () in
 	let btn_3d_obj = GButton.button
 		~label:"3D OBJ"
+		~packing:main_box#pack () in
+    let _sep = GMisc.separator `HORIZONTAL
+		~packing:main_box#pack () in
+    let _sep = GMisc.separator `HORIZONTAL
+		~packing:main_box#pack () in
+    let _sep = GMisc.separator `HORIZONTAL
 		~packing:main_box#pack () in
 	let btn_3d_inst = GButton.button
 		~label:"3D instantane"
