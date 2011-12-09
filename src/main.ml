@@ -31,8 +31,8 @@ let exec_brow win b_img b_obj =
 
 let exec_random btn =
     begin
-	if ((Sys.command "./genperlin -save > rand_map.bmp") = 0) then
-		(Refe.filename := "rand_map.bmp";
+	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.rand_file := true;)
 	else
 		failwith "Fatal error on genperlin"
@@ -51,8 +51,8 @@ let exec_3d_obj () =
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
 	begin
-	if ((Sys.command "./genperlin -save > rand_map.bmp") = 0) then
-		Refe.filename := "rand_map.bmp"
+	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+		Refe.filename := "/tmp/rand_map.bmp"
 	else
 		Refe.filename := "carte.bmp"
 	end;
@@ -180,4 +180,3 @@ let main () =
   	w#show ();
   	GMain.main ()
 
-let _ = main ()

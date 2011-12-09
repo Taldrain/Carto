@@ -2,22 +2,22 @@
 
 CC=ocamlopt.opt
 RM=rm -f
-OUT=carto
-ML=refe.ml argv.ml parser_obj.ml filter.ml pre.ml post.ml\
-   camera.ml graphics_engine.ml browser.ml assist.ml main.ml
+OUT=supermap
+ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml\
+   camera.ml graphics_engine.ml browser.ml assist.ml main.ml argv.ml
 CMX=${ML:.ml=.cmx}
 WALL= -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
-	 str.cmxa \
-     lablgl.cmxa \
-     lablgtk.cmxa \
-     bigarray.cmxa \
-     sdl.cmxa \
+	 str.cmxa       \
+     lablgl.cmxa    \
+     lablgtk.cmxa   \
+     bigarray.cmxa  \
+     sdl.cmxa       \
      sdlloader.cmxa \
 	 lablglut.cmxa
 
 all: assemble genperlin post
 
-32: assemble post
+32: assemble genperlin post
 
 ocamlbuild:
 	rm -f *.cm* *.so *.a *.o

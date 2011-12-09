@@ -161,6 +161,16 @@ let exec_prec pict_view =
             Refe.filename := (tmp_name ())
         end
 
+let exec_rerand pct =
+    begin
+	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+		(Refe.filename := "/tmp/rand_map.bmp";
+        Refe.rand_file := true;)
+	else
+		failwith "Fatal error on genperlin"
+	end;
+   pct#set_file "/tmp/rand_map.bmp"
+
 
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
@@ -199,6 +209,9 @@ let win_flout () =
 		~border_width:5
 		~packing:fram#add () in
 	(*pas de filtre*)
+	let btn_rerand = GButton.button
+		~label:"Regenerate image"
+		~packing:box_fram#add () in
 	let btn_nop = GButton.button
 		~label:"Disable filter"
 		~packing:box_fram#add () in
@@ -243,8 +256,10 @@ let win_flout () =
 
 
 	(* -- CALLBACK -- *)
+	ignore (btn_rerand#connect#clicked
+		~callback:(fun () -> (exec_rerand picture)));
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (rank := 1; exec_nop picture)));
+		~callback:(fun () -> (exec_nop picture)));
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture)));
 	ignore (btn_aveg#connect#clicked
