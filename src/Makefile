@@ -3,7 +3,7 @@
 CC=ocamlopt.opt
 RM=rm -f
 OUT=carto
-ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml\
+ML=refe.ml argv.ml parser_obj.ml filter.ml pre.ml post.ml\
    camera.ml graphics_engine.ml browser.ml assist.ml main.ml
 CMX=${ML:.ml=.cmx}
 WALL= -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
