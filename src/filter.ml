@@ -311,11 +311,38 @@ let median_filtr img dim =
           if dim = 3 then
             li := [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
             red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
-            red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)];
-          else  
-            li := [red mat (x+1) (y+1); red mat (x+1) (y+1); red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);red mat (x+1) (y+1);
+            red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)]
+          else
+            begin
+            li := [
+              red mat (x-2) (y-2);
+              red mat (x-1) (y-2);
+              red mat (x  ) (y-2);
+              red mat (x+1) (y-2);
+              red mat (x+2) (y-2);
+              red mat (x-2) (y-1);
+              red mat (x-1) (y-1);
+              red mat (x  ) (y-1);
+              red mat (x+1) (y-1);
+              red mat (x+2) (y-1);
+              red mat (x-2) (y  );
+              red mat (x-1) (y  );
+              red mat (x  ) (y  );
+              red mat (x+1) (y  );
+              red mat (x+2) (y  );
+              red mat (x-2) (y+1);
+              red mat (x-1) (y+1);
+              red mat (x  ) (y+1);
+              red mat (x+1) (y+1);
+              red mat (x+2) (y+1);
+              red mat (x-2) (y+2);
+              red mat (x-1) (y+2);
+              red mat (x  ) (y+2);
+              red mat (x+1) (y+2);
+              red mat (x+2) (y+2)]
+            end;
           let li_f = List.fast_sort (fun x y -> compare x y) (!li) in
-          let g = List.nth li_f 4 in
+          let g = List.nth li_f ((List.length li_f)/2) in
           mat_f.(x).(y) <- (g,g,g);
         with Invalid_argument "index out of bounds" ->
                mat_f.(x).(y) <- mat.(x).(y);
