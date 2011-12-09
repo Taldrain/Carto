@@ -244,7 +244,7 @@ let win_flout () =
 
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (exec_nop picture)));
+		~callback:(fun () -> (rank := 1; exec_nop picture)));
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture)));
 	ignore (btn_aveg#connect#clicked
@@ -307,7 +307,6 @@ let winstep () =
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
-
 
 
 
@@ -427,5 +426,31 @@ let winalt () =
     if (Refe.is_save_obj ()) then
         ignore (lbl#set_text "[WARNING] OBJ file will be created");
 	ignore (btn_ok#connect#clicked ~callback:(win1#destroy));
-	win1#show ();
+	win1#show ()
 	(* end -- Generation des boutons en fonction de !nb_colors *)
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+
+
+
+(* -------------------------------------------------------------------------- *)
+(* ABOUT *)
+(* -------------------------------------------------------------------------- *)
+
+let aboutbox () =
+    let win = GWindow.about_dialog
+        ~authors:["Alonso Giraldo (girald_a) - Pikachu";
+                  "Quentin Ribierre (ribier_q) - Mathsup";
+                  "Thomas Mariaux (mariau_t) - Taldrain";
+                  "Thomas Joole - Tommytom"]
+        ~comments:"Supermap - Epita Infospe project - Winter 2011"
+        ~license:"BSD"
+        ~name:"SuperMap"
+        ~version:"RC-1"
+        ~title:"About" () in
+     win#show ()
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
