@@ -66,10 +66,10 @@ let view_img () =
 		~spacing:5
 		~packing:box_fram#add () in
 	let btn_so1 = GButton.button
-		~label:"Sobel 1"
+		~label:"Sobel colored"
 		~packing:box_so#add () in
 	let btn_so2 = GButton.button
-		~label:"Sobel 2"
+		~label:"Sobel W&B"
 		~packing:box_so#add () in
     let range = GRange.scale `HORIZONTAL
         ~digits:0
@@ -137,44 +137,90 @@ let view_img () =
 (* FENETRE DE FILTRES FLOUTE *)
 (* -------------------------------------------------------------------------- *)
 let rank = ref 1
+let stacky = Stack.create ()
 
-let tmp_name () =
-    ("/tmp/tmp"^(string_of_int !rank)^".bmp")
+let sdl_to_bmp img_sdl =
+	Sdlvideo.save_BMP img_sdl "/tmp/tmp.bmp"
 
-let exec_aveg pict_view =
+let exec_aveg1 pict_view =
     if (!rank <= 5) then
     begin
-  	let img = Sdlloader.load_image (Refe.get_filename ()) in
-    let ret = Filter.average1 img in
+    let ret = Filter.average1 (Stack.top stacky) in
     rank := !rank + 1;
-	Sdlvideo.save_BMP ret (tmp_name ());
-	pict_view#set_file (tmp_name ());
-    Refe.filename := (tmp_name ())
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
+
+let exec_aveg2 pict_view =
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.average2 (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
+
+let exec_gauss pict_view =
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.gauss3_filter (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
+
+let exec_med1 pict_view =
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.median_filtr3 (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
+
+let exec_med2 pict_view =
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.median_filtr5 (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
     end
 
 let exec_prec pict_view =
-    print_endline (string_of_int !rank);
     if (!rank > 1) then
         begin
+            ignore (Stack.pop stacky);
             rank := !rank - 1;
-	        pict_view#set_file (tmp_name ());
-            Refe.filename := (tmp_name ())
+            sdl_to_bmp (Stack.top stacky);
+	        pict_view#set_file ("/tmp/tmp.bmp");
         end
 
 let exec_rerand pct =
     begin
 	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
-		(Refe.filename := "/tmp/rand_map.bmp";
+		(Refe.filename := "/tmp/tmp.bmp";
         Refe.rand_file := true;)
 	else
 		failwith "Fatal error on genperlin"
 	end;
-   pct#set_file "/tmp/rand_map.bmp"
+    let img = Sdlloader.load_image "/tmp/tmp.bmp" in
+    Stack.push img stacky;
+    rank := 1;
+    pct#set_file "/tmp/tmp.bmp"
 
 
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
     Refe.save_obj := chk2#active;
+    sdl_to_bmp (Stack.top stacky);
+    Refe.filename := "/tmp/tmp.bmp";
+    Stack.clear stacky;
     w#destroy ();
     view_img ()
 
@@ -199,39 +245,78 @@ let win_flout () =
 		~border_width:9
 		~packing:hbox#add () in
 	(*pour les encadrer*)
-	let fram = GBin.frame
+	let fram1 = GBin.frame
+		~label:"Commons"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram1 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram1#add () in
+	(*pas de filtre*)
+	let btn_rerand = GButton.button
+		~label:"Regenerate image"
+		~packing:box_fram1#add () in
+	let btn_nop = GButton.button
+		~label:"Disable filter"
+		~packing:box_fram1#add () in
+	let btn_prec = GButton.button
+		~label:"Previous"
+		~packing:box_fram1#add () in
+
+	(*pour les encadrer*)
+	let fram2 = GBin.frame
 		~label:"Filters"
 		~border_width:5
 		~packing:box#pack () in
 	(*pour mettre les boutons dans la frame*)
-	let box_fram = GPack.vbox
+	let box_fram2 = GPack.vbox
 		~spacing:5
 		~border_width:5
-		~packing:fram#add () in
-	(*pas de filtre*)
-	let btn_rerand = GButton.button
-		~label:"Regenerate image"
-		~packing:box_fram#add () in
-	let btn_nop = GButton.button
-		~label:"Disable filter"
-		~packing:box_fram#add () in
-	let btn_prec = GButton.button
-		~label:"Previous"
-		~packing:box_fram#add () in
-	let btn_aveg = GButton.button
-		~label:"Moyenne"
-		~packing:box_fram#add () in
-	let _btn_4 = GButton.button
-		~label:"unused"
-		~packing:box_fram#add () in
+		~packing:fram2#add () in
+	let box_moy = GPack.hbox
+		~spacing:5
+		~packing:box_fram2#add () in
+	let btn_aveg1 = GButton.button
+		~label:"Low average"
+		~packing:box_moy#add () in
+	let btn_aveg2 = GButton.button
+		~label:"High average"
+		~packing:box_moy#add () in
+
+	let btn_gauss = GButton.button
+		~label:"Gauss"
+		~packing:box_fram2#add () in
+
+	let box_med = GPack.hbox
+		~spacing:5
+		~packing:box_fram2#add () in
+	let btn_med1 = GButton.button
+		~label:"Low median"
+		~packing:box_med#add () in
+	let btn_med2 = GButton.button
+		~label:"High median"
+		~packing:box_med#add () in
+
+	(*pour les encadrer*)
+	let fram3 = GBin.frame
+		~label:"Options"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram3 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram3#add () in
 	let chk_btn = GButton.check_button
 		~label:"Save colors in txt file"
         ~active:false
-		~packing:box_fram#add () in
+		~packing:box_fram3#add () in
 	let chk_btn2 = GButton.check_button
 		~label:"Save obj"
         ~active:false
-		~packing:box_fram#add () in
+		~packing:box_fram3#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
 	let btn_close = GButton.button
@@ -254,7 +339,6 @@ let win_flout () =
 		~packing:secbox#add () in
 
 
-
 	(* -- CALLBACK -- *)
 	ignore (btn_rerand#connect#clicked
 		~callback:(fun () -> (exec_rerand picture)));
@@ -262,11 +346,25 @@ let win_flout () =
 		~callback:(fun () -> (exec_nop picture)));
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture)));
-	ignore (btn_aveg#connect#clicked
-		~callback:(fun () -> (exec_aveg picture)));
+	ignore (btn_aveg1#connect#clicked
+		~callback:(fun () -> (exec_aveg1 picture)));
+	ignore (btn_aveg2#connect#clicked
+		~callback:(fun () -> (exec_aveg2 picture)));
+
+	ignore (btn_gauss#connect#clicked
+		~callback:(fun () -> (exec_gauss picture)));
+	ignore (btn_med1#connect#clicked
+		~callback:(fun () -> (exec_med1 picture)));
+	ignore (btn_med2#connect#clicked
+		~callback:(fun () -> (exec_med2 picture)));
+
 	ignore (btn_close#connect#clicked
         ~callback:(fun () -> destro win chk_btn chk_btn2));
 
+    (* crade *)
+  	let img = Sdlloader.load_image (Refe.get_filename ()) in
+	Sdlvideo.save_BMP img "/tmp/tmp1.bmp";
+    Stack.push img stacky;
 
 	win#show ()
 	end
