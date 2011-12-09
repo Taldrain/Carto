@@ -36,6 +36,6 @@ let args =
 
 let parse () =
   let usage_msg = "Usage: supermap (options) <.bmp>\nOptions are:" in
-    Arg.parse args (fun "" -> ()) usage_msg
+    Arg.parse (Arg.align args) (fun "" -> ()) usage_msg
 
 let _ = parse()
