@@ -307,7 +307,7 @@ let average2 img =
    filtr_simpl_img img (average5()) 5 25
 
 (* gauss3 filter *)
-let gauss3_filter img variance =
+let gauss3_filter img =
   filtr_simpl_img img (gauss3()) 3 16
 
 (* function needed for the next function *)

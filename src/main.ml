@@ -169,4 +169,3 @@ let main () =
   	w#show ();
   	GMain.main ()
 
-let _ = main ()

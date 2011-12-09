@@ -22,7 +22,7 @@ let rec wait_key () =
 	    | Sdlevent.KEYDOWN _ -> ()
       | _ -> wait_key ()
 
-      
+
 (* shows the surface of the image on the destination surface dst (the screen) *)
 let show img dst =
   let d = Sdlvideo.display_format img in
@@ -64,7 +64,7 @@ let list_to_text li =
 
 (* ---------------------------- Put map to grey ----------------------------- *)
 
-let img_to_grey img = 
+let img_to_grey img =
   for x=0 to (Refe.get_w())-1 do
 	  for y=0 to (Refe.get_h())-1 do
       let (r,g,b) = Sdlvideo.get_pixel_color img x y in
@@ -95,7 +95,7 @@ let contour image image2 =
         || !center <> !down &&  y < (Refe.get_h())-1 ) then
           Sdlvideo.put_pixel_color image2 x y (0,0,0) else
           Sdlvideo.put_pixel_color image2 x y !center;
-        if (!center <> !right || !center <> !down) then 
+        if (!center <> !right || !center <> !down) then
           listcolor := p_list !listcolor !center
         else() ;
       done;
@@ -133,15 +133,15 @@ let contour_diag1 image interv =
   let rec con_d img x y inc_x inc_y y_finish =
     match (x, y, inc_x, inc_y, y_finish) with
 	   | (x, y, inc_x, inc_y, y_finish) when inc_x > (Refe.get_w())-1 -> ()
-     | (x, y, inc_x, inc_y, y_finish) when inc_y > (Refe.get_h())-1 -> 
+     | (x, y, inc_x, inc_y, y_finish) when inc_y > (Refe.get_h())-1 ->
          con_d img 0 0 0 0 true
-     | (x, y, inc_x, inc_y, y_finish) 
-       when  x >= (Refe.get_w())-1 || y >= (Refe.get_h())-1 -> 
+     | (x, y, inc_x, inc_y, y_finish)
+       when  x >= (Refe.get_w())-1 || y >= (Refe.get_h())-1 ->
          if inc_x < (Refe.get_w())-1 && y_finish = true then
-	          con_d img inc_x inc_y (inc_x + interv) 0 true 
+	          con_d img inc_x inc_y (inc_x + interv) 0 true
           else if inc_x = 0 && y_finish = false then
 		        con_d img inc_x inc_y 0 (inc_y + interv) false
-     | (x, y, inc_x, inc_y, y_finish) -> 
+     | (x, y, inc_x, inc_y, y_finish) ->
          Sdlvideo.put_pixel_color img x y (0,0,0);
 	       con_d img (x+1) (y+1) inc_x inc_y y_finish
     in con_d image 0 0 0 0 false
@@ -151,7 +151,7 @@ let contour_diag1 image interv =
  let rec con_d img x y inc_x inc_y  =
    match (x, y, inc_x, inc_y) with
      | (x, y, inc_x, inc_y) when inc_x >= (Refe.get_w())-1 -> ()
-     | (x, y, inc_x, inc_y) when inc_y >= (Refe.get_h())-1 && x > 
+     | (x, y, inc_x, inc_y) when inc_y >= (Refe.get_h())-1 && x >
      (Refe.get_w())-1
       -> con_d img inc_x inc_y (inc_x+interv) inc_y
      | (x, y, inc_x, inc_y) when  inc_y < (Refe.get_h())-1 && (y <= 0)
@@ -173,8 +173,8 @@ let rec map_to_mat x y intx inty = match (intx, inty) with
   | (intx, inty) when intx > ((Refe.get_w())) ->
       map_to_mat 0 (y+1) 0 (inty + (Refe.get_step()))
   | (intx, inty) when inty > ((Refe.get_h())) -> ()
-  | (intx, inty) -> 
-      Array.set (Refe.get_matrice()).(x) (y) (inty,intx); 
+  | (intx, inty) ->
+      Array.set (Refe.get_matrice()).(x) (y) (inty,intx);
       map_to_mat (x+1) y (intx + Refe.get_step()) inty
 
 
@@ -183,7 +183,7 @@ let matXY_to_matRGB img =
   for y = 0 to (Refe.get_h() / Refe.get_step()) do
     for x = 0 to (Refe.get_w() / Refe.get_step()) do
     	 let (a,b) = (Refe.get_matrice()).(x).(y) in
-        Array.set (Refe.get_matrice_rgb()).(x) (y) 
+        Array.set (Refe.get_matrice_rgb()).(x) (y)
          ((x,y),(Sdlvideo.get_pixel_color img a b))
     done;
   done
@@ -239,5 +239,5 @@ let pre_trait () =
 	Sdlvideo.save_BMP img2 "out.bmp";
 	(*wait_key ();*)
 	Sdl.quit ()
-  
+
 (* END -- Functions for the pre traitement *)

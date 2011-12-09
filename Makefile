@@ -2,11 +2,16 @@
 
 VPATH=src/
 GPATH=generator/
-OUT=carto genperlin
+OUT=supermap genperlin
 IMG=img/car*
 
 all:
 	cd ${VPATH} && ${MAKE}
+
+32: assemble32
+
+assemble32:
+	cd ${VPATH} && ${MAKE} 32
 
 genperlin:
 	cd ${VPATH} && ${MAKE} genperlin
@@ -14,15 +19,12 @@ genperlin:
 ocamlbuild: genperlin
 	cd ${VPATH} && ${MAKE} ocamlbuild
 
-32: assemble32
-
-assemble32:
-	cd ${VPATH} && ${MAKE} 32
-
 clean:
 	rm -f ${IMG} && cd ${VPATH} && ${MAKE} clean && cd ${GPATH} && ${MAKE} clean
 
 cleanall: clean
-	${RM} ${OUT} InfoCarto.txt out.bmp supermap.obj rand_map.bmp contour?.bmp tmp.bmp median.bmp
+	${RM} ${OUT} InfoCarto.txt supermap.obj
+	${RM} out.bmp rand_map.bmp contour?.bmp tmp.bmp median.bmp
+
 
 #END
