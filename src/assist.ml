@@ -162,8 +162,9 @@ let exec_prec pict_view =
         end
 
 
-let destro w chk =
-    Refe.save_color_txt := (chk#active);
+let destro w chk chk2=
+    Refe.save_color_txt := chk#active;
+    Refe.save_obj := chk2#active;
     w#destroy ();
     view_img ()
 
@@ -214,6 +215,10 @@ let win_flout () =
 		~label:"Save colors in txt file"
         ~active:false
 		~packing:box_fram#add () in
+	let chk_btn2 = GButton.check_button
+		~label:"Save obj"
+        ~active:false
+		~packing:box_fram#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
 	let btn_close = GButton.button
@@ -244,7 +249,8 @@ let win_flout () =
 		~callback:(fun () -> (exec_prec picture)));
 	ignore (btn_aveg#connect#clicked
 		~callback:(fun () -> (exec_aveg picture)));
-	ignore (btn_close#connect#clicked ~callback:(fun () -> destro win chk_btn));
+	ignore (btn_close#connect#clicked
+        ~callback:(fun () -> destro win chk_btn chk_btn2));
 
 
 	win#show ()
@@ -413,9 +419,13 @@ let winalt () =
 		Stack.push str stack;
 		sugar := !sugar + 5;
 	done;
+    let lbl = GMisc.label
+		~packing:vbox#pack () in
 	let btn_ok = GButton.button
 		~label:"OK"
 		~packing:(vbox#pack ~padding:5) () in
+    if (Refe.is_save_obj ()) then
+        ignore (lbl#set_text "[WARNING] OBJ file will be created");
 	ignore (btn_ok#connect#clicked ~callback:(win1#destroy));
 	win1#show ();
 	(* end -- Generation des boutons en fonction de !nb_colors *)

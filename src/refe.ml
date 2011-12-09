@@ -35,6 +35,9 @@ let get_step() = !step
 let save_color_txt = ref false
 let save_ornot_color () = !save_color_txt
 
+let save_obj = ref false
+let is_save_obj () = !save_obj
+
 let w = ref 600
 let get_w() = !w
 

@@ -211,6 +211,7 @@ let post_treat() =
     Refe.list_3d := i_2_f (mat_to_li());
     Refe.list_xyz := (mat_to_lixyz());
     li_ord := list_tolist2 (Refe.get_list_xyz());
-    (*write_obj();*)
+    if (Refe.is_save_obj ()) then
+        write_obj();
   end
 
