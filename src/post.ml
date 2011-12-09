@@ -215,3 +215,107 @@ let post_treat() =
         write_obj();
   end
 
+
+
+
+
+
+(* grosse ligne en commentaire------------------------------------------------*)
+
+(* variables globales necessaires a la triangularisation *)
+let x0 = ref 0
+let y0 = ref 0
+let z0 = ref 0
+let xx = ref 0
+let yx = ref 0
+let xy = ref 0
+let yy = ref 0
+
+
+(* optimisation de la triangularisation *)
+
+(* test d altitude sur la largeur *)
+let test_x x y =
+	let i = ref 0 in
+	let get_z ((a,b,c),d) = c in 
+	let zi e f = get_z (get_f e f) in
+		while ((!i) < ((y-(!y0))+1)) && ( (zi x ((!y0)+(!i))) = (!z0)) do
+			i := !i + 1
+		done;
+	(zi x ((!y0)+(!i))) = (!z0)
+	
+(* test d altitude su la hauteur *)
+let test_y x y =
+	let j = ref 0 in
+	let get_z ((a,b,c),d) = c in
+	let zj e f = get_z (get_f e f) in
+		while ((!j) < ((x-(!x0))+1)) && ( (zj ((!x0)+(!j)) y) = (!z0)) do
+			j := !j + 1
+		done;
+	(zj ((!x0)+(!j)) y) = (!z0)
+
+(* le triangle du bas a atteint son max, mais pas celui du haut *)
+let rec tri_max_up x y =
+	if (test_y x y) then 
+		tri_max_up (x+1) (y+1)
+	else 
+		xy := (x-1);
+		yy := (y-1)
+
+(* le triangle du haut a atteint son max, mais pas celui du bas *)
+let rec tri_max_down x y =
+	if (test_x x y) then
+		tri_max_down (x+1) (y+1)
+	else
+		xx := (x-1);
+		yx := (y-1)
+
+(* chercher le plus grand triangle possible en partant de (x0,y0) *)
+let new_triangles x y =
+	x0 := x;
+	y0 := y;
+	let get_z ((_,_,c),_) = c in
+	z0 := get_z (get_f (!x0) (!y0));
+		let rec tri_max x y = 
+			let testx = test_x x y in
+			let testy = test_y x y in
+			begin
+				if (testx && testy) then
+					tri_max (x+1) (y+1);
+				if ( testx && (not testy) ) then
+					begin	
+						xx := (x-1);
+						yx := (y-1);
+						tri_max_up (x+1) (y+1)
+					end;
+				if ( (not testx) && testy) then
+					begin
+						xy := (x-1);
+						yy := (y-1);
+						tri_max_down (x+1) (y+1)				
+					end;
+				if ( (not testx) && (not testy) ) then
+					begin
+						xx := (x-1);
+						yx := (y-1);
+						xy := (x-1);
+						yy := (y-1)
+					end;
+			end
+		in tri_max !x0 !y0
+	(* maintenant que on a les coordonnées des sommet des triangles max, il faut les stockés *)
+	
+
+
+
+(* fonction principale de la triangularisation,
+qui consiste a tester (x,y) , s'il font déja parti d'un triangle, x->x+1,
+si x depasse la largeur, x->0 et y->y+1, si y depasse la hauteur, sortir,
+sinon new_triangles x y *)
+let triangularisation () =
+	let rec tri x y = match (x,y) with
+		| (x,y) when y > ((Refe.get_w())/(Refe.get_step())) -> ()
+		| (x,y) when x > ((Refe.get_h())/(Refe.get_step())) -> tri 0 (y+1)
+		| (x,y) when true(* (x,y) appartient deja a un triangle *) -> tri (x+1) y
+		| (x,y) -> new_triangles x y
+	in tri 0 0
