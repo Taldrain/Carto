@@ -30,11 +30,12 @@ let exec_brow win b_img b_obj =
 	end
 
 let exec_random btn =
-	begin
+    begin
 	if ((Sys.command "./genperlin -save > rand_map.bmp") = 0) then
-		Refe.filename := "rand_map.bmp"
+		(Refe.filename := "rand_map.bmp";
+        Refe.rand_file := true;)
 	else
-		failwith "Fatal error sur genperlin"
+		failwith "Fatal error on genperlin"
 	end;
   	Assist.win_flout ();
 	btn#misc#set_sensitive true
@@ -88,7 +89,15 @@ let main () =
 	let item1 = GMenu.menu_item
 		~label:"File"
 		~packing:menubar#append () in
+	let menuhelp = GMenu.menu () in
+    let mf_about = GMenu.menu_item
+        ~label:"About"
+		~packing:menuhelp#append () in
+	let item2 = GMenu.menu_item
+		~label:"Help"
+		~packing:menubar#append () in
 	item1#set_submenu menufile;
+    item2#set_submenu menuhelp;
 
 	let _lbl = GMisc.label
 		~text:"Projet Carto -- Topo team"
@@ -147,6 +156,8 @@ let main () =
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (mf_quit#connect#activate
 		~callback:quit);
+	ignore (mf_about#connect#activate
+		~callback:(Assist.aboutbox));
 
 	(*buttons*)
   	ignore (w#connect#destroy ~callback:GMain.quit);
