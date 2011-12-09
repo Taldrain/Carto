@@ -336,8 +336,7 @@ let median_filtr img =
           let g = List.nth li_f 4 in
           mat_f.(x).(y) <- (g,g,g);
         with Invalid_argument "index out of bounds" ->
-               (mat_f.(x).(y) <- mat.(x).(y);
-                  print_endline "out";)
+               mat_f.(x).(y) <- mat.(x).(y);
       done;
     done;
     mat_to_img mat_f img
