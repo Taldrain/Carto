@@ -7,16 +7,16 @@ let save img str =
   Sdlvideo.save_BMP img str
 
 let args =
-  let nw = " Use Supermap with the gui" in
+  let gui = " Use Supermap with the gui" in
   let s = " Apply the Sobel filter, on the .bmp" in
   let sc = " Apply the Sobel filter with color, on the .bmp" in
   let av1 = " Apply the Average filter with the precision of 3" in
   let av2 = " Apply the Average filter with the precision of 5" in
   let g = " Apply the Gauss filter" in
     (* Look at my indentation, my indentation is amazing... *)
-  [("-nw", Arg.Unit
+  [("-g", Arg.Unit
      (fun () -> Main.main ()),
-     nw);
+     gui);
    ("-sobel", Arg.String
      (fun str -> (save (Filter.sobel_filter_f (sTS str)) "sobel.bmp");
      ()), s);

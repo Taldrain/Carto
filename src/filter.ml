@@ -295,7 +295,7 @@ let sobel_filter2 img =
 (* ------------------------- Function for median filter --------------------- *)
 
 (* give the red component of pixel *)
-let red mat x y = 
+let red mat x y =
   let (r,_,_) = mat.(x).(y) in
     r
 
