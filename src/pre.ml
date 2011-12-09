@@ -205,10 +205,10 @@ let pre_trait () =
   get_dims img;
   let img2 = Sdlvideo.create_RGB_surface_format
   img [] (Refe.get_w()) (Refe.get_h()) in
-	  (* we create the display surface *)
-  (*let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
-	    (* on affiche l'image avant traitement*)
-	    show img display;
+	(* we create the display surface *)
+  let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
+	(* on affiche l'image avant traitement*)
+	(*    show img display;
 	wait_key();*)
 	(* Grid function *)
 	(*let img3 = (Filter.gauss3_filter img 1.) in
@@ -223,21 +223,19 @@ let pre_trait () =
   Sdlvideo.save_BMP img3 "grey.bmp";*)
   let img4 = Filter.median_filtr img in
   Sdlvideo.save_BMP img4 "median.bmp";
-
 	contour img img2;
-	(*show img2 display;
-	wait_key ();*)
-  (* contour sobel test *)
+	show img2 display;
+	wait_key ();
 	contour_hor img2 (Refe.get_step());
 	contour_ver img2 (Refe.get_step());
 	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
   	(* on affiche l'image apres traitement*)
-	(*show img2 display;*)
+	show img2 display;
 	(* recording the image *)
 	Sdlvideo.save_BMP img2 "out.bmp";
 	(*wait_key ();*)
 	Sdl.quit ()
-  
+
 (* END -- Functions for the pre traitement *)
