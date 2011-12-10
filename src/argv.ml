@@ -19,7 +19,7 @@ let args =
   let med5 = " Apply the Median filter with a 5x5 matrix" in
   let inst_3d = " Instant 3d on a randomly generate map" in
   let v = " Print version and exit" in
-    (* Look at my indentation, my indentation is amazing... *)
+    (* Look at my indentation, my indentation is Amazing... *)
   [("-sobel", Arg.String
      (fun str -> (save (Filter.sobel_filter_f (sTS str)) "sobel.bmp");
      ()), s);
