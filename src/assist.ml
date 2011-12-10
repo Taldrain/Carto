@@ -237,7 +237,7 @@ let destro w chk chk2=
     view_img ()
 
 let grise bt1 bt2 bt3 bt4 bt5 bt6 =
-   ( 
+   (
     if (!rank = 1) then
         (
             bt1#misc#set_sensitive false;
@@ -272,7 +272,23 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
         );
     );
     )
-            
+
+let save parent =
+	let dialog = GWindow.file_chooser_dialog
+		~action: `SAVE
+		~title: "Save image"
+		~parent () in
+	dialog#add_button_stock `CANCEL `CANCEL;
+	dialog#add_select_button_stock `SAVE `SAVE;
+	begin
+	match dialog#run () with
+	| `SAVE -> Sdlvideo.save_BMP (Stack.top stacky)
+               (match dialog#filename with
+                    |Some x -> x
+                    | _ -> "~/save.bmp")
+	| `DELETE_EVENT | `CANCEL -> Refe.if_file := false
+	end;
+	dialog#destroy ()
 
 let win_flout () =
 	(*La fenetre de filtre *)
@@ -369,6 +385,9 @@ let win_flout () =
 		~packing:box_fram3#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
+    let btn_save = GButton.button
+        ~label:"Save current image"
+		~packing:box#pack () in
 	let btn_close = GButton.button
 		~label:"Next"
 		~packing:box#pack () in
@@ -446,6 +465,8 @@ let win_flout () =
                                     btn_med1
                                     btn_med2)));
 
+	ignore (btn_save#connect#clicked
+        ~callback:(fun () -> save win));
 	ignore (btn_close#connect#clicked
         ~callback:(fun () -> destro win chk_btn chk_btn2));
 
