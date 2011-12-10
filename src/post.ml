@@ -203,24 +203,13 @@ let write_obj() =
   end
 
 
-(*fonction main du post_treatment *)
-let post_treat() =
-  begin
-    get_alt();
-	liss ();
-    Refe.list_3d := i_2_f (mat_to_li());
-    Refe.list_xyz := (mat_to_lixyz());
-    li_ord := list_tolist2 (Refe.get_list_xyz());
-    if (Refe.is_save_obj ()) then
-        write_obj();
-  end
 
 
 
 
 
 
-(* grosse ligne en commentaire------------------------------------------------*)
+(* OPTIMISATION DE LA TRIANGULATION *)
 
 (* variables globales necessaires a la triangularisation *)
 let x0 = ref 0
@@ -232,22 +221,64 @@ let xy = ref 0
 let yy = ref 0
 
 
-(* optimisation de la triangularisation *)
+
+
+(* calculer un angle a partir de trois point *)
+let calc_angle xA yA xD yD xB yB =
+	acos ( ( ( ((xD-.xB)*.(xD-.xB)) +. ((yD-.yB)*.(yD-.yB)) )
+			+. ( ((xD-.xA)*.(xD-.xA)) +. ((yD-.yA)*.(yD-.yA)) )
+			-. ( ((xB-.xA)*.(xB-.xA)) +. ((yB-.yA)*.(yB-.yA)) ) )
+		/. ( 2. *. ( ((xD-.xB)*.(xD-.xB)) +. ((yD-.yB)*.(yD-.yB)) )
+			*. ( ((xD-.xA)*.(xD-.xA)) +. ((yD-.yA)*.(yD-.yA)) ) ) )
+
+
+(* somme des trois angles *)
+let som_angles xA yA xB yB xC yC xD yD =
+	(calc_angle xA yA xD yD xB yB)
+	+. (calc_angle xB yB xD yD xC yC)
+	+. (calc_angle xC yC xD yD xA yA)
+
+(* test d egalite de pi *)
+let test_2pi x =
+	(x>6.282) && (x<6.284)
+
+(* tester si (x,y) appartient deja a un triangle *)
+let tri_membership x y =
+	let rec test_membership i =
+		let xi ((a,_,_),_) = a in
+		let yi ((_,b,_),_) = b in
+			let	x1 = xi (List.nth !Refe.list_tri3D i) in
+			let y1 = yi (List.nth !Refe.list_tri3D i) in
+			let x2 = xi (List.nth !Refe.list_tri3D (i+1)) in
+			let y2 = yi (List.nth !Refe.list_tri3D (i+1)) in
+			let x3 = xi (List.nth !Refe.list_tri3D (i+2)) in
+			let y3 = yi (List.nth !Refe.list_tri3D (i+2)) in
+				if (test_2pi (som_angles x1 y1 x2 y2 x3 y3 (float_of_int x) (float_of_int y))) then true
+					else 
+						begin
+							if (i+5) < (List.length !Refe.list_tri3D) then	
+								test_membership (i+3)
+							else false
+						end;
+	in test_membership 0
+
 
 (* test d altitude sur la largeur *)
 let test_x x y =
-	let i = ref 0 in
-	let get_z ((a,b,c),d) = c in 
-	let zi e f = get_z (get_f e f) in
-		while ((!i) < ((y-(!y0))+1)) && ( (zi x ((!y0)+(!i))) = (!z0)) do
-			i := !i + 1
-		done;
-	(zi x ((!y0)+(!i))) = (!z0)
+	if (tri_membership x y) then false
+	else let i = ref 0 in
+		let get_z ((_,_,c),_) = c in 
+		let zi e f = get_z (get_f e f) in
+			while ((!i) <  ((y-(!y0))+1)) 
+					&& ( (zi x ((!y0)+(!i))) = (!z0)) do
+				i := !i + 1
+			done;
+		(zi x ((!y0)+(!i))) = (!z0)
 	
 (* test d altitude su la hauteur *)
 let test_y x y =
 	let j = ref 0 in
-	let get_z ((a,b,c),d) = c in
+	let get_z ((_,_,c),_) = c in
 	let zj e f = get_z (get_f e f) in
 		while ((!j) < ((x-(!x0))+1)) && ( (zj ((!x0)+(!j)) y) = (!z0)) do
 			j := !j + 1
@@ -269,6 +300,20 @@ let rec tri_max_down x y =
 	else
 		xx := (x-1);
 		yx := (y-1)
+
+(* creer la liste de coordonnees des grands triangles *)
+let stock_tri3D x0 y0 x1 y1 x2 y2 =
+	let f_of_i ((a,b,c),(d,e,f)) =
+		(((float_of_int a),(float_of_int b),(float_of_int c)),
+		((float_of_int d),(float_of_int e),(float_of_int f))) in
+			Refe.list_tri3D :=
+			(f_of_i (get_f x0 y0))
+			::(f_of_i (get_f x0 y1))
+			::(f_of_i (get_f x1 y1))
+			::(f_of_i (get_f x0 y0))
+			::(f_of_i (get_f x2 y0))
+			::(f_of_i (get_f x2 y2))
+			::(Refe.get_list_tri3D())
 
 (* chercher le plus grand triangle possible en partant de (x0,y0) *)
 let new_triangles x y =
@@ -301,10 +346,11 @@ let new_triangles x y =
 						xy := (x-1);
 						yy := (y-1)
 					end;
-			end
+			end;
+(* maintenant que on a les coordonnées des sommet des triangles max,
+il faut les stockés *)
+	stock_tri3D !x0 !y0 !xx !yx !xy !yy
 		in tri_max !x0 !y0
-	(* maintenant que on a les coordonnées des sommet des triangles max, il faut les stockés *)
-	
 
 
 
@@ -312,10 +358,28 @@ let new_triangles x y =
 qui consiste a tester (x,y) , s'il font déja parti d'un triangle, x->x+1,
 si x depasse la largeur, x->0 et y->y+1, si y depasse la hauteur, sortir,
 sinon new_triangles x y *)
-let triangularisation () =
+let triangulation () =
 	let rec tri x y = match (x,y) with
 		| (x,y) when y > ((Refe.get_w())/(Refe.get_step())) -> ()
 		| (x,y) when x > ((Refe.get_h())/(Refe.get_step())) -> tri 0 (y+1)
-		| (x,y) when true(* (x,y) appartient deja a un triangle *) -> tri (x+1) y
+		| (x,y) when (tri_membership x y) -> tri (x+1) y
 		| (x,y) -> new_triangles x y
 	in tri 0 0
+
+
+
+
+
+
+(*fonction main du post_treatment *)
+let post_treat() =
+  begin
+    get_alt();
+	liss ();
+    Refe.list_3d := i_2_f (mat_to_li());
+    Refe.list_xyz := (mat_to_lixyz());
+    li_ord := list_tolist2 (Refe.get_list_xyz());
+	triangulation ();
+    if (Refe.is_save_obj ()) then
+        write_obj();
+  end
