@@ -168,15 +168,14 @@ let exec_rerand pct =
     pct#set_file "/tmp/tmp.bmp"
 
 let exec_wb pict_view =
-    (*if (!rank <= 5) then
+    if (!rank <= 5) then
     begin
-    (*let ret = Filter. (Stack.top stacky) in*)
+    let ret = Filter.img_to_grey (Stack.top stacky) in
     rank := !rank + 1;
     Stack.push ret stacky;
     sdl_to_bmp (Stack.top stacky);
 	pict_view#set_file ("/tmp/tmp.bmp");
-    end*)
-    ()
+    end
 
 let exec_aveg1 pict_view =
     if (!rank <= 5) then
