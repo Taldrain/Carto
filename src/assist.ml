@@ -710,7 +710,7 @@ let aboutbox () =
                   "Thomas Mariaux (mariau_t) - Taldrain";
                   "Thomas Joole (joole_t) - Tommytom"]
         ~comments:"Supermap - Epita Infospe project - Winter 2011"
-        ~license:"BSD"
+        ~license:"GPLv3"
         ~name:"SuperMap"
         ~version:"RC-1"
         ~title:"About"

@@ -74,3 +74,6 @@ let get_list_xyz() = !list_xyz
 
 let list_tri3D = ref [((0.,0.,0.),(0.,0.,0.))]
 let get_list_tri3D () = !list_tri3D
+
+let version = ref "Supermap, version RC-1"
+let gVersion = !version
