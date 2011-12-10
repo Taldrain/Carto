@@ -75,7 +75,7 @@ let display () =
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
-  Glut.swapBuffers ()
+  Gl.flush ()
 
 
 

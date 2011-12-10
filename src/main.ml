@@ -88,7 +88,7 @@ let main () =
 	(* --------- *)
 
     area#connect#realize ~callback: Graphics_engine.init;
-    area#connect#display ~callback:(Graphics_engine.display; area#swap_buffers );
+    area#connect#display ~callback:(Graphics_engine.display (); area#swap_buffers ());
 
 	(*menu*)
 	ignore (mf_open#connect#activate
@@ -105,8 +105,7 @@ let main () =
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
 	ignore (btn_3d#connect#clicked
-		~callback:(fun () ->let hip ()
-               GMain.Main.main ();
+		~callback:(fun () ->
                GMain.Timeout.add ~ms:20 ~callback:(fun () -> Graphics_engine.display(); true )
         ));
 	ignore (btn_quit#connect#clicked
