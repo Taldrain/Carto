@@ -72,10 +72,7 @@ let sobelv2_2() =
 
 let gauss3() (* var *) =
   let mat = Array.make_matrix 3 3 0 in
-(*  let grad x y = int_of_float(( 1. /. ( 2. *. 3.1416 *. var ** 2.))
-                  *. exp ( -. ( (float)(x) ** 2. +. (float)(y) ** 2. ) /. 2. *.
-                  ( var ** 2.) )) in  *)
-  mat.(0).(0) <- 1;
+    mat.(0).(0) <- 1;
   mat.(1).(0) <- 2;
   mat.(2).(0) <- 1;
   mat.(0).(1) <- 2;
@@ -231,6 +228,7 @@ let mat_to_img mat img =
       done;
     done;
   image
+
 (* e1 = elt of mat1...    ef = sqrt (square e1 + square e2)  *)
 let mat1_mat2 mat1 mat2 img =
   let mat_f =
@@ -317,57 +315,6 @@ let red mat x y =
   let (r,_,_) = mat.(x).(y) in
     r
 
-(* mdian filter, it has a different behaviour *)
-(*let median_filtr img dim =
-  let mat = img_to_mat img in
-  let mat_f = Array.make_matrix (Array.length mat)
-              (Array.length mat.(0)) (0,0,0) in
-    for x = 0 to Array.length mat - 1 do
-      for y = 0 to Array.length mat.(0) - 1 do
-        try
-          let li = ref [] in
-          if dim = 3 then
-            li := [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
-            red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
-            red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)]
-          else
-            begin
-            li := [
-              red mat (x-2) (y-2);
-              red mat (x-1) (y-2);
-              red mat (x  ) (y-2);
-              red mat (x+1) (y-2);
-              red mat (x+2) (y-2);
-              red mat (x-2) (y-1);
-              red mat (x-1) (y-1);
-              red mat (x  ) (y-1);
-              red mat (x+1) (y-1);
-              red mat (x+2) (y-1);
-              red mat (x-2) (y  );
-              red mat (x-1) (y  );
-              red mat (x  ) (y  );
-              red mat (x+1) (y  );
-              red mat (x+2) (y  );
-              red mat (x-2) (y+1);
-              red mat (x-1) (y+1);
-              red mat (x  ) (y+1);
-              red mat (x+1) (y+1);
-              red mat (x+2) (y+1);
-              red mat (x-2) (y+2);
-              red mat (x-1) (y+2);
-              red mat (x  ) (y+2);
-              red mat (x+1) (y+2);
-              red mat (x+2) (y+2)]
-            end;
-          let li_f = List.fast_sort (fun x y -> compare x y) (!li) in
-          let g = List.nth li_f ((List.length li_f)/2) in
-          mat_f.(x).(y) <- (g,g,g);
-        with Invalid_argument "index out of bounds" ->
-               mat_f.(x).(y) <- mat.(x).(y);
-      done;
-    done;
-    mat_to_img mat_f img
-*)
 (* function needed for the next function *)
 let rec qsort li g = match li with
   | [] -> failwith "problem in median color filter"

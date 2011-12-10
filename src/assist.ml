@@ -16,10 +16,10 @@ let exec_so level pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
 	begin
 	if level = 1 then
-		let img_so = (Filter.sobel_filter_f img) in
+		let img_so = (Filter.sobel_filter_f_color img) in
 		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
 	else (*level = 2 *)
-		let img_so = (Filter.sobel_filter_f_color img) in
+		let img_so = (Filter.sobel_filter_f img) in
 		Sdlvideo.save_BMP img_so "tmp/tmp.bmp";
 	end;
 	Refe.filename := "/tmp/tmp.bmp";
