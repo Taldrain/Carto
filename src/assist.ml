@@ -142,12 +142,13 @@ let stacky = Stack.create ()
 let sdl_to_bmp img_sdl =
 	Sdlvideo.save_BMP img_sdl "/tmp/tmp.bmp"
 
-let exec_off pict_view =
+let exec_off btn pict_view =
     Stack.clear stacky;
     let img = Sdlloader.load_image (Refe.get_orig_file ()) in
     Stack.push img stacky;
     sdl_to_bmp img;
 	Refe.filename := (Refe.get_orig_file ());
+    btn#misc#set_sensitive false;
     rank := 1;
     pict_view#set_file "/tmp/tmp.bmp"
 
@@ -166,6 +167,16 @@ let exec_rerand pct =
     rank := 1;
     pct#set_file "/tmp/tmp.bmp"
 
+let exec_wb pict_view =
+    (*if (!rank <= 5) then
+    begin
+    (*let ret = Filter. (Stack.top stacky) in*)
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end*)
+    ()
 
 let exec_aveg1 pict_view =
     if (!rank <= 5) then
@@ -236,7 +247,7 @@ let destro w chk chk2=
     w#destroy ();
     view_img ()
 
-let grise bt1 bt2 bt3 bt4 bt5 bt6 =
+let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
    (
     if (!rank = 1) then
         (
@@ -246,7 +257,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive true;
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
-            bt6#misc#set_sensitive true
+            bt6#misc#set_sensitive true;
+            bt7#misc#set_sensitive true
         )
     else
     (
@@ -258,7 +270,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive false;
             bt4#misc#set_sensitive false;
             bt5#misc#set_sensitive false;
-            bt6#misc#set_sensitive false
+            bt6#misc#set_sensitive false;
+            bt7#misc#set_sensitive false
         )
     else
         (
@@ -268,7 +281,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive true;
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
-            bt6#misc#set_sensitive true
+            bt6#misc#set_sensitive true;
+            bt7#misc#set_sensitive true
         );
     );
     )
@@ -331,6 +345,19 @@ let win_flout () =
 		~label:"Previous"
 		~packing:box_fram1#add () in
 
+	(*pour les encadrer*)
+	let fram4 = GBin.frame
+		~label:"Transformations"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram4 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram4#add () in
+	let btn_wb = GButton.button
+		~label:"White & black"
+		~packing:box_fram4#add () in
 	(*pour les encadrer*)
 	let fram2 = GBin.frame
 		~label:"Filters"
@@ -414,7 +441,16 @@ let win_flout () =
 		~callback:(fun () -> (exec_rerand picture;
                               )));
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (exec_off picture)));
+		~callback:(fun () -> (exec_off btn_prec picture)));
+	ignore (btn_wb#connect#clicked
+		~callback:(fun () -> (exec_wb picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture;
                               grise btn_prec
@@ -422,7 +458,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_aveg1#connect#clicked
 		~callback:(fun () -> (exec_aveg1 picture;
                               grise btn_prec
@@ -430,7 +467,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_aveg2#connect#clicked
 		~callback:(fun () -> (exec_aveg2 picture;
                               grise btn_prec
@@ -438,7 +476,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 
 	ignore (btn_gauss#connect#clicked
 		~callback:(fun () -> (exec_gauss picture;
@@ -447,7 +486,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_med1#connect#clicked
 		~callback:(fun () -> (exec_med1 picture;
                               grise btn_prec
@@ -455,7 +495,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_med2#connect#clicked
 		~callback:(fun () -> (exec_med2 picture;
                               grise btn_prec
@@ -463,7 +504,8 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 
 	ignore (btn_save#connect#clicked
         ~callback:(fun () -> save win));
@@ -666,17 +708,14 @@ let aboutbox () =
         ~authors:["Alonso Giraldo (girald_a) - Pikachu";
                   "Quentin Ribierre (ribier_q) - Mathsup";
                   "Thomas Mariaux (mariau_t) - Taldrain";
-                  "Thomas Joole - Tommytom"]
+                  "Thomas Joole (joole_t) - Tommytom"]
         ~comments:"Supermap - Epita Infospe project - Winter 2011"
         ~license:"BSD"
         ~name:"SuperMap"
         ~version:"RC-1"
-        ~title:"About" () in
-     (*begin
-     match win#run () with
-     | `CLOSE -> ()
-     end*)
-     win#show ()
-
+        ~title:"About"
+        ~show:true () in
+        (*win#connect#response (on `CLOSE | `DELETE_EVENT -> win#destroy ()); ()*)
+()
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
