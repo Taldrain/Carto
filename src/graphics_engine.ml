@@ -27,24 +27,21 @@ let g_mode = function
   | Line -> `line
   | Point -> `point
 
-let light_b = ref false
+let light_b = ref true
 
 let fullscreen = ref true
 
 (* rotation var *)
-let rx = ref (-90.)(*(-40.)*)
+let rx = ref (-40.)
 let ry = ref 0.
 let rz = ref 0.
 
 (* translation var *)
-(*let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
- *)
+let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
 let tx = ref 0.
-(*let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
- *)
+let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
 let ty = ref 0.
-(*let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
- *)
+let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
 let tz = ref 10.
 
 (* camera *)
@@ -69,9 +66,9 @@ let lz = ref 0.
 
 let init () =
   (* init of some variable translation *)
-  (*tx := dtx();
+  tx := dtx();
   ty := dty();
-  tz := dtz();*)
+  tz := dtz();
   ignore (Glut.init Sys.argv);
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
   (*Glut.initWindowSize ~w:800 ~h:600;*)
@@ -82,9 +79,9 @@ let init () =
   (* background color *)
   GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
-  GlMat.translate3 (0., 0., -50.);
+  (*GlMat.translate3 (0., 0., -50.);*)
   (*GlClear.clear [`color; `depth];*)
-  List.iter Gl.enable [`depth_test; `color_material; `light0;];
+  List.iter Gl.enable [`depth_test; `light0; `color_material;];
   (*GlFunc.depth_func `lequal;*)
   GlDraw.shade_model `smooth;
   GlFunc.depth_func `less;
@@ -96,19 +93,19 @@ let findcolor = function
 
 
 let init_light () =
-  GlLight.color_material ~face:`both `specular;
-  let nop = (1., 0., 1., 1.) in
-    List.iter (GlLight.material ~face:`both) [`specular nop];
-  let light_am = 0., 1., 0., 1.
-  and light_diffuse = 1., 0., 0., 1. (*!lr*.2., !lg*.2., !lb*.2., 1.*)
-  and light_specular = 0., 1., 0., 1. (*!lr*.4., !lg*.4., !lb*.4., 1*)
+  (*GlLight.color_material ~face:`both `specular;*)
+  let light_am = 0.8, 0.8, 0.8, 0.0
+  and light_diffuse = 0.8, 0.8, 0.8, 1. (*!lr*.2., !lg*.2., !lb*.2., 1.*)
+  and light_specular = 0., 0., 0., 0. (*!lr*.4., !lg*.4., !lb*.4., 1*)
   and light_position = !lx, !ly, !lz, 1.
   in
   List.iter (GlLight.light ~num:0)
     [ `ambient light_am;
       `diffuse light_diffuse;
       `specular light_specular;
-      `position light_position ]
+      `position light_position ];
+  GlLight.material ~face:`both (`specular (0., 1., 0., 1.));
+  GlLight.material ~face:`both (`shininess 97.0)
   (*GlLight.color_material ~face:`both `ambient*)
 
 
@@ -127,8 +124,8 @@ let light (x2,y2,z2) =
 let rec create_tri = function
     [] -> ()
   | e::l -> findcolor (snd e);
-            GlDraw.color (snd e);
             init_light ();
+            GlDraw.color (snd e);
             GlDraw.vertex3 (fst e);
             create_tri l
 
@@ -137,13 +134,13 @@ let rec create_tri = function
 let display ~area  =
   GlClear.clear [`color; `depth];
   GlMat.load_identity ();
-  eye#setX !tx;
+  (*eye#setX !tx;
   eye#setY !ty;
   eye#setZ !tz;
   GluMat.look_at (eye#getX, eye#getY, eye#getZ)
                  (at#getX, at#getY, at#getZ)
-                 (up#getX, up#getY, up#getZ);
-  (*GlMat.translate3 (!tx, !ty, !tz);*)
+                 (up#getX, up#getY, up#getZ);*)
+  GlMat.translate3 (!tx, !ty, !tz);
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
   GlMat.rotate3 !rz (0.0, 0.0, 2.0);
@@ -183,12 +180,12 @@ let reset () =
   rx := -40.;
   ry := 0.;
   rz := 0.;
-  tx := 0.;
+  (*tx := 0.;
   ty := 0.;
-  tz := 5.
-  (*tx := dtx();
+  tz := 5.*)
+  tx := dtx();
   ty := dty();
-  tz := dtz()*)
+  tz := dtz()
 
 
 (* deal with the mouse event *)
@@ -226,8 +223,8 @@ let mouse_event ~button ~state ~x ~y = match button, state with
 let keyboard_event ~key ~x ~y = match key with
     (* ESCAPE *)
     027 -> exit 0
-  | 105 | 151  -> rx := !rx +. !pas
-  | 107 | 153 -> rx:= !rx -. !pas
+  | 105 | 151 -> rx := !rx +. !pas
+  | 107 | 153 -> rx := !rx -. !pas
   | 106 | 152 -> ry := !ry +. !pas
   | 108 | 154 -> ry := !ry -. !pas
   | 117 | 165 -> rz := !rz -. !pas
@@ -238,18 +235,18 @@ let keyboard_event ~key ~x ~y = match key with
   | 113 | 161 -> tz := !tz +. !pas
   | 101 | 145 -> tz := !tz -. !pas
   | 114 | 162 -> reset ()
-  (*| 50 -> ly := !ly -. !pas
+  | 50 -> ly := !ly -. !pas
   | 51 -> lz := !lz -. !pas
   | 52 -> lx := !lx -. !pas
   | 54 -> lx := !lx +. !pas
   | 56 -> ly := !ly +. !pas
-  | 57 -> lz := !lz +. !pas*)
-  | 50 -> ty := !ty -. !pas
+  | 57 -> lz := !lz +. !pas
+  (*| 50 -> ty := !ty -. !pas
   | 51 -> tz := !tz -. !pas
   | 52 -> tx := !tx -. !pas
   | 54 -> tx := !tx +. !pas
   | 56 -> ty := !ty +. !pas
-  | 57 -> tz := !tz +. !pas
+  | 57 -> tz := !tz +. !pas*)
   | 49 -> print_endline ("eyeX = " ^(string_of_float !tx))
   | 55 -> print_endline ("eyeY = " ^(string_of_float !ty))
   | 48 -> print_endline ("eyeZ = " ^(string_of_float !tz))
