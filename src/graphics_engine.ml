@@ -1,6 +1,6 @@
 (* Graphics engine *)
 
-let rx = ref (-40.)
+let rx = ref (-90.)
 let ry = ref 0.
 let rz = ref 0.
 let dtx() = (float (-(Refe.get_w()/(2*Refe.get_step()))))
@@ -20,10 +20,6 @@ let lz = ref 0.
 
 let init () =
   ignore(Glut.init Sys.argv);
-  print_endline "01";
-  tx := dtx();
-  ty := dty();
-  tz := dtz();
   (* creation du mode d'affichage *)
   (*Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();*)
   (* Init de la fenetre, a remplacer par une fenetre gtk *)
@@ -47,7 +43,6 @@ let rec create_tri = function
     [] -> ()
   | e::l -> (*findcolor (snd e);*)
             GlDraw.color (snd e);
-            print_endline "0";
             GlDraw.vertex3 (fst e);
             create_tri l
 
@@ -75,20 +70,20 @@ let display () =
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
+  tx := !tx -. 0.1;
   Gl.flush ()
 
 
 
 (* redimensionner et lancement du programme *)
 let reshape ~width:w ~height:h =
-  let ratio = (float_of_int w) /. (float_of_int h) in
     (* limite d'affichage *)
     GlDraw.viewport ~x:0 ~y:0 ~w ~h;
     (* mode projection ? *)
     GlMat.mode `projection;
     (* chargement de la matrice identite *)
     GlMat.load_identity ();
-    GluMat.perspective 45.0 ratio (0.1, 500.0);
+    GluMat.perspective 45. 1. (1., 500.0);
     (* changement de mode ? *)
     GlMat.mode `modelview;
     GlMat.load_identity ()

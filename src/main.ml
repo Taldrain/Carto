@@ -88,7 +88,8 @@ let main () =
 	(* --------- *)
 
     area#connect#realize ~callback: Graphics_engine.init;
-    area#connect#display ~callback:(Graphics_engine.display (); area#swap_buffers ());
+    area#connect#display ~callback:(fun () -> (Graphics_engine.display ()(*; area#swap_buffers ()*)));
+    area#event#add [`KEY_PRESS];
 
 	(*menu*)
 	ignore (mf_open#connect#activate
@@ -104,12 +105,21 @@ let main () =
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
 		~callback:exec_assist);
+
 	ignore (btn_3d#connect#clicked
 		~callback:(fun () ->
-               GMain.Timeout.add ~ms:20 ~callback:(fun () -> Graphics_engine.display(); true )
+               GMain.Timeout.add
+                 ~ms:20
+                 ~callback:(fun () -> Graphics_engine.display(); area#swap_buffers (); true); ()
         ));
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
+    w#event#connect#key_press ~callback:
+    begin fun ev ->
+      let key = GdkEvent.Key.keyval ev in
+      if key = GdkKeysyms._Escape then area#destroy ();
+        true
+    end;
 
   	w#show ();
   	GMain.main ()
