@@ -276,6 +276,24 @@ let mat_edge_to_white mat_i img =
      mat_to_img mat_f img
 
 
+(* ------------------------------------ ------------------------------------- *)
+
+(* ---------------------------- Put image to grey --------------------------- *)
+
+let img_to_grey img =
+  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
+              (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let img_f = Sdlvideo.create_RGB_surface_format img [] w h in
+    for x=0 to (w)-1 do
+      for y=0 to (h)-1 do
+        let (r,g,b) = Sdlvideo.get_pixel_color img x y in
+          let g = int_of_float(0.299 *. (float)(r) +. 0.587 *. (float)(g) +. 
+                  0.114 *. (float)(b)) in
+          Sdlvideo.put_pixel_color img_f x y (normalize(g,g,g));
+      done;
+    done;
+  img_f
+
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -300,7 +318,7 @@ let red mat x y =
     r
 
 (* mdian filter, it has a different behaviour *)
-let median_filtr img dim =
+(*let median_filtr img dim =
   let mat = img_to_mat img in
   let mat_f = Array.make_matrix (Array.length mat)
               (Array.length mat.(0)) (0,0,0) in
@@ -349,6 +367,111 @@ let median_filtr img dim =
       done;
     done;
     mat_to_img mat_f img
+*)
+(* function needed for the next function *)
+let rec qsort li g = match li with
+  | [] -> failwith "problem in median color filter"
+  | (x,y,z)::li when x = g -> (y,z)
+  | (x,y,z)::li -> qsort li g
+
+
+let median_filtr img dim =
+  let mat_grey = img_to_mat ( img_to_grey img) in
+  let mat = img_to_mat img in
+  let mat_f = Array.make_matrix (Array.length mat)
+              (Array.length mat.(0)) (0,0,0) in
+    for x = 0 to Array.length mat - 1 do
+      for y = 0 to Array.length mat.(0) - 1 do
+        try
+          let li_couple = ref [] in
+          let li = ref [] in
+          if dim = 3 then
+           begin
+            li_couple := [
+              red mat_grey (x-1) (y-1), x-1, y-1;
+              red mat_grey (x  ) (y-1), x  , y-1;
+              red mat_grey (x+1) (y-1), x+1, y-1;
+              red mat_grey (x-1) (y  ), x-1, y;
+              red mat_grey (x  ) (y  ), x  , y;
+              red mat_grey (x+1) (y  ), x+1, y;
+              red mat_grey (x-1) (y+1), x-1, y+1;
+              red mat_grey (x  ) (y+1), x  , y+1;
+              red mat_grey (x+1) (y+1), x+1, y+1];
+            li := [
+             red mat_grey (x-1) (y-1);
+             red mat_grey (x  ) (y-1);
+             red mat_grey (x+1) (y-1);
+             red mat_grey (x-1) (y  );
+             red mat_grey (x  ) (y  );
+             red mat_grey (x+1) (y  );
+             red mat_grey (x-1) (y+1);
+             red mat_grey (x  ) (y+1);
+             red mat_grey (x+1) (y+1)];
+           end
+          else
+            begin
+              li_couple := [
+                red mat_grey (x-2) (y-2), x-2, y-2;
+                red mat_grey (x-1) (y-2), x-1, y-2;
+                red mat_grey (x  ) (y-2), x  , y-2;
+                red mat_grey (x+1) (y-2), x+1, y-2;
+                red mat_grey (x+2) (y-2), x+2, y-2;
+                red mat_grey (x-2) (y-1), x-2, y-1;
+                red mat_grey (x-1) (y-1), x-1, y-1;
+                red mat_grey (x  ) (y-1), x  , y-1;
+                red mat_grey (x+1) (y-1), x+1, y-1;
+                red mat_grey (x+2) (y-1), x+2, y-1;
+                red mat_grey (x-2) (y  ), x-2, y  ;
+                red mat_grey (x-1) (y  ), x-1, y  ;
+                red mat_grey (x  ) (y  ), x  , y  ;
+                red mat_grey (x+1) (y  ), x+1, y  ;
+                red mat_grey (x+2) (y  ), x+2, y  ;
+                red mat_grey (x-2) (y+1), x-2, y+1;
+                red mat_grey (x-1) (y+1), x-1, y+1;
+                red mat_grey (x  ) (y+1), x  , y+1;
+                red mat_grey (x+1) (y+1), x+1, y+1;
+                red mat_grey (x+2) (y+1), x+2, y+1;
+                red mat_grey (x-2) (y+2), x-2, y+2;
+                red mat_grey (x-1) (y+2), x-1, y+2;
+                red mat_grey (x  ) (y+2), x  , y+2;
+                red mat_grey (x+1) (y+2), x+1, y+2;
+                red mat_grey (x+2) (y+2), x+2, y+2];
+              li := [
+                red mat_grey (x-2) (y-2);
+                red mat_grey (x-1) (y-2);
+                red mat_grey (x  ) (y-2);
+                red mat_grey (x+1) (y-2);
+                red mat_grey (x+2) (y-2);
+                red mat_grey (x-2) (y-1);
+                red mat_grey (x-1) (y-1);
+                red mat_grey (x  ) (y-1);
+                red mat_grey (x+1) (y-1);
+                red mat_grey (x+2) (y-1);
+                red mat_grey (x-2) (y  );
+                red mat_grey (x-1) (y  );
+                red mat_grey (x  ) (y  );
+                red mat_grey (x+1) (y  );
+                red mat_grey (x+2) (y  );
+                red mat_grey (x-2) (y+1);
+                red mat_grey (x-1) (y+1);
+                red mat_grey (x  ) (y+1);
+                red mat_grey (x+1) (y+1);
+                red mat_grey (x+2) (y+1);
+                red mat_grey (x-2) (y+2);
+                red mat_grey (x-1) (y+2);
+                red mat_grey (x  ) (y+2);
+                red mat_grey (x+1) (y+2);
+                red mat_grey (x+2) (y+2)];
+              end;
+          let li_f = List.fast_sort (fun x y -> compare x y) (!li) in
+          let g = List.nth li_f ((List.length li_f)/2) in
+          let (xf,yf) = qsort !li_couple g in
+            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img xf yf;
+        with Invalid_argument "index out of bounds" ->
+          mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y;
+      done;
+    done;
+    mat_to_img mat_f img
 
 
 
@@ -385,7 +508,6 @@ let median_filtr5 img =
 (* median filter, with 3x3 matrix *)
 let median_filtr3 img =
   median_filtr img 3
-
 
 
 (* ------------------------------------ ------------------------------------- *)

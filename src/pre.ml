@@ -62,20 +62,6 @@ let list_to_text li =
 
 
 
-(* ---------------------------- Put map to grey ----------------------------- *)
-
-let img_to_grey img =
-  for x=0 to (Refe.get_w())-1 do
-	  for y=0 to (Refe.get_h())-1 do
-      let (r,g,b) = Sdlvideo.get_pixel_color img x y in
-        let g = int_of_float(0.299 *. (float)(r) +. 0.587 *. (float)(g) +. 
-                0.114 *. (float)(b)) in
-	      Sdlvideo.put_pixel_color img x y (g,g,g);
-	  done;
-  done
-
-
-
 (* ------------------------------------ ------------------------------------- *)
 
 (* ---------------------------- Edge detection ------------------------------ *)
@@ -221,7 +207,7 @@ let pre_trait () =
   (*let img3 = img in
   img_to_grey img3;
   Sdlvideo.save_BMP img3 "grey.bmp";*)
-  let img4 = Filter.median_filtr5 img in
+  let img4 = Filter.median_filtr3 img in
   Sdlvideo.save_BMP img4 "median.bmp";
 	contour img img2;
 	show img2 display;
