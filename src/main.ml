@@ -56,8 +56,7 @@ let exec_3d_inst () =
 	else
 		Refe.filename := "carte.bmp"
 	end;
-	(*print_endline (Refe.get_filename ());*)
-  	Assist.view_img ();
+  	(*Assist.view_img ();*)
 	Refe.file_type := "img";
 	Refe.step := 5;
 	Pre.pre_trait ();

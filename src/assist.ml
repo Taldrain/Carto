@@ -672,6 +672,10 @@ let aboutbox () =
         ~name:"SuperMap"
         ~version:"RC-1"
         ~title:"About" () in
+     (*begin
+     match win#run () with
+     | `CLOSE -> ()
+     end*)
      win#show ()
 
 (* -------------------------------------------------------------------------- *)
