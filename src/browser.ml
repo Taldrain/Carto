@@ -25,7 +25,7 @@ let obj_filter () =
 	f#add_pattern "*.obj";
 	f#add_pattern "*.OBJ";
 	f
-	
+
 
 let browser parent =
 	let dialog = GWindow.file_chooser_dialog

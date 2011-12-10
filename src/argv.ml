@@ -1,5 +1,8 @@
 (* Parse des arguments entrés en parametres du programme *)
 
+let annon_fun str =
+  print_endline (str ^ " is not an option, check -help or --help.")
+
 let sTS str =
   Sdlloader.load_image str
 
@@ -7,17 +10,13 @@ let save img str =
   Sdlvideo.save_BMP img str
 
 let args =
-  let nw = " Use Supermap with the gui" in
   let s = " Apply the Sobel filter, on the .bmp" in
   let sc = " Apply the Sobel filter with color, on the .bmp" in
   let av1 = " Apply the Average filter with the precision of 3" in
   let av2 = " Apply the Average filter with the precision of 5" in
   let g = " Apply the Gauss filter" in
     (* Look at my indentation, my indentation is amazing... *)
-  [("-nw", Arg.Unit
-     (fun () -> Main.main ()),
-     nw);
-   ("-sobel", Arg.String
+  [("-sobel", Arg.String
      (fun str -> (save (Filter.sobel_filter_f (sTS str)) "sobel.bmp");
      ()), s);
    ("-sobelc", Arg.String
@@ -35,7 +34,10 @@ let args =
   ]
 
 let parse () =
-  let usage_msg = "Usage: supermap (options) <.bmp>\nOptions are:" in
-    Arg.parse args (fun "" -> ()) usage_msg
+  if (Array.length Sys.argv) < 2 then
+    Main.main ()
+  else
+    let usage_msg = "Usage: supermap (options) <.bmp>\nOptions are:" in
+      Arg.parse (Arg.align args) annon_fun usage_msg
 
 let _ = parse()

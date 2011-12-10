@@ -287,9 +287,9 @@ let test_y x y =
 
 (* le triangle du bas a atteint son max, mais pas celui du haut *)
 let rec tri_max_up x y =
-	if (test_y x y) then 
+	if (test_y x y) then
 		tri_max_up (x+1) (y+1)
-	else 
+	else
 		xy := (x-1);
 		yy := (y-1)
 
@@ -321,14 +321,14 @@ let new_triangles x y =
 	y0 := y;
 	let get_z ((_,_,c),_) = c in
 	z0 := get_z (get_f (!x0) (!y0));
-		let rec tri_max x y = 
+		let rec tri_max x y =
 			let testx = test_x x y in
 			let testy = test_y x y in
 			begin
 				if (testx && testy) then
 					tri_max (x+1) (y+1);
 				if ( testx && (not testy) ) then
-					begin	
+					begin
 						xx := (x-1);
 						yx := (y-1);
 						tri_max_up (x+1) (y+1)
@@ -337,7 +337,7 @@ let new_triangles x y =
 					begin
 						xy := (x-1);
 						yy := (y-1);
-						tri_max_down (x+1) (y+1)				
+						tri_max_down (x+1) (y+1)
 					end;
 				if ( (not testx) && (not testy) ) then
 					begin

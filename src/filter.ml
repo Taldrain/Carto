@@ -279,22 +279,90 @@ let mat_edge_to_white mat_i img =
 
 (* ------------------------------------ ------------------------------------- *)
 
-(* ---------------------------- Filter functions ---------------------------- *)
+(* ----------------------- Functions for sobel filter ----------------------- *)
 
-(* Soble filter   image -> image   *)
+(* Sobel filter   image -> image   *)
 let sobel_filter img =
   mat_to_img (filtr_doubl_img img (sobel1()) (sobel2()) 3 9) img
 
 let sobel_filter2 img =
   mat_to_img (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img
 
+
+
+(* ------------------------------------ ------------------------------------- *)
+
+(* ------------------------- Function for median filter --------------------- *)
+
+(* give the red component of pixel *)
+let red mat x y =
+  let (r,_,_) = mat.(x).(y) in
+    r
+
+(* mdian filter, it has a different behaviour *)
+let median_filtr img dim =
+  let mat = img_to_mat img in
+  let mat_f = Array.make_matrix (Array.length mat)
+              (Array.length mat.(0)) (0,0,0) in
+    for x = 0 to Array.length mat - 1 do
+      for y = 0 to Array.length mat.(0) - 1 do
+        try
+          let li = ref [] in
+          if dim = 3 then
+            li := [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
+            red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
+            red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)]
+          else
+            begin
+            li := [
+              red mat (x-2) (y-2);
+              red mat (x-1) (y-2);
+              red mat (x  ) (y-2);
+              red mat (x+1) (y-2);
+              red mat (x+2) (y-2);
+              red mat (x-2) (y-1);
+              red mat (x-1) (y-1);
+              red mat (x  ) (y-1);
+              red mat (x+1) (y-1);
+              red mat (x+2) (y-1);
+              red mat (x-2) (y  );
+              red mat (x-1) (y  );
+              red mat (x  ) (y  );
+              red mat (x+1) (y  );
+              red mat (x+2) (y  );
+              red mat (x-2) (y+1);
+              red mat (x-1) (y+1);
+              red mat (x  ) (y+1);
+              red mat (x+1) (y+1);
+              red mat (x+2) (y+1);
+              red mat (x-2) (y+2);
+              red mat (x-1) (y+2);
+              red mat (x  ) (y+2);
+              red mat (x+1) (y+2);
+              red mat (x+2) (y+2)]
+            end;
+          let li_f = List.fast_sort (fun x y -> compare x y) (!li) in
+          let g = List.nth li_f ((List.length li_f)/2) in
+          mat_f.(x).(y) <- (g,g,g);
+        with Invalid_argument "index out of bounds" ->
+               mat_f.(x).(y) <- mat.(x).(y);
+      done;
+    done;
+    mat_to_img mat_f img
+
+
+
+(* ------------------------------------ ------------------------------------- *)
+
+(* ---------------------------- Filter functions ---------------------------- *)
+
 (* complete sobel filter with colored edges*)
-let sobel_filter_f img =
+let sobel_filter_f_color img =
   mat_to_img (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()) 3 9)
                   (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
 
 (* sobel filter with white edges *)
-let sobel_filter_f_color img =
+let sobel_filter_f img =
   mat_edge_to_white (mat1_mat2 (filtr_doubl_img img (sobel1()) (sobel2()) 3 9)
                   (filtr_doubl_img img (sobelv2_1()) (sobelv2_2()) 3 9) img) img
 
@@ -310,36 +378,15 @@ let average2 img =
 let gauss3_filter img =
   filtr_simpl_img img (gauss3()) 3 16
 
-(* function needed for the next function *)
-let rec med_term lis i median = match lis with
-  | [] -> failwith "fail"
-  | m::lis when i = median -> m
-  | m::lis -> med_term lis (i+1) median 
+(* median filter, with 5x5 matrix *)
+let median_filtr5 img =
+  median_filtr img 5
+
+(* median filter, with 3x3 matrix *)
+let median_filtr3 img =
+  median_filtr img 3
 
 
-let red mat x y = 
-  let (r,_,_) = mat.(x).(y) in
-    r
-
-(* mdian filter, it has a different behaviour *)
-let median_filtr img =
-  let mat = img_to_mat img in
-  let mat_f = Array.make_matrix (Array.length mat)
-              (Array.length mat.(0)) (0,0,0) in
-    for x = 0 to Array.length mat - 1 do
-      for y = 0 to Array.length mat.(0) - 1 do
-        try
-          let li = [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
-          red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
-          red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)] in
-          let li_f = List.fast_sort (fun x y -> compare x y) li in
-          let g = List.nth li_f 4 in
-          mat_f.(x).(y) <- (g,g,g);
-        with Invalid_argument "index out of bounds" ->
-               mat_f.(x).(y) <- mat.(x).(y);
-      done;
-    done;
-    mat_to_img mat_f img
 
 (* ------------------------------------ ------------------------------------- *)
 
