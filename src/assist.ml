@@ -69,7 +69,7 @@ let view_img () =
 		~label:"Sobel colored"
 		~packing:box_so#add () in
 	let btn_so2 = GButton.button
-		~label:"Sobel W&B"
+		~label:"Sobel B&W"
 		~packing:box_so#add () in
     let range = GRange.scale `HORIZONTAL
         ~digits:0
@@ -168,15 +168,14 @@ let exec_rerand pct =
     pct#set_file "/tmp/tmp.bmp"
 
 let exec_wb pict_view =
-    (*if (!rank <= 5) then
+    if (!rank <= 5) then
     begin
-    (*let ret = Filter. (Stack.top stacky) in*)
+    let ret = Filter.img_to_grey (Stack.top stacky) in
     rank := !rank + 1;
     Stack.push ret stacky;
     sdl_to_bmp (Stack.top stacky);
 	pict_view#set_file ("/tmp/tmp.bmp");
-    end*)
-    ()
+    end
 
 let exec_aveg1 pict_view =
     if (!rank <= 5) then
@@ -356,7 +355,7 @@ let win_flout () =
 		~border_width:5
 		~packing:fram4#add () in
 	let btn_wb = GButton.button
-		~label:"White & black"
+		~label:"Black & White"
 		~packing:box_fram4#add () in
 	(*pour les encadrer*)
 	let fram2 = GBin.frame
