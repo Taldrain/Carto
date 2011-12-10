@@ -142,6 +142,31 @@ let stacky = Stack.create ()
 let sdl_to_bmp img_sdl =
 	Sdlvideo.save_BMP img_sdl "/tmp/tmp.bmp"
 
+let exec_off pict_view =
+    Stack.clear stacky;
+    let img = Sdlloader.load_image (Refe.get_orig_file ()) in
+    Stack.push img stacky;
+    sdl_to_bmp img;
+	Refe.filename := (Refe.get_orig_file ());
+    rank := 1;
+    pict_view#set_file "/tmp/tmp.bmp"
+
+let exec_rerand pct =
+    begin
+	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+		(Refe.filename := "/tmp/rand_map.bmp";
+        Refe.orig_file := "/tmp/rand_map.bmp";
+        Refe.rand_file := true;)
+	else
+		failwith "Fatal error on genperlin"
+	end;
+    let img = Sdlloader.load_image "/tmp/rand_map.bmp" in
+    sdl_to_bmp img;
+    Stack.push img stacky;
+    rank := 1;
+    pct#set_file "/tmp/tmp.bmp"
+
+
 let exec_aveg1 pict_view =
     if (!rank <= 5) then
     begin
@@ -201,19 +226,6 @@ let exec_prec pict_view =
 	        pict_view#set_file ("/tmp/tmp.bmp");
         end
 
-let exec_rerand pct =
-    begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
-		(Refe.filename := "/tmp/tmp.bmp";
-        Refe.rand_file := true;)
-	else
-		failwith "Fatal error on genperlin"
-	end;
-    let img = Sdlloader.load_image "/tmp/tmp.bmp" in
-    Stack.push img stacky;
-    rank := 1;
-    pct#set_file "/tmp/tmp.bmp"
-
 
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
@@ -223,6 +235,44 @@ let destro w chk chk2=
     Stack.clear stacky;
     w#destroy ();
     view_img ()
+
+let grise bt1 bt2 bt3 bt4 bt5 bt6 =
+   ( 
+    if (!rank = 1) then
+        (
+            bt1#misc#set_sensitive false;
+
+            bt2#misc#set_sensitive true;
+            bt3#misc#set_sensitive true;
+            bt4#misc#set_sensitive true;
+            bt5#misc#set_sensitive true;
+            bt6#misc#set_sensitive true
+        )
+    else
+    (
+    if (!rank = 5) then
+        (
+            bt1#misc#set_sensitive true;
+
+            bt2#misc#set_sensitive false;
+            bt3#misc#set_sensitive false;
+            bt4#misc#set_sensitive false;
+            bt5#misc#set_sensitive false;
+            bt6#misc#set_sensitive false
+        )
+    else
+        (
+            bt1#misc#set_sensitive true;
+
+            bt2#misc#set_sensitive true;
+            bt3#misc#set_sensitive true;
+            bt4#misc#set_sensitive true;
+            bt5#misc#set_sensitive true;
+            bt6#misc#set_sensitive true
+        );
+    );
+    )
+            
 
 let win_flout () =
 	(*La fenetre de filtre *)
@@ -256,7 +306,7 @@ let win_flout () =
 		~packing:fram1#add () in
 	(*pas de filtre*)
 	let btn_rerand = GButton.button
-		~label:"Regenerate image"
+		~label:"Regenerate new image"
 		~packing:box_fram1#add () in
 	let btn_nop = GButton.button
 		~label:"Disable filter"
@@ -338,25 +388,63 @@ let win_flout () =
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 
+   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2;
 
 	(* -- CALLBACK -- *)
 	ignore (btn_rerand#connect#clicked
-		~callback:(fun () -> (exec_rerand picture)));
+		~callback:(fun () -> (exec_rerand picture;
+                              )));
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (exec_nop picture)));
+		~callback:(fun () -> (exec_off picture)));
 	ignore (btn_prec#connect#clicked
-		~callback:(fun () -> (exec_prec picture)));
+		~callback:(fun () -> (exec_prec picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 	ignore (btn_aveg1#connect#clicked
-		~callback:(fun () -> (exec_aveg1 picture)));
+		~callback:(fun () -> (exec_aveg1 picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 	ignore (btn_aveg2#connect#clicked
-		~callback:(fun () -> (exec_aveg2 picture)));
+		~callback:(fun () -> (exec_aveg2 picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 
 	ignore (btn_gauss#connect#clicked
-		~callback:(fun () -> (exec_gauss picture)));
+		~callback:(fun () -> (exec_gauss picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 	ignore (btn_med1#connect#clicked
-		~callback:(fun () -> (exec_med1 picture)));
+		~callback:(fun () -> (exec_med1 picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 	ignore (btn_med2#connect#clicked
-		~callback:(fun () -> (exec_med2 picture)));
+		~callback:(fun () -> (exec_med2 picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2)));
 
 	ignore (btn_close#connect#clicked
         ~callback:(fun () -> destro win chk_btn chk_btn2));
