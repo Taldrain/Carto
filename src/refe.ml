@@ -70,3 +70,7 @@ let get_list_3d() = !list_3d
 
 let list_xyz = ref [((0,0,0),(0,0,0))]
 let get_list_xyz() = !list_xyz
+
+
+let list_tri3D = ref [((0.,0.,0.),(0.,0.,0.))]
+let get_list_tri3D () = !list_tri3D

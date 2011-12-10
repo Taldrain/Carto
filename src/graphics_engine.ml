@@ -160,7 +160,7 @@ let display ~area  =
   GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
-  create_tri (Refe.get_list_3d());
+  create_tri (Refe.get_list_tri3D());
   GlDraw.ends ();
   Glut.swapBuffers ()
 
