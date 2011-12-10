@@ -69,7 +69,7 @@ let view_img () =
 		~label:"Sobel colored"
 		~packing:box_so#add () in
 	let btn_so2 = GButton.button
-		~label:"Sobel W&B"
+		~label:"Sobel B&W"
 		~packing:box_so#add () in
     let range = GRange.scale `HORIZONTAL
         ~digits:0
@@ -355,7 +355,7 @@ let win_flout () =
 		~border_width:5
 		~packing:fram4#add () in
 	let btn_wb = GButton.button
-		~label:"White & black"
+		~label:"Black & White"
 		~packing:box_fram4#add () in
 	(*pour les encadrer*)
 	let fram2 = GBin.frame
