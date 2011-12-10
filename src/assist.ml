@@ -666,9 +666,9 @@ let aboutbox () =
         ~authors:["Alonso Giraldo (girald_a) - Pikachu";
                   "Quentin Ribierre (ribier_q) - Mathsup";
                   "Thomas Mariaux (mariau_t) - Taldrain";
-                  "Thomas Joole - Tommytom"]
+                  "Thomas Joole (joole_t) - Tommytom"]
         ~comments:"Supermap - Epita Infospe project - Winter 2011"
-        ~license:"BSD"
+        ~license:"GPLv3"
         ~name:"SuperMap"
         ~version:"RC-1"
         ~title:"About" () in
