@@ -1,7 +1,7 @@
 (* Parse des arguments entrés en parametres du programme *)
 
 let annon_fun str =
-  print_endline (str ^ " is not an option, check -help or --help.")
+  print_endline ("'"^str^"'"^" is not an option, check -help or --help.")
 
 let sTS str =
   Sdlloader.load_image str
@@ -15,6 +15,7 @@ let args =
   let av1 = " Apply the Average filter with the precision of 3" in
   let av2 = " Apply the Average filter with the precision of 5" in
   let g = " Apply the Gauss filter" in
+  let inst_3d = " Instant 3d on a randomly generate map" in
     (* Look at my indentation, my indentation is amazing... *)
   [("-sobel", Arg.String
      (fun str -> (save (Filter.sobel_filter_f (sTS str)) "sobel.bmp");
@@ -31,6 +32,9 @@ let args =
    ("-gauss", Arg.String
      (fun str -> (save (Filter.gauss3_filter (sTS str)) "gauss.bmp");
      ()), g);
+   ("-r3d", Arg.Unit
+     (fun () -> (Main.exec_3d_inst ());
+     ()), inst_3d);
   ]
 
 let parse () =
