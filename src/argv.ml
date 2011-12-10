@@ -17,6 +17,7 @@ let args =
   let g = " Apply the Gauss filter" in
   let med3 = " Apply the Median filter with a 3x3 matrix" in
   let med5 = " Apply the Median filter with a 5x5 matrix" in
+  let grey = " Apply the Grey filter" in
   let inst_3d = " Instant 3d on a randomly generate map" in
   let v = " Print version and exit" in
     (* Look at my indentation, my indentation is Amazing... *)
@@ -41,6 +42,9 @@ let args =
    ("-median5", Arg.String
      (fun str -> (save (Filter.median_filtr5 (sTS str)) "median5.bmp");
      ()), med5);
+   ("-grey", Arg.String
+     (fun str -> (save (Filter.img_to_grey (sTS str)) "grey.bmp");
+     ()), grey);
    ("-r3d", Arg.Unit
      (fun () -> (Main.exec_3d_inst ());
      ()), inst_3d);
