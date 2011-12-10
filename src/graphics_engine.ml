@@ -69,11 +69,9 @@ let init () =
   tx := dtx();
   ty := dty();
   tz := dtz();
+  print_endline "e1";
   ignore (Glut.init Sys.argv);
-  Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-  (*Glut.initWindowSize ~w:800 ~h:600;*)
-  ignore (Glut.createWindow "OpenGl");
-  Glut.fullScreen ();
+  (*Glut.fullScreen ();*)
   (* color gradient *)
   GlDraw.shade_model `smooth;
   (* background color *)
@@ -164,7 +162,7 @@ let display ~area  =
   GlDraw.ends ()
 
 
-let reshape ~w ~h =
+let reshape ~width:w ~height:h =
   let ratio = (float_of_int w) /. (float_of_int h) in
     GlMat.mode `projection;
     GlMat.load_identity ();
@@ -248,8 +246,8 @@ let act_keyUP () = ty := !ty +. !pas
 let boucleGTK () =
   init_light ();
   display ();
-  Glut.motionFunc motion;
-  Glut.reshapeFunc reshape;
+  (*Glut.motionFunc*) motion;
+  (*Glut.reshapeFunc*) reshape;
   Gl.flush ()
 
 

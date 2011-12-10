@@ -75,22 +75,25 @@ let exec_glgtk () =
         ~height:400
         ~packing:box#pack () in
     area#connect#realize ~callback: Graphics_engine.init;
-    area#connect#display ~callback:(fun () -> (Graphics_engine.boucleGTK ()));
+    area#connect#display ~callback:(fun () -> (Graphics_engine.boucleGTK (); area#swap_buffers ()));
     area#event#add [`KEY_PRESS];
 
+    print_endline "1";
 
+    (fun () ->
     GMain.Timeout.add
       ~ms:20
       ~callback:
-       (fun () -> Graphics_engine.boucleGTK (); area#swap_buffers (); true); ();
+       (fun () -> Graphics_engine.boucleGTK (); area#swap_buffers (); true); ());
+    print_endline "2";
 
-    w#event#connect#key_press ~callback:
+   (* w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
       if key = GdkKeysyms._Escape then area#destroy ();
         true
-    end;
-    ()
+    end;*)
+    print_endline "3"
 
 
 
@@ -211,7 +214,7 @@ let main () =
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
     ignore (btn_noclik#connect#clicked
-        ~callback:exec_glgtk);
+        ~callback:(fun () -> (exec_glgtk (); print_endline "a")));
 
   	w#show ();
   	GMain.main ()
