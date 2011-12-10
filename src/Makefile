@@ -13,7 +13,8 @@ WALL= -I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
      bigarray.cmxa  \
      sdl.cmxa       \
      sdlloader.cmxa \
-	 lablglut.cmxa
+	 lablglut.cmxa  \
+	 lablgtkgl.cmxa
 
 all: assemble genperlin post
 

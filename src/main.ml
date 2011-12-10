@@ -45,8 +45,8 @@ let exec_random btn =
 let exec_3d_obj () =
 	(* PETAGE DU MOTEUR 3D *)
 	Parser_obj.open_obj ();
-	Parser_obj.put_color ();
-	Graphics_engine.main_engine ()
+	Parser_obj.put_color ()
+	(*Graphics_engine.main_engine ()*)
 
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
@@ -61,6 +61,38 @@ let exec_3d_inst () =
 	Refe.step := 5;
 	Pre.pre_trait ();
 	Assist.rand_alt ()
+
+let exec_glgtk () =
+  	let w = GWindow.window
+		~title:"Carto TopoTeam" ()
+		~width:600
+		~height:400
+		~position:`CENTER in
+    let box = GPack.hbox
+        ~packing:w#add () in
+    let area = GlGtk.area [`RGBA;`DOUBLEBUFFER]
+        ~width:400
+        ~height:400
+        ~packing:box#pack () in
+    area#connect#realize ~callback: Graphics_engine.init;
+    area#connect#display ~callback:(fun () -> (Graphics_engine.boucleGTK ()));
+    area#event#add [`KEY_PRESS];
+
+
+    GMain.Timeout.add
+      ~ms:20
+      ~callback:
+       (fun () -> Graphics_engine.boucleGTK (); area#swap_buffers (); true); ();
+
+    w#event#connect#key_press ~callback:
+    begin fun ev ->
+      let key = GdkEvent.Key.keyval ev in
+      if key = GdkKeysyms._Escape then area#destroy ();
+        true
+    end;
+    ()
+
+
 
 let main () =
 
@@ -137,6 +169,9 @@ let main () =
 	let btn_3d_inst = GButton.button
 		~label:"3D instantane"
 		~packing:main_box#pack () in
+    let btn_noclik = GButton.button
+		~label:"Do not click"
+		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
 	 	~packing:main_box#pack () in
@@ -175,6 +210,8 @@ let main () =
 		~callback:exec_3d_inst);
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
+    ignore (btn_noclik#connect#clicked
+        ~callback:exec_glgtk);
 
   	w#show ();
   	GMain.main ()

@@ -161,29 +161,25 @@ let display ~area  =
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
-  GlDraw.ends ();
-  Glut.swapBuffers ()
+  GlDraw.ends ()
 
 
 let reshape ~w ~h =
   let ratio = (float_of_int w) /. (float_of_int h) in
     GlMat.mode `projection;
     GlMat.load_identity ();
-    GlDraw.viewport 0 0 w h;
+    GlDraw.viewport ~x:0 ~y:0 ~w ~h;
     (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
     GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
     GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
     GlMat.mode `modelview;
     GlMat.load_identity ()
 
-
-(* fonction xor *)
 let xor a b =
-  if a = true then
-    not b
-  else
-    b
-
+if a = true then
+  not b
+else
+  b
 
 let reset () =
   rx := -40.;
@@ -214,75 +210,46 @@ let motion ~x ~y =
   yold := y;
   rzold := x
 
+(* mouse event *)
+let act_leftDown x y = bl_down := true; xold := x; yold := y
+let act_leftUp () = bl_down := false
+let act_rightDown x y = br_down := true; zold := y; rzold := x
+let act_rightUP () = br_down := false
 
-(* get the mouse_event *)
-let mouse_event ~button ~state ~x ~y = match button, state with
-  | Glut.LEFT_BUTTON, Glut.DOWN -> bl_down := true;
-                                   xold := x;
-                                   yold := y;
-  | Glut.LEFT_BUTTON, Glut.UP -> bl_down := false;
-  | Glut.RIGHT_BUTTON, Glut.DOWN -> br_down := true;
-                                    zold := y;
-                                    rzold := x;
-  | Glut.RIGHT_BUTTON, Glut.UP -> br_down := false;
-  | _ -> ()
+(* keyboard event *)
+let act_i () = rx := !rx +. !pas
+let act_k () = rx := !rx -. !pas
+let act_j () = ry := !ry +. !pas
+let act_l () = ry := !ry -. !pas
+let act_u () = rz := !rz -. !pas
+let act_o () = rz := !rz +. !pas
+let act_w () = mode_ := Line
+let act_f () = mode_ := Fill
+let act_p () = mode_ := Point
+let act_q () = tz := !tz +. !pas
+let act_e () = tz := !tz -. !pas
+let act_e () = reset ()
+let act_g () = light_b := (xor !light_b true)
+let act_2 () = ly := !ly -. !pas
+let act_3 () = lz := !lz -. !pas
+let act_4 () = lx := !lx -. !pas
+let act_6 () = lx := !lx +. !pas
+let act_8 () = ly := !ly +. !pas
+let act_9 () = lz := !lz +. !pas
 
-
-(* get the keyboard_event *)
-let keyboard_event ~key ~x ~y = match key with
-    (* ESCAPE *)
-    027 -> exit 0
-  | 105 | 151 -> rx := !rx +. !pas
-  | 107 | 153 -> rx := !rx -. !pas
-  | 106 | 152 -> ry := !ry +. !pas
-  | 108 | 154 -> ry := !ry -. !pas
-  | 117 | 165 -> rz := !rz -. !pas
-  | 111 | 157 -> rz := !rz +. !pas
-  | 119 | 167 -> mode_ := Line
-  | 102 | 146 -> mode_ := Fill
-  | 112 | 160 -> mode_ := Point
-  | 113 | 161 -> tz := !tz +. !pas
-  | 101 | 145 -> tz := !tz -. !pas
-  | 114 | 162 -> reset ()
-  | 50 -> ly := !ly -. !pas
-  | 51 -> lz := !lz -. !pas
-  | 52 -> lx := !lx -. !pas
-  | 54 -> lx := !lx +. !pas
-  | 56 -> ly := !ly +. !pas
-  | 57 -> lz := !lz +. !pas
-  (*| 50 -> ty := !ty -. !pas
-  | 51 -> tz := !tz -. !pas
-  | 52 -> tx := !tx -. !pas
-  | 54 -> tx := !tx +. !pas
-  | 56 -> ty := !ty +. !pas
-  | 57 -> tz := !tz +. !pas*)
-  (*| 49 -> print_endline ("eyeX = " ^(string_of_float !tx))
-  | 55 -> print_endline ("eyeY = " ^(string_of_float !ty))
-  | 48 -> print_endline ("eyeZ = " ^(string_of_float !tz))*)
-  | 103 -> light_b := (xor !light_b true)
-  | _ -> ()
+(* special keyboard event *)
+let act_keyLeft () = tx := !tx -. !pas
+let act_keyRight () = tx := !tx +. !pas
+let act_keyDown () = ty := !ty -. !pas
+let act_keyUP () = ty := !ty +. !pas
 
 
-(* same with special key *)
-let keyboard_special_event ~key ~x ~y = match key with
-  | Glut.KEY_LEFT -> tx := !tx -. !pas
-  | Glut.KEY_RIGHT -> tx := !tx +. !pas
-  | Glut.KEY_DOWN -> ty := !ty -. !pas
-  | Glut.KEY_UP -> ty := !ty +. !pas
-  | _ -> ()
 
-let idle () =
+let boucleGTK () =
   init_light ();
-  display ()
+  display ();
+  Glut.motionFunc motion;
+  Glut.reshapeFunc reshape;
+  Gl.flush ()
 
-let main_engine () =
-    init ();
-    Glut.keyboardFunc keyboard_event;
-    Glut.specialFunc keyboard_special_event;
-    Glut.mouseFunc mouse_event;
-    Glut.motionFunc motion;
-    Glut.reshapeFunc reshape;
-    (*Glut.displayFunc display;*)
-    Glut.idleFunc (Some idle);
-    Glut.mainLoop ()
 
