@@ -440,7 +440,14 @@ let win_flout () =
 		~callback:(fun () -> (exec_rerand picture;
                               )));
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (exec_off btn_prec picture)));
+		~callback:(fun () -> (exec_off btn_prec picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_wb#connect#clicked
 		~callback:(fun () -> (exec_wb picture;
                               grise btn_prec
