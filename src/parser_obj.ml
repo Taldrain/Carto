@@ -10,14 +10,14 @@ let stock_list_triplet l1 l2 =
 	let a = float_of_string (List.nth l1 1) in
 	let	b = float_of_string (List.nth l1 2) in
 	let	c = float_of_string
-		(String.sub (List.nth l1 3) 0 ((String.length (List.nth l1 3))(* - 2*))) in
+		(String.sub (List.nth l1 3) 0 ((String.length (List.nth l1 3)) - 2)) in
 			l2 := (a,b,c)::(!l2)
 
 
 let stock_list_couple l1 l2 =
 	let a = float_of_string (List.nth l1 1) in
 	let	b = float_of_string
-		 (String.sub (List.nth l1 2) 0 ((String.length (List.nth l1 2))(* - 2*))) in
+		 (String.sub (List.nth l1 2) 0 ((String.length (List.nth l1 2)) - 2)) in
 			l2 := (a,b)::(!l2)
 
 
@@ -32,7 +32,6 @@ let open_obj () =
 let obj_file = open_in (Refe.get_filename ()) in
 	let rec parser_obj ()  =
 	let line = input_line obj_file in
-	print_endline line;
 		let string_list = Str.split (Str.regexp " ") line in
 		begin
 			match List.hd string_list with
