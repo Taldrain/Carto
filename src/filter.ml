@@ -219,8 +219,7 @@ let multi_mat_filter filter img dim coef =
 
 (* matrix to image *)
 let mat_to_img mat img =
-  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
-              (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let (w,h) = (Array.length mat, Array.length mat.(0)) in
   let image = Sdlvideo.create_RGB_surface_format img [] w h in
     for x = 0 to (w-1) do
       for y = 0 to (h-1) do
@@ -415,10 +414,31 @@ let median_filtr img dim =
           let (xf,yf) = qsort !li_couple g in
             mat_f.(x).(y) <- Sdlvideo.get_pixel_color img xf yf;
         with Invalid_argument "index out of bounds" ->
-          mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y;
+          if (Refe.get_grid_stat() = "Continue") then
+            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y
+          else 
+            mat_f.(x).(y) <- (0,0,0);
       done;
     done;
-    mat_to_img mat_f img
+  print_endline (Refe.get_grid_stat()); 
+  let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
+  if Refe.get_grid_stat() = "None" then
+    begin
+      (* var is the number of pixels lost for each line and columns *)
+      let var = dim - 1  in
+        mat_final := (Array.make_matrix ((Array.length mat_f) - var)
+        ((Array.length mat_f.(0)) - var) (0,0,0));
+       for x = 0 to (Array.length !mat_final) - 1 do
+          for y = 0 to (Array.length !mat_final.(0)) - 1 do
+            !mat_final.(x).(y) <- mat_f.(x + (var/2)).(y + (var/2));
+         done;
+       done;
+    end
+  else
+    begin
+      mat_final := mat_f ;
+    end;
+  mat_to_img !mat_final img
 
 
 
