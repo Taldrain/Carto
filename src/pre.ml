@@ -92,20 +92,21 @@ let tolerance (r,g,b) (r_n, g_n, b_n) =
 
 (* Basic Edge function *)
 let contour image =
-  get_dims image;
+  let (w,h) = ((Sdlvideo.surface_info image).Sdlvideo.w,
+               (Sdlvideo.surface_info image).Sdlvideo.h) in
   let image2 = Sdlvideo.create_RGB_surface_format
-  image [] (Refe.get_w()) (Refe.get_h())
+  image [] w h
   and right = ref (0,0,0)
   and down = ref (0,0,0)
   and center = ref (0,0,0)
   and listcolor = ref [] in
-    for x=0 to (Refe.get_w())-1 do
-      for y=0 to (Refe.get_h())-1 do
+    for x=0 to (w)-1 do
+      for y=0 to (h)-1 do
         center := Sdlvideo.get_pixel_color image x y;
         right := Sdlvideo.get_pixel_color image (x+1) y;
         down := Sdlvideo.get_pixel_color image x (y+1);
-        if (tolerance !center !right = false &&  x < (Refe.get_w())-1
-        || tolerance !center !down = false  &&  y < (Refe.get_h())-1 ) then
+        if (tolerance !center !right = false &&  x < (w)-1
+        || tolerance !center !down = false  &&  y < (h)-1 ) then
           Sdlvideo.put_pixel_color image2 x y (0,0,0) else
           Sdlvideo.put_pixel_color image2 x y !center;
         if (tolerance !center !right = false || tolerance !center !down = false) then
