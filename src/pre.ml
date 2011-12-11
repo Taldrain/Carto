@@ -204,21 +204,18 @@ let pre_trait () =
   let img = Sdlloader.load_image (Refe.get_filename ()) in
   (* getting dimensions *)
   get_dims img;
-  (*let img2 = contour img in*)
+  let img2 = contour img in
 	(* we create the display surface *)
-  (*let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
 	(* Grid function *)
-	show img2 display;
+	(* :show img2 display;
 	wait_key ();*)
-	(*contour_hor img2 (Refe.get_step());
+	contour_hor img2 (Refe.get_step());
 	contour_ver img2 (Refe.get_step());
-	contour_diag1 img2 (Refe.get_step());*)
+	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
   (* on affiche l'image apres traitement*)
-	(*show img2 display;*)
 	(* recording the image *)
-	(*Sdlvideo.save_BMP img2 "out.bmp";*)
 	(*wait_key ();*)
 	Sdl.quit ()
 
