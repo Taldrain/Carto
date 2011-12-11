@@ -126,6 +126,7 @@ let view_img () =
         ~page_incr:1.
         ~page_size:1. ();
     range#set_adjustment adj;
+    print_endline (string_of_int range#digits);
 
 
 	(* -- CALLBACK -- *)
