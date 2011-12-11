@@ -118,6 +118,7 @@ let contour image =
     (* call fct which write colors in a .txt *)
     if (Refe.save_ornot_color() = true) then
       list_to_text !listcolor;
+    Sdlvideo.save_BMP image2 "contour.bmp";
     image2
 
 
@@ -205,19 +206,16 @@ let pre_trait () =
   get_dims img;
   let img2 = contour img in
 	(* we create the display surface *)
-  let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
 	(* Grid function *)
-	show img2 display;
-	wait_key ();
+	(* :show img2 display;
+	wait_key ();*)
 	contour_hor img2 (Refe.get_step());
 	contour_ver img2 (Refe.get_step());
 	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
   (* on affiche l'image apres traitement*)
-	show img2 display;
 	(* recording the image *)
-	Sdlvideo.save_BMP img2 "out.bmp";
 	(*wait_key ();*)
 	Sdl.quit ()
 
