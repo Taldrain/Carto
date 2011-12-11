@@ -494,6 +494,16 @@ qui consiste a tester (x,y) , s'il font déja parti d'un triangle, x->x+1,
 si x depasse la largeur, x->0 et y->y+1, si y depasse la hauteur, sortir,
 sinon new_triangles x y *)
 let triangulation () =
+(* Remise a zero des valeurs *)
+	x0 := 0;
+	y0 := 0;
+	z0 := 0;
+	xx := 0;
+	yx := 0;
+	xy := 0;
+	yy := 0;
+	list_in_tri_coords := [];
+
 	let rec tri x y = match (x,y) with
 		| (x,y) when y > ((Refe.get_w())/(Refe.get_step())-1) -> ()
 		| (x,y) when x > ((Refe.get_h())/(Refe.get_step())) -> tri 1 (y+1)

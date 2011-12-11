@@ -103,7 +103,9 @@ let exec_glgtk () =
    w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
-        if key = GdkKeysyms._Escape then (area#destroy (); w#destroy ();
+        if key = GdkKeysyms._Escape then (Refe.list_tri3D := [];
+										  Refe.list_3d := [];
+										  area#destroy (); w#destroy ();
                                           Graphics_engine.set_init ()) else
         if key = GdkKeysyms._Down then Graphics_engine.act_keyDown () else
         if key = GdkKeysyms._Up then Graphics_engine.act_keyUP () else
