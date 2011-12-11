@@ -472,7 +472,7 @@ let win_flout () =
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 
-   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2;
+   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2 btn_wb;
 
 	(* -- CALLBACK -- *)
 	ignore (btn_rerand#connect#clicked
@@ -754,7 +754,7 @@ let winalt () =
 (* -------------------------------------------------------------------------- *)
 
 let aboutbox () =
-    let win = GWindow.about_dialog
+    let _win = GWindow.about_dialog
         ~authors:["Alonso Giraldo (girald_a) - Pikachu";
                   "Quentin Ribierre (ribier_q) - Mathsup";
                   "Thomas Mariaux (mariau_t) - Taldrain";

@@ -66,17 +66,13 @@ let exec_glgtk () =
     let btn = GButton.button
         ~label:"Close"
         ~packing:box#add () in
-    area#connect#realize ~callback:Graphics_engine.init;
-    area#connect#display ~callback:(fun () -> (Graphics_engine.display ();
-                                               area#swap_buffers ()));
+    ignore (area#connect#realize ~callback:Graphics_engine.init);
+    ignore (area#connect#display ~callback:(fun () -> (Graphics_engine.display ();
+                                               area#swap_buffers ())));
     area#event#add [`ALL_EVENTS];
 
-    (fun () ->
-    GMain.Timeout.add
-      ~ms:2
-      ~callback:
-       (fun () -> Graphics_engine.display (); area#swap_buffers (); true); ());
 
+    ignore(
    area#event#connect#button_press ~callback:
     begin fun ev ->
       let button = GdkEvent.Button.button ev in
@@ -87,8 +83,9 @@ let exec_glgtk () =
         Graphics_engine.display ();
         area#swap_buffers ();
           true
-    end;
+    end);
 
+    ignore(
    area#event#connect#motion_notify ~callback:
     begin fun ev ->
       let motion = GdkEvent.Motion.is_hint ev in
@@ -97,18 +94,20 @@ let exec_glgtk () =
         Graphics_engine.display ();
         area#swap_buffers ();
           true
-    end;
+    end);
 
+    ignore(
    area#event#connect#button_release ~callback:
     begin fun ev ->
       let button = GdkEvent.Button.button ev in
         if button = 1 then Graphics_engine.act_leftUp () else
         if button = 3 then Graphics_engine.act_rightUP () ;
         Graphics_engine.display ();
-        area#swap_buffers ();
+        ignore (area#swap_buffers ());
           true
-    end;
+    end);
 
+    ignore(
    w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
@@ -145,10 +144,11 @@ let exec_glgtk () =
         Graphics_engine.display ();
       area#swap_buffers ();
         true
-    end;
-    btn#connect#clicked ~callback:
+    end);
+
+    ignore (btn#connect#clicked ~callback:
         (fun () -> area#destroy (); w#destroy ();
-                   Graphics_engine.set_init ());
+                   Graphics_engine.set_init ()));
    ()
 
 let exec_3d_inst () =
