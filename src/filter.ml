@@ -72,10 +72,7 @@ let sobelv2_2() =
 
 let gauss3() (* var *) =
   let mat = Array.make_matrix 3 3 0 in
-(*  let grad x y = int_of_float(( 1. /. ( 2. *. 3.1416 *. var ** 2.))
-                  *. exp ( -. ( (float)(x) ** 2. +. (float)(y) ** 2. ) /. 2. *.
-                  ( var ** 2.) )) in  *)
-  mat.(0).(0) <- 1;
+    mat.(0).(0) <- 1;
   mat.(1).(0) <- 2;
   mat.(2).(0) <- 1;
   mat.(0).(1) <- 2;
@@ -178,7 +175,7 @@ let mpf3 img x y filter color coef =
    filter.(0).(2) * (atb_p img (x-1) (y+1) color ) +
    filter.(1).(2) * (atb_p img (x  ) (y+1) color ) +
    filter.(2).(2) * (atb_p img (x+1) (y+1) color )) / coef
-  with _ -> 0
+  with _ -> atb_p img x y color
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
 let multi3_pix_filter img x y filter coef =
@@ -196,7 +193,7 @@ let mpf5 img x y filter color coef =
        done;
     done;
   !int_f / coef
- with _ -> 0
+ with _ -> atb_p img x y color
 
 
 (* addition of pixel with all neighbours filtered (5x5) to make pixel filtered*)
@@ -206,7 +203,7 @@ let multi5_pix_filter img x y filter coef =
     normalize pixel
 
 
-(* multiplication of filter and the matrix (3x3) *)
+(* multiplication of filter and the matrix *)
 let multi_mat_filter filter img dim coef =
   let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
               (Sdlvideo.surface_info img).Sdlvideo.h) in
@@ -218,12 +215,28 @@ let multi_mat_filter filter img dim coef =
        else  mat_out.(x).(y) <- multi5_pix_filter img x y filter coef;
      done;
     done;
-  mat_out
+  let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
+    if Refe.get_grid_stat() = "None" then
+     begin
+       (* var is the number of pixels lost for each line and columns *)
+       let var = dim - 1  in
+         mat_final := (Array.make_matrix ((Array.length mat_out) - var)
+         ((Array.length mat_out.(0)) - var) (0,0,0));
+        for x = 0 to (Array.length !mat_final) - 1 do
+           for y = 0 to (Array.length !mat_final.(0)) - 1 do
+             !mat_final.(x).(y) <- mat_out.(x + (var/2)).(y + (var/2));
+          done;
+        done;
+      end
+   else
+      begin
+       mat_final := mat_out ;
+     end;
+   !mat_final
 
 (* matrix to image *)
 let mat_to_img mat img =
-  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
-              (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let (w,h) = (Array.length mat, Array.length mat.(0)) in
   let image = Sdlvideo.create_RGB_surface_format img [] w h in
     for x = 0 to (w-1) do
       for y = 0 to (h-1) do
@@ -231,6 +244,7 @@ let mat_to_img mat img =
       done;
     done;
   image
+
 (* e1 = elt of mat1...    ef = sqrt (square e1 + square e2)  *)
 let mat1_mat2 mat1 mat2 img =
   let mat_f =
@@ -276,6 +290,24 @@ let mat_edge_to_white mat_i img =
      mat_to_img mat_f img
 
 
+(* ------------------------------------ ------------------------------------- *)
+
+(* ---------------------------- Put image to grey --------------------------- *)
+
+let img_to_grey img =
+  let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
+              (Sdlvideo.surface_info img).Sdlvideo.h) in
+  let img_f = Sdlvideo.create_RGB_surface_format img [] w h in
+    for x=0 to (w)-1 do
+      for y=0 to (h)-1 do
+        let (r,g,b) = Sdlvideo.get_pixel_color img x y in
+          let g = int_of_float(0.299 *. (float)(r) +. 0.587 *. (float)(g) +. 
+                  0.114 *. (float)(b)) in
+          Sdlvideo.put_pixel_color img_f x y (normalize(g,g,g));
+      done;
+    done;
+  img_f
+
 
 (* ------------------------------------ ------------------------------------- *)
 
@@ -299,56 +331,129 @@ let red mat x y =
   let (r,_,_) = mat.(x).(y) in
     r
 
-(* mdian filter, it has a different behaviour *)
+(* function needed for the next function *)
+let rec qsort li g = match li with
+  | [] -> failwith "problem in median color filter"
+  | (x,y,z)::li when x = g -> (y,z)
+  | (x,y,z)::li -> qsort li g
+
+
 let median_filtr img dim =
+  let mat_grey = img_to_mat ( img_to_grey img) in
   let mat = img_to_mat img in
   let mat_f = Array.make_matrix (Array.length mat)
               (Array.length mat.(0)) (0,0,0) in
     for x = 0 to Array.length mat - 1 do
       for y = 0 to Array.length mat.(0) - 1 do
         try
+          let li_couple = ref [] in
           let li = ref [] in
           if dim = 3 then
-            li := [red mat (x-1) (y-1); red mat (x) (y-1); red mat (x+1) (y-1);
-            red mat (x-1) (y); red mat (x) (y); red mat (x+1) (y);
-            red mat (x-1) (y+1); red mat (x) (y+1); red mat (x+1) (y+1)]
+           begin
+            li_couple := [
+              red mat_grey (x-1) (y-1), x-1, y-1;
+              red mat_grey (x  ) (y-1), x  , y-1;
+              red mat_grey (x+1) (y-1), x+1, y-1;
+              red mat_grey (x-1) (y  ), x-1, y;
+              red mat_grey (x  ) (y  ), x  , y;
+              red mat_grey (x+1) (y  ), x+1, y;
+              red mat_grey (x-1) (y+1), x-1, y+1;
+              red mat_grey (x  ) (y+1), x  , y+1;
+              red mat_grey (x+1) (y+1), x+1, y+1];
+            li := [
+             red mat_grey (x-1) (y-1);
+             red mat_grey (x  ) (y-1);
+             red mat_grey (x+1) (y-1);
+             red mat_grey (x-1) (y  );
+             red mat_grey (x  ) (y  );
+             red mat_grey (x+1) (y  );
+             red mat_grey (x-1) (y+1);
+             red mat_grey (x  ) (y+1);
+             red mat_grey (x+1) (y+1)];
+           end
           else
             begin
-            li := [
-              red mat (x-2) (y-2);
-              red mat (x-1) (y-2);
-              red mat (x  ) (y-2);
-              red mat (x+1) (y-2);
-              red mat (x+2) (y-2);
-              red mat (x-2) (y-1);
-              red mat (x-1) (y-1);
-              red mat (x  ) (y-1);
-              red mat (x+1) (y-1);
-              red mat (x+2) (y-1);
-              red mat (x-2) (y  );
-              red mat (x-1) (y  );
-              red mat (x  ) (y  );
-              red mat (x+1) (y  );
-              red mat (x+2) (y  );
-              red mat (x-2) (y+1);
-              red mat (x-1) (y+1);
-              red mat (x  ) (y+1);
-              red mat (x+1) (y+1);
-              red mat (x+2) (y+1);
-              red mat (x-2) (y+2);
-              red mat (x-1) (y+2);
-              red mat (x  ) (y+2);
-              red mat (x+1) (y+2);
-              red mat (x+2) (y+2)]
-            end;
+              li_couple := [
+                red mat_grey (x-2) (y-2), x-2, y-2;
+                red mat_grey (x-1) (y-2), x-1, y-2;
+                red mat_grey (x  ) (y-2), x  , y-2;
+                red mat_grey (x+1) (y-2), x+1, y-2;
+                red mat_grey (x+2) (y-2), x+2, y-2;
+                red mat_grey (x-2) (y-1), x-2, y-1;
+                red mat_grey (x-1) (y-1), x-1, y-1;
+                red mat_grey (x  ) (y-1), x  , y-1;
+                red mat_grey (x+1) (y-1), x+1, y-1;
+                red mat_grey (x+2) (y-1), x+2, y-1;
+                red mat_grey (x-2) (y  ), x-2, y  ;
+                red mat_grey (x-1) (y  ), x-1, y  ;
+                red mat_grey (x  ) (y  ), x  , y  ;
+                red mat_grey (x+1) (y  ), x+1, y  ;
+                red mat_grey (x+2) (y  ), x+2, y  ;
+                red mat_grey (x-2) (y+1), x-2, y+1;
+                red mat_grey (x-1) (y+1), x-1, y+1;
+                red mat_grey (x  ) (y+1), x  , y+1;
+                red mat_grey (x+1) (y+1), x+1, y+1;
+                red mat_grey (x+2) (y+1), x+2, y+1;
+                red mat_grey (x-2) (y+2), x-2, y+2;
+                red mat_grey (x-1) (y+2), x-1, y+2;
+                red mat_grey (x  ) (y+2), x  , y+2;
+                red mat_grey (x+1) (y+2), x+1, y+2;
+                red mat_grey (x+2) (y+2), x+2, y+2];
+              li := [
+                red mat_grey (x-2) (y-2);
+                red mat_grey (x-1) (y-2);
+                red mat_grey (x  ) (y-2);
+                red mat_grey (x+1) (y-2);
+                red mat_grey (x+2) (y-2);
+                red mat_grey (x-2) (y-1);
+                red mat_grey (x-1) (y-1);
+                red mat_grey (x  ) (y-1);
+                red mat_grey (x+1) (y-1);
+                red mat_grey (x+2) (y-1);
+                red mat_grey (x-2) (y  );
+                red mat_grey (x-1) (y  );
+                red mat_grey (x  ) (y  );
+                red mat_grey (x+1) (y  );
+                red mat_grey (x+2) (y  );
+                red mat_grey (x-2) (y+1);
+                red mat_grey (x-1) (y+1);
+                red mat_grey (x  ) (y+1);
+                red mat_grey (x+1) (y+1);
+                red mat_grey (x+2) (y+1);
+                red mat_grey (x-2) (y+2);
+                red mat_grey (x-1) (y+2);
+                red mat_grey (x  ) (y+2);
+                red mat_grey (x+1) (y+2);
+                red mat_grey (x+2) (y+2)];
+              end;
           let li_f = List.fast_sort (fun x y -> compare x y) (!li) in
           let g = List.nth li_f ((List.length li_f)/2) in
-          mat_f.(x).(y) <- (g,g,g);
+          let (xf,yf) = qsort !li_couple g in
+            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img xf yf;
         with Invalid_argument "index out of bounds" ->
-               mat_f.(x).(y) <- mat.(x).(y);
+          (*if (Refe.get_grid_stat() = "Continue") then*)
+            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y;
       done;
     done;
-    mat_to_img mat_f img
+  print_endline (Refe.get_grid_stat());
+  let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
+  if Refe.get_grid_stat() = "None" then
+    begin
+      (* var is the number of pixels lost for each line and columns *)
+      let var = dim - 1  in
+        mat_final := (Array.make_matrix ((Array.length mat_f) - var)
+        ((Array.length mat_f.(0)) - var) (0,0,0));
+       for x = 0 to (Array.length !mat_final) - 1 do
+          for y = 0 to (Array.length !mat_final.(0)) - 1 do
+            !mat_final.(x).(y) <- mat_f.(x + (var/2)).(y + (var/2));
+         done;
+       done;
+    end
+  else
+    begin
+      mat_final := mat_f ;
+    end;
+  mat_to_img !mat_final img
 
 
 
@@ -385,7 +490,6 @@ let median_filtr5 img =
 (* median filter, with 3x3 matrix *)
 let median_filtr3 img =
   median_filtr img 3
-
 
 
 (* ------------------------------------ ------------------------------------- *)

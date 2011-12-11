@@ -5,31 +5,41 @@ display exept the main window *)
 
 
 (* -------------------------------------------------------------------------- *)
-(* FENETRE DE FILTRES COUTOURS *)
+(* FENETRE DE COUTOURS *)
 (* -------------------------------------------------------------------------- *)
 
 let exec_nop pict_view =
 	Refe.filename := (Refe.get_orig_file ());
 	pict_view#set_file (Refe.get_filename ())
 
+let exec_seq pict_view =
+  	let img = Sdlloader.load_image (Refe.get_filename ()) in
+	let ret = (Pre.contour img) in
+	Sdlvideo.save_BMP ret "tmp/tmp.bmp";
+	Refe.filename := "/tmp/tmp.bmp";
+	pict_view#set_file "/tmp/tmp.bmp"
+
 let exec_so level pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
 	begin
 	if level = 1 then
-		let img_so = (Filter.sobel_filter_f img) in
+		let img_so = (Filter.sobel_filter_f_color img) in
 		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
 	else (*level = 2 *)
-		let img_so = (Filter.sobel_filter_f_color img) in
+		let img_so = (Filter.sobel_filter_f img) in
 		Sdlvideo.save_BMP img_so "tmp/tmp.bmp";
 	end;
 	Refe.filename := "/tmp/tmp.bmp";
 	pict_view#set_file "/tmp/tmp.bmp"
 
+let put_scale sc =
+    Refe.tolerance := sc#digits;
+    print_endline (string_of_int (Refe.get_tolerance ()))
+
 let destrof () =
     ()
 
 let view_img () =
-	(*La fenetre de filtre *)
 	if (Refe.get_filename ()) != "" then
 	begin
 	Refe.orig_file := (Refe.get_filename ());
@@ -50,7 +60,7 @@ let view_img () =
 		~packing:hbox#add () in
 	(*pour les encadrer*)
 	let fram = GBin.frame
-		~label:"Filters"
+		~label:"Common"
 		~border_width:5
 		~packing:box#pack () in
 	(*pour mettre les boutons dans la frame*)
@@ -62,25 +72,31 @@ let view_img () =
 	let btn_nop = GButton.button
 		~label:"Disable filter"
 		~packing:box_fram#add () in
+
+    let fram1  = GBin.frame
+		~label:"Contours"
+		~border_width:5
+		~packing:box#pack () in
+	let box_fram1 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram1#add () in
+    let range = GRange.scale `HORIZONTAL
+        ~digits:0
+        ~value_pos:`RIGHT
+        ~packing:box_fram1#add () in
+	let btn_seq = GButton.button
+		~label:"Sequential contour"
+		~packing:box_fram1#add () in
 	let box_so = GPack.hbox
 		~spacing:5
-		~packing:box_fram#add () in
+		~packing:box_fram1#add () in
 	let btn_so1 = GButton.button
 		~label:"Sobel colored"
 		~packing:box_so#add () in
 	let btn_so2 = GButton.button
-		~label:"Sobel W&B"
+		~label:"Sobel B&W"
 		~packing:box_so#add () in
-    let range = GRange.scale `HORIZONTAL
-        ~digits:0
-        ~value_pos:`RIGHT
-        ~packing:box_fram#add () in
-	let _btn_3 = GButton.button
-		~label:"unused"
-		~packing:box_fram#add () in
-	let _btn_4 = GButton.button
-		~label:"unused"
-		~packing:box_fram#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
 	let btn = GButton.button
@@ -105,7 +121,7 @@ let view_img () =
     let adj = GData.adjustment () in
     adj#set_bounds
         ~lower:1.
-        ~upper:10.
+        ~upper:100.
         ~step_incr:1.
         ~page_incr:1.
         ~page_size:1. ();
@@ -115,10 +131,15 @@ let view_img () =
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked
 		~callback:(fun () -> exec_nop picture));
+	ignore (btn_seq#connect#clicked
+		~callback:(fun () -> put_scale range;
+                             exec_seq picture));
 	ignore (btn_so1#connect#clicked
-		~callback:(fun () -> exec_so 1 picture));
+		~callback:(fun () -> put_scale range;
+                             exec_so 1 picture));
 	ignore (btn_so2#connect#clicked
-		~callback:(fun () -> exec_so 2 picture));
+		~callback:(fun () -> put_scale range;
+                             exec_so 2 picture));
 
 	ignore (btn#connect#clicked ~callback:(win#destroy));
 
@@ -142,12 +163,13 @@ let stacky = Stack.create ()
 let sdl_to_bmp img_sdl =
 	Sdlvideo.save_BMP img_sdl "/tmp/tmp.bmp"
 
-let exec_off pict_view =
+let exec_off btn pict_view =
     Stack.clear stacky;
     let img = Sdlloader.load_image (Refe.get_orig_file ()) in
     Stack.push img stacky;
     sdl_to_bmp img;
 	Refe.filename := (Refe.get_orig_file ());
+    btn#misc#set_sensitive false;
     rank := 1;
     pict_view#set_file "/tmp/tmp.bmp"
 
@@ -166,6 +188,15 @@ let exec_rerand pct =
     rank := 1;
     pct#set_file "/tmp/tmp.bmp"
 
+let exec_wb pict_view =
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.img_to_grey (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
 
 let exec_aveg1 pict_view =
     if (!rank <= 5) then
@@ -226,6 +257,10 @@ let exec_prec pict_view =
 	        pict_view#set_file ("/tmp/tmp.bmp");
         end
 
+let gridy combo =
+    match (GEdit.text_combo_get_active combo) with
+        | Some x when x = "Delete" -> Refe.grid_stat := "None"
+        | _ -> Refe.grid_stat := "Continue"
 
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
@@ -236,7 +271,7 @@ let destro w chk chk2=
     w#destroy ();
     view_img ()
 
-let grise bt1 bt2 bt3 bt4 bt5 bt6 =
+let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
    (
     if (!rank = 1) then
         (
@@ -246,7 +281,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive true;
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
-            bt6#misc#set_sensitive true
+            bt6#misc#set_sensitive true;
+            bt7#misc#set_sensitive true
         )
     else
     (
@@ -258,7 +294,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive false;
             bt4#misc#set_sensitive false;
             bt5#misc#set_sensitive false;
-            bt6#misc#set_sensitive false
+            bt6#misc#set_sensitive false;
+            bt7#misc#set_sensitive false
         )
     else
         (
@@ -268,7 +305,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 =
             bt3#misc#set_sensitive true;
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
-            bt6#misc#set_sensitive true
+            bt6#misc#set_sensitive true;
+            bt7#misc#set_sensitive true
         );
     );
     )
@@ -332,6 +370,35 @@ let win_flout () =
 		~packing:box_fram1#add () in
 
 	(*pour les encadrer*)
+	let fram4 = GBin.frame
+		~label:"Transformations"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram4 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram4#add () in
+	let btn_wb = GButton.button
+		~label:"Black & White"
+		~packing:box_fram4#add () in
+
+	(*pour les encadrer*)
+	let fram5 = GBin.frame
+		~label:"Edge detections method"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram5 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram5#add () in
+	let combo = GEdit.combo_box_text
+        ~strings:["Basic"; "Delete"]
+        ~active:0
+		~packing:box_fram5#add () in
+
+	(*pour les encadrer*)
 	let fram2 = GBin.frame
 		~label:"Filters"
 		~border_width:5
@@ -377,20 +444,22 @@ let win_flout () =
 		~packing:fram3#add () in
 	let chk_btn = GButton.check_button
 		~label:"Save colors in txt file"
-        ~active:false
+        ~active:true
 		~packing:box_fram3#add () in
 	let chk_btn2 = GButton.check_button
 		~label:"Save obj"
         ~active:false
 		~packing:box_fram3#add () in
-	let _separator = GMisc.separator `HORIZONTAL
+
+	let box_h = GPack.hbox
+		~spacing:5
 		~packing:box#add () in
     let btn_save = GButton.button
         ~label:"Save current image"
-		~packing:box#pack () in
+		~packing:box_h#add () in
 	let btn_close = GButton.button
 		~label:"Next"
-		~packing:box#pack () in
+		~packing:box_h#add () in
 
 	let box2 = GPack.vbox
 		~packing:hbox#add () in
@@ -414,7 +483,23 @@ let win_flout () =
 		~callback:(fun () -> (exec_rerand picture;
                               )));
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> (exec_off picture)));
+		~callback:(fun () -> (exec_off btn_prec picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2
+                                    btn_wb)));
+	ignore (btn_wb#connect#clicked
+		~callback:(fun () -> (exec_wb picture;
+                              grise btn_prec
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture;
                               grise btn_prec
@@ -422,48 +507,59 @@ let win_flout () =
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_aveg1#connect#clicked
-		~callback:(fun () -> (exec_aveg1 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_aveg1 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_aveg2#connect#clicked
-		~callback:(fun () -> (exec_aveg2 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_aveg2 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 
 	ignore (btn_gauss#connect#clicked
-		~callback:(fun () -> (exec_gauss picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_gauss picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_med1#connect#clicked
-		~callback:(fun () -> (exec_med1 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_med1 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 	ignore (btn_med2#connect#clicked
-		~callback:(fun () -> (exec_med2 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_med2 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
                                     btn_med1
-                                    btn_med2)));
+                                    btn_med2
+                                    btn_wb)));
 
 	ignore (btn_save#connect#clicked
         ~callback:(fun () -> save win));
@@ -666,13 +762,14 @@ let aboutbox () =
         ~authors:["Alonso Giraldo (girald_a) - Pikachu";
                   "Quentin Ribierre (ribier_q) - Mathsup";
                   "Thomas Mariaux (mariau_t) - Taldrain";
-                  "Thomas Joole - Tommytom"]
+                  "Thomas Joole (joole_t) - Tommytom"]
         ~comments:"Supermap - Epita Infospe project - Winter 2011"
-        ~license:"BSD"
+        ~license:"GPLv3"
         ~name:"SuperMap"
         ~version:"RC-1"
-        ~title:"About" () in
-     win#show ()
-
+        ~title:"About"
+        ~show:true () in
+        (*win#connect#response (on `CLOSE | `DELETE_EVENT -> win#destroy ()); ()*)
+()
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
