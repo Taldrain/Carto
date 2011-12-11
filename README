@@ -29,8 +29,8 @@ bibliothèques SDL, Lablgl et Lablgtk.
 3. Installation
 
   Il n'existe pas de version pre-compilé du programme. Après avoir toutes les
-dépendances nécessaires, ce placer dans le dossier principale du projet, par
-défaut carto/.
+dépendances nécessaires, se placer dans le dossier principal du projet, par
+défaut carto/
 
  Puis compiler le programme:
     Pour une machine 64 bits:
@@ -46,7 +46,7 @@ défaut carto/.
 
 4. Utilisation
 
-  Les paramètres du programme sont accessible par les options -help ou --help.
+  Les paramètres du programme sont accessibles par les options -help ou --help.
 
   Commandes clavier pour la 3D:
   Zoom : q -> -
@@ -65,5 +65,4 @@ défaut carto/.
                      f -> surface plein (fill)
                      p -> nuage de points
   Lumière : d -> rester pour appuyer pour un effet jour/nuit
-
 
