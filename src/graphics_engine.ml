@@ -16,7 +16,7 @@ let anglex = ref 0
 let angley = ref 0
 
 (* for the movement of the map with keys *)
-let pas = ref 2.
+let pas = ref 1.
 
 (* display mode the the map *)
 type mode = Fill | Line | Point
@@ -32,7 +32,7 @@ let light_b = ref true
 let fullscreen = ref true
 
 (* rotation var *)
-let rx = ref (-40.)
+let rx = ref (-90.)(*(-40.)*)
 let ry = ref 0.
 let rz = ref 0.
 
@@ -42,7 +42,7 @@ let tx = ref 0.
 let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
 let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
-let tz = ref 10.
+let tz = ref 0.(*10.*)
 
 (* camera *)
 let eye = new Camera.point3 1. 0. 10.
@@ -65,12 +65,12 @@ let lz = ref 0.
 (* --- Function --- *)
 
 let init () =
+  ignore (Glut.init Sys.argv);
   (* init of some variable translation *)
   tx := dtx();
   ty := dty();
   tz := dtz();
-  print_endline "e1";
-  ignore (Glut.init Sys.argv);
+  prerr_string "hi";
   (*Glut.fullScreen ();*)
   (* color gradient *)
   GlDraw.shade_model `smooth;
@@ -142,9 +142,10 @@ let rec create_tri = function
 
 
 (* affichage de la scene - display *)
-let display ~area  =
+let display (*~area*) ()  =
   GlClear.clear [`color; `depth];
   GlMat.load_identity ();
+  print_endline "plouplouploup";
   (*eye#setX !tx;
   eye#setY !ty;
   eye#setZ !tz;
@@ -162,14 +163,14 @@ let display ~area  =
   GlDraw.ends ()
 
 
-let reshape ~width:w ~height:h =
-  let ratio = (float_of_int w) /. (float_of_int h) in
+let reshape ~w:w ~h:h =
+  let ratio = (float_of_int 1024) /. (float_of_int 768) in
     GlMat.mode `projection;
     GlMat.load_identity ();
     GlDraw.viewport ~x:0 ~y:0 ~w ~h;
     (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
     GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
-    GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
+    GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(50.,500.);
     GlMat.mode `modelview;
     GlMat.load_identity ()
 
@@ -226,7 +227,7 @@ let act_f () = mode_ := Fill
 let act_p () = mode_ := Point
 let act_q () = tz := !tz +. !pas
 let act_e () = tz := !tz -. !pas
-let act_e () = reset ()
+let act_r () = reset ()
 let act_g () = light_b := (xor !light_b true)
 let act_2 () = ly := !ly -. !pas
 let act_3 () = lz := !lz -. !pas
@@ -246,7 +247,7 @@ let act_keyUP () = ty := !ty +. !pas
 let boucleGTK () =
   init_light ();
   display ();
-  (*Glut.motionFunc*) motion;
+  (*Glut.motionFunc motion;*)
   (*Glut.reshapeFunc*) reshape;
   Gl.flush ()
 

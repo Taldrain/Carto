@@ -65,34 +65,59 @@ let exec_3d_inst () =
 let exec_glgtk () =
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
-		~width:600
-		~height:400
-		~position:`CENTER in
+		~width:1024
+		~height:768
+		~position:`CENTER
+        ~show:true in
     let box = GPack.hbox
         ~packing:w#add () in
     let area = GlGtk.area [`RGBA;`DOUBLEBUFFER;`DEPTH_SIZE 1;`USE_GL]
-        ~width:400
-        ~height:400
+        ~width:1024
+        ~height:768
         ~packing:box#pack () in
-    area#connect#realize ~callback: Graphics_engine.init;
+    area#connect#realize ~callback:Graphics_engine.init;
     area#connect#display ~callback:(fun () -> (Graphics_engine.boucleGTK (); area#swap_buffers ()));
     area#event#add [`KEY_PRESS];
 
-    print_endline "1";
 
     (fun () ->
     GMain.Timeout.add
-      ~ms:20
+      ~ms:2
       ~callback:
        (fun () -> Graphics_engine.boucleGTK (); area#swap_buffers (); true); ());
-    print_endline "2";
 
-   (* w#event#connect#key_press ~callback:
+   w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
-      if key = GdkKeysyms._Escape then area#destroy ();
+        print_endline "new_event";
+        if key = GdkKeysyms._Escape then (area#destroy ();w#destroy ()) else
+        if key = GdkKeysyms._Down then Graphics_engine.act_keyDown () else
+        if key = GdkKeysyms._Up then Graphics_engine.act_keyUP () else
+        if key = GdkKeysyms._Right then Graphics_engine.act_keyRight () else
+        if key = GdkKeysyms._Left then Graphics_engine.act_keyLeft () else
+        if key = GdkKeysyms._i then Graphics_engine.act_i () else
+        if key = GdkKeysyms._k then Graphics_engine.act_k () else
+        if key = GdkKeysyms._j then Graphics_engine.act_j () else
+        if key = GdkKeysyms._l then Graphics_engine.act_l () else
+        if key = GdkKeysyms._u then Graphics_engine.act_u () else
+        if key = GdkKeysyms._o then Graphics_engine.act_o () else
+        if key = GdkKeysyms._w then Graphics_engine.act_w () else
+        if key = GdkKeysyms._f then Graphics_engine.act_f () else
+        if key = GdkKeysyms._p then Graphics_engine.act_p () else
+        if key = GdkKeysyms._q then Graphics_engine.act_q () else
+        if key = GdkKeysyms._e then Graphics_engine.act_e () else
+        if key = GdkKeysyms._r then Graphics_engine.act_r () else
+        if key = GdkKeysyms._g then Graphics_engine.act_g () else
+        if key = GdkKeysyms._2 then Graphics_engine.act_2 () else
+        if key = GdkKeysyms._3 then Graphics_engine.act_3 () else
+        if key = GdkKeysyms._4 then Graphics_engine.act_4 () else
+        if key = GdkKeysyms._6 then Graphics_engine.act_6 () else
+        if key = GdkKeysyms._8 then Graphics_engine.act_8 () else
+        if key = GdkKeysyms._9 then Graphics_engine.act_9 ();
+      Graphics_engine.boucleGTK ();
+      area#swap_buffers ();
         true
-    end;*)
+    end;
     print_endline "3"
 
 
@@ -214,7 +239,7 @@ let main () =
 	ignore (btn_quit#connect#clicked
 		~callback:quit);
     ignore (btn_noclik#connect#clicked
-        ~callback:(fun () -> (exec_glgtk (); print_endline "a")));
+        ~callback:(fun () -> (exec_glgtk () )));
 
   	w#show ();
   	GMain.main ()
