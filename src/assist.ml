@@ -9,26 +9,29 @@ display exept the main window *)
 (* -------------------------------------------------------------------------- *)
 
 let exec_nop pict_view =
+    print_endline (Refe.get_orig_file ());
 	Refe.filename := (Refe.get_orig_file ());
 	pict_view#set_file (Refe.get_filename ())
 
 let exec_seq pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
-	let ret = (Pre.contour img) in
-	Sdlvideo.save_BMP ret "tmp/tmp.bmp";
+	let ret = Pre.contour img in
+	Sdlvideo.save_BMP ret "/tmp/tmp.bmp";
 	Refe.filename := "/tmp/tmp.bmp";
 	pict_view#set_file "/tmp/tmp.bmp"
 
 let exec_so level pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
-	begin
 	if level = 1 then
-		let img_so = (Filter.sobel_filter_f_color img) in
+    begin
+		let img_so = Filter.sobel_filter_f_color img in
 		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
+    end
 	else (*level = 2 *)
-		let img_so = (Filter.sobel_filter_f img) in
-		Sdlvideo.save_BMP img_so "tmp/tmp.bmp";
-	end;
+    begin
+		let img_so = Filter.sobel_filter_f img in
+		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
+    end;
 	Refe.filename := "/tmp/tmp.bmp";
 	pict_view#set_file "/tmp/tmp.bmp"
 
@@ -40,9 +43,6 @@ let destrof () =
     ()
 
 let view_img () =
-	if (Refe.get_filename ()) != "" then
-	begin
-	Refe.orig_file := (Refe.get_filename ());
 	let win = GWindow.window
 		~title:"Welcome" ()
 		~width:800
@@ -145,9 +145,6 @@ let view_img () =
 
 
 	win#show ()
-	end
-	else
-		()
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
@@ -332,7 +329,6 @@ let win_flout () =
 	(*La fenetre de filtre *)
 	if (Refe.get_filename ()) != "" then
 	begin
-	Refe.orig_file := (Refe.get_filename ());
 	let win = GWindow.window
 		~title:"Apply some filters or not" ()
 		~width:800

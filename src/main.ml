@@ -33,6 +33,7 @@ let exec_random btn =
     begin
 	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
+        Refe.orig_file := (Refe.get_filename ());
         Refe.rand_file := true;)
 	else
 		failwith "Fatal error on genperlin"
