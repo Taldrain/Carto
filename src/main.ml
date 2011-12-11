@@ -70,7 +70,7 @@ let exec_glgtk () =
 		~position:`CENTER in
     let box = GPack.hbox
         ~packing:w#add () in
-    let area = GlGtk.area [`RGBA;`DOUBLEBUFFER]
+    let area = GlGtk.area [`RGBA;`DOUBLEBUFFER;`DEPTH_SIZE 1;`USE_GL]
         ~width:400
         ~height:400
         ~packing:box#pack () in
