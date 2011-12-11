@@ -175,7 +175,7 @@ let mpf3 img x y filter color coef =
    filter.(0).(2) * (atb_p img (x-1) (y+1) color ) +
    filter.(1).(2) * (atb_p img (x  ) (y+1) color ) +
    filter.(2).(2) * (atb_p img (x+1) (y+1) color )) / coef
-  with _ -> 0
+  with _ -> atb_p img x y color
 
 (* addition of pixel with all neighbours filtered (3x3) to make pixel filtered*)
 let multi3_pix_filter img x y filter coef =
@@ -193,7 +193,7 @@ let mpf5 img x y filter color coef =
        done;
     done;
   !int_f / coef
- with _ -> 0
+ with _ -> atb_p img x y color
 
 
 (* addition of pixel with all neighbours filtered (5x5) to make pixel filtered*)
@@ -203,7 +203,7 @@ let multi5_pix_filter img x y filter coef =
     normalize pixel
 
 
-(* multiplication of filter and the matrix (3x3) *)
+(* multiplication of filter and the matrix *)
 let multi_mat_filter filter img dim coef =
   let (w,h) = ((Sdlvideo.surface_info img).Sdlvideo.w,
               (Sdlvideo.surface_info img).Sdlvideo.h) in
@@ -215,7 +215,24 @@ let multi_mat_filter filter img dim coef =
        else  mat_out.(x).(y) <- multi5_pix_filter img x y filter coef;
      done;
     done;
-  mat_out
+  let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
+    if Refe.get_grid_stat() = "None" then
+     begin
+       (* var is the number of pixels lost for each line and columns *)
+       let var = dim - 1  in
+         mat_final := (Array.make_matrix ((Array.length mat_out) - var)
+         ((Array.length mat_out.(0)) - var) (0,0,0));
+        for x = 0 to (Array.length !mat_final) - 1 do
+           for y = 0 to (Array.length !mat_final.(0)) - 1 do
+             !mat_final.(x).(y) <- mat_out.(x + (var/2)).(y + (var/2));
+          done;
+        done;
+      end
+   else
+      begin
+       mat_final := mat_out ;
+     end;
+   !mat_final
 
 (* matrix to image *)
 let mat_to_img mat img =
@@ -414,13 +431,11 @@ let median_filtr img dim =
           let (xf,yf) = qsort !li_couple g in
             mat_f.(x).(y) <- Sdlvideo.get_pixel_color img xf yf;
         with Invalid_argument "index out of bounds" ->
-          if (Refe.get_grid_stat() = "Continue") then
-            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y
-          else 
-            mat_f.(x).(y) <- (0,0,0);
+          (*if (Refe.get_grid_stat() = "Continue") then*)
+            mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y;
       done;
     done;
-  print_endline (Refe.get_grid_stat()); 
+  print_endline (Refe.get_grid_stat());
   let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
   if Refe.get_grid_stat() = "None" then
     begin
