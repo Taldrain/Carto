@@ -236,6 +236,13 @@ let exec_prec pict_view =
 	        pict_view#set_file ("/tmp/tmp.bmp");
         end
 
+let gridy combo =
+    begin
+    match (GEdit.text_combo_get_active combo) with
+        | Some x when x = "Delete" -> Refe.grid_stat := "None"
+        | _ -> Refe.grid_stat := "Continue";
+    end;
+    print_endline (Refe.get_grid_stat ())
 
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
@@ -357,6 +364,22 @@ let win_flout () =
 	let btn_wb = GButton.button
 		~label:"Black & White"
 		~packing:box_fram4#add () in
+
+	(*pour les encadrer*)
+	let fram5 = GBin.frame
+		~label:"Edge detections method"
+		~border_width:5
+		~packing:box#pack () in
+	(*pour mettre les boutons dans la frame*)
+	let box_fram5 = GPack.vbox
+		~spacing:5
+		~border_width:5
+		~packing:fram5#add () in
+	let combo = GEdit.combo_box_text
+        ~strings:["Basic"; "Delete"]
+        ~active:0
+		~packing:box_fram5#add () in
+
 	(*pour les encadrer*)
 	let fram2 = GBin.frame
 		~label:"Filters"
@@ -409,14 +432,16 @@ let win_flout () =
 		~label:"Save obj"
         ~active:false
 		~packing:box_fram3#add () in
-	let _separator = GMisc.separator `HORIZONTAL
+
+	let box_h = GPack.hbox
+		~spacing:5
 		~packing:box#add () in
     let btn_save = GButton.button
         ~label:"Save current image"
-		~packing:box#pack () in
+		~packing:box_h#add () in
 	let btn_close = GButton.button
 		~label:"Next"
-		~packing:box#pack () in
+		~packing:box_h#add () in
 
 	let box2 = GPack.vbox
 		~packing:hbox#add () in
@@ -467,7 +492,8 @@ let win_flout () =
                                     btn_med2
                                     btn_wb)));
 	ignore (btn_aveg1#connect#clicked
-		~callback:(fun () -> (exec_aveg1 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_aveg1 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
@@ -476,7 +502,8 @@ let win_flout () =
                                     btn_med2
                                     btn_wb)));
 	ignore (btn_aveg2#connect#clicked
-		~callback:(fun () -> (exec_aveg2 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_aveg2 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
@@ -486,7 +513,8 @@ let win_flout () =
                                     btn_wb)));
 
 	ignore (btn_gauss#connect#clicked
-		~callback:(fun () -> (exec_gauss picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_gauss picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
@@ -495,7 +523,8 @@ let win_flout () =
                                     btn_med2
                                     btn_wb)));
 	ignore (btn_med1#connect#clicked
-		~callback:(fun () -> (exec_med1 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_med1 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2
@@ -504,7 +533,8 @@ let win_flout () =
                                     btn_med2
                                     btn_wb)));
 	ignore (btn_med2#connect#clicked
-		~callback:(fun () -> (exec_med2 picture;
+		~callback:(fun () -> (gridy combo;
+                              exec_med2 picture;
                               grise btn_prec
                                     btn_aveg1
                                     btn_aveg2

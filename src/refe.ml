@@ -78,7 +78,7 @@ let get_list_tri3D () = !list_tri3D
 let version = ref "Supermap, version RC-1"
 let gVersion = !version
 
-let grid_stat = ref "None"
+let grid_stat = ref "Continue"
 let get_grid_stat() = !grid_stat
 
 let tolerance = ref 0
