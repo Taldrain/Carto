@@ -49,19 +49,6 @@ let exec_3d_obj () =
 	Parser_obj.put_color ()
 	(*Graphics_engine.main_engine ()*)
 
-let exec_3d_inst () =
-	(* 3D POUR LES PRESSES *)
-	begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
-		Refe.filename := "/tmp/rand_map.bmp"
-	else
-		Refe.filename := "carte.bmp"
-	end;
-  	(*Assist.view_img ();*)
-	Refe.file_type := "img";
-	Refe.step := 5;
-	Pre.pre_trait ();
-	Assist.rand_alt ()
 
 let exec_glgtk () =
   	let w = GWindow.window
@@ -164,6 +151,20 @@ let exec_glgtk () =
                    Graphics_engine.set_init ());
    ()
 
+let exec_3d_inst () =
+	(* 3D POUR LES PRESSES *)
+	begin
+	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+		Refe.filename := "/tmp/rand_map.bmp"
+	else
+		Refe.filename := "carte.bmp"
+	end;
+  	(*Assist.view_img ();*)
+	Refe.file_type := "img";
+	Refe.step := 5;
+	Pre.pre_trait ();
+	Assist.rand_alt ();
+    exec_glgtk ()
 
 
 let main () =
