@@ -491,7 +491,8 @@ let median_filtr5 img =
 let median_filtr3 img =
   median_filtr img 3
 
-
+let boost_filtr img =
+  assert false
 
 (* ------------------------------------ ------------------------------------- *)
 
