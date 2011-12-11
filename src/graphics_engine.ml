@@ -142,7 +142,10 @@ let display (*~area*) ()  =
   GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
-  create_tri (Refe.get_list_3d());
+  if Refe.get_perso() then
+    create_tri (Refe.get_list_tri3D())
+  else
+    create_tri (Refe.get_list_3d());
   GlDraw.ends ();
   (* reshape *)
   let ratio = (float_of_int 1024) /. (float_of_int 768) in

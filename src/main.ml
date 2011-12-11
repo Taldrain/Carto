@@ -162,6 +162,7 @@ let exec_3d_inst () =
 	Refe.step := 5;
 	Pre.pre_trait ();
 	Assist.rand_alt ();
+    Refe.perso := false;
     exec_glgtk ()
 
 
