@@ -1,6 +1,3 @@
-(* ASSIST.ML *)
-(* It seems like a draft but there are a lot of function for all windows that
-display exept the main window *)
 
 
 
@@ -14,35 +11,35 @@ let exec_nop pict_view =
 
 let exec_seq pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
-	let ret = (Pre.contour img) in
-	Sdlvideo.save_BMP ret "tmp/tmp.bmp";
-	Refe.filename := "/tmp/tmp.bmp";
+	let ret = Pre.contour img in
+	Sdlvideo.save_BMP ret "/tmp/tmp.bmp";
 	pict_view#set_file "/tmp/tmp.bmp"
 
 let exec_so level pict_view =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
-	begin
 	if level = 1 then
-		let img_so = (Filter.sobel_filter_f_color img) in
+    begin
+		let img_so = Filter.sobel_filter_f_color img in
 		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
+    end
 	else (*level = 2 *)
-		let img_so = (Filter.sobel_filter_f img) in
-		Sdlvideo.save_BMP img_so "tmp/tmp.bmp";
-	end;
-	Refe.filename := "/tmp/tmp.bmp";
+    begin
+		let img_so = Filter.sobel_filter_f img in
+		Sdlvideo.save_BMP img_so "/tmp/tmp.bmp";
+    end;
 	pict_view#set_file "/tmp/tmp.bmp"
 
-let put_scale sc =
-    Refe.tolerance := sc#digits;
-    print_endline (string_of_int (Refe.get_tolerance ()))
-
-let destrof () =
+let exec_ult pict_view =
     ()
 
+let put_scale sc =
+    Refe.tolerance := int_of_float (sc#adjustment#value)
+
+let destrof () =
+	Refe.filename := "/tmp/tmp.bmp"
+
+
 let view_img () =
-	if (Refe.get_filename ()) != "" then
-	begin
-	Refe.orig_file := (Refe.get_filename ());
 	let win = GWindow.window
 		~title:"Welcome" ()
 		~width:800
@@ -97,6 +94,9 @@ let view_img () =
 	let btn_so2 = GButton.button
 		~label:"Sobel B&W"
 		~packing:box_so#add () in
+	let btn_ult = GButton.button
+		~label:"Ultime Sobel"
+		~packing:box_fram1#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
 	let btn = GButton.button
@@ -127,27 +127,33 @@ let view_img () =
         ~page_size:1. ();
     range#set_adjustment adj;
 
+    btn#misc#set_sensitive false;
 
 	(* -- CALLBACK -- *)
 	ignore (btn_nop#connect#clicked
-		~callback:(fun () -> exec_nop picture));
+		~callback:(fun () -> exec_nop picture;
+                             btn#misc#set_sensitive false));
 	ignore (btn_seq#connect#clicked
 		~callback:(fun () -> put_scale range;
-                             exec_seq picture));
+                             exec_seq picture;
+                             btn#misc#set_sensitive true));
 	ignore (btn_so1#connect#clicked
 		~callback:(fun () -> put_scale range;
-                             exec_so 1 picture));
+                             exec_so 1 picture;
+                              btn#misc#set_sensitive true));
 	ignore (btn_so2#connect#clicked
 		~callback:(fun () -> put_scale range;
-                             exec_so 2 picture));
+                             exec_so 2 picture;
+                             btn#misc#set_sensitive true));
+	ignore (btn_ult#connect#clicked
+		~callback:(fun () -> put_scale range;
+                             exec_ult picture;
+                             btn#misc#set_sensitive true));
 
 	ignore (btn#connect#clicked ~callback:(win#destroy));
 
 
 	win#show ()
-	end
-	else
-		()
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
@@ -162,6 +168,9 @@ let stacky = Stack.create ()
 
 let sdl_to_bmp img_sdl =
 	Sdlvideo.save_BMP img_sdl "/tmp/tmp.bmp"
+
+let sdl_to_bmp_fin img_sdl =
+	Sdlvideo.save_BMP img_sdl "/tmp/traite.bmp"
 
 let exec_off btn pict_view =
     Stack.clear stacky;
@@ -257,6 +266,9 @@ let exec_prec pict_view =
 	        pict_view#set_file ("/tmp/tmp.bmp");
         end
 
+let exec_uflo pict_view =
+    ()
+
 let gridy combo =
     match (GEdit.text_combo_get_active combo) with
         | Some x when x = "Delete" -> Refe.grid_stat := "None"
@@ -265,13 +277,15 @@ let gridy combo =
 let destro w chk chk2=
     Refe.save_color_txt := chk#active;
     Refe.save_obj := chk2#active;
-    sdl_to_bmp (Stack.top stacky);
-    Refe.filename := "/tmp/tmp.bmp";
+    sdl_to_bmp_fin (Stack.top stacky);
+    Refe.filename := "/tmp/traite.bmp";
+    Refe.orig_file := (Refe.get_filename ());
     Stack.clear stacky;
+    rank := 1;
     w#destroy ();
     view_img ()
 
-let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
+let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 bt8 =
    (
     if (!rank = 1) then
         (
@@ -282,7 +296,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
             bt6#misc#set_sensitive true;
-            bt7#misc#set_sensitive true
+            bt7#misc#set_sensitive true;
+            bt8#misc#set_sensitive true
         )
     else
     (
@@ -295,7 +310,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
             bt4#misc#set_sensitive false;
             bt5#misc#set_sensitive false;
             bt6#misc#set_sensitive false;
-            bt7#misc#set_sensitive false
+            bt7#misc#set_sensitive false;
+            bt8#misc#set_sensitive false
         )
     else
         (
@@ -306,7 +322,8 @@ let grise bt1 bt2 bt3 bt4 bt5 bt6 bt7 =
             bt4#misc#set_sensitive true;
             bt5#misc#set_sensitive true;
             bt6#misc#set_sensitive true;
-            bt7#misc#set_sensitive true
+            bt7#misc#set_sensitive true;
+            bt8#misc#set_sensitive true
         );
     );
     )
@@ -332,7 +349,6 @@ let win_flout () =
 	(*La fenetre de filtre *)
 	if (Refe.get_filename ()) != "" then
 	begin
-	Refe.orig_file := (Refe.get_filename ());
 	let win = GWindow.window
 		~title:"Apply some filters or not" ()
 		~width:800
@@ -362,12 +378,15 @@ let win_flout () =
 	let btn_rerand = GButton.button
 		~label:"Regenerate new image"
 		~packing:box_fram1#add () in
+    let boxi = GPack.hbox
+		~spacing:5
+        ~packing:box_fram1#pack () in
 	let btn_nop = GButton.button
 		~label:"Disable filter"
-		~packing:box_fram1#add () in
+		~packing:boxi#add () in
 	let btn_prec = GButton.button
 		~label:"Previous"
-		~packing:box_fram1#add () in
+		~packing:boxi#add () in
 
 	(*pour les encadrer*)
 	let fram4 = GBin.frame
@@ -385,7 +404,7 @@ let win_flout () =
 
 	(*pour les encadrer*)
 	let fram5 = GBin.frame
-		~label:"Edge detections method"
+		~label:"Edge gestion methods"
 		~border_width:5
 		~packing:box#pack () in
 	(*pour mettre les boutons dans la frame*)
@@ -408,6 +427,9 @@ let win_flout () =
 		~spacing:5
 		~border_width:5
 		~packing:fram2#add () in
+	let btn_uflo = GButton.button
+		~label:"Unfloute"
+		~packing:box_fram2#add () in
 	let box_moy = GPack.hbox
 		~spacing:5
 		~packing:box_fram2#add () in
@@ -476,7 +498,7 @@ let win_flout () =
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 
-   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2;
+   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2 btn_wb;
 
 	(* -- CALLBACK -- *)
 	ignore (btn_rerand#connect#clicked
@@ -485,6 +507,7 @@ let win_flout () =
 	ignore (btn_nop#connect#clicked
 		~callback:(fun () -> (exec_off btn_prec picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -494,6 +517,7 @@ let win_flout () =
 	ignore (btn_wb#connect#clicked
 		~callback:(fun () -> (exec_wb picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -503,6 +527,7 @@ let win_flout () =
 	ignore (btn_prec#connect#clicked
 		~callback:(fun () -> (exec_prec picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -513,6 +538,7 @@ let win_flout () =
 		~callback:(fun () -> (gridy combo;
                               exec_aveg1 picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -523,6 +549,19 @@ let win_flout () =
 		~callback:(fun () -> (gridy combo;
                               exec_aveg2 picture;
                               grise btn_prec
+                                    btn_uflo
+                                    btn_aveg1
+                                    btn_aveg2
+                                    btn_gauss
+                                    btn_med1
+                                    btn_med2
+                                    btn_wb)));
+
+	ignore (btn_uflo#connect#clicked
+		~callback:(fun () -> (gridy combo;
+                              exec_gauss picture;
+                              grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -534,6 +573,7 @@ let win_flout () =
 		~callback:(fun () -> (gridy combo;
                               exec_gauss picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -544,6 +584,7 @@ let win_flout () =
 		~callback:(fun () -> (gridy combo;
                               exec_med1 picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -554,6 +595,7 @@ let win_flout () =
 		~callback:(fun () -> (gridy combo;
                               exec_med2 picture;
                               grise btn_prec
+                                    btn_uflo
                                     btn_aveg1
                                     btn_aveg2
                                     btn_gauss
@@ -570,6 +612,7 @@ let win_flout () =
   	let img = Sdlloader.load_image (Refe.get_filename ()) in
 	Sdlvideo.save_BMP img "/tmp/tmp1.bmp";
     Stack.push img stacky;
+    rank := 1;
 
 	win#show ()
 	end
@@ -656,8 +699,8 @@ let rand_alt () =
 		i := !i + 1;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-    Post.post_treat ();
-    Graphics_engine.main_engine ()
+    Post.post_treat ()
+    (*Graphics_engine.main_engine ()*)
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
@@ -676,8 +719,8 @@ let save_alt () =
 		} in
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-    Post.post_treat ();
-    Graphics_engine.main_engine ()
+    Post.post_treat ()
+    (*Graphics_engine.main_engine ()*)
 
 (* WINDOW TO ENTER THE ALTS *)
 let winalt () =
@@ -758,7 +801,7 @@ let winalt () =
 (* -------------------------------------------------------------------------- *)
 
 let aboutbox () =
-    let win = GWindow.about_dialog
+    let _win = GWindow.about_dialog
         ~authors:["Alonso Giraldo (girald_a) - Pikachu";
                   "Quentin Ribierre (ribier_q) - Mathsup";
                   "Thomas Mariaux (mariau_t) - Taldrain";
