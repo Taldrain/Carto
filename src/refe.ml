@@ -81,6 +81,6 @@ let gVersion = !version
 let grid_stat = ref "Continue"
 let get_grid_stat() = !grid_stat
 
-let tolerance = ref 0
+let tolerance = ref 5
 let get_tolerance() = !tolerance
 

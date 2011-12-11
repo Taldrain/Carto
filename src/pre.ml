@@ -92,6 +92,7 @@ let tolerance (r,g,b) (r_n, g_n, b_n) =
 
 (* Basic Edge function *)
 let contour image =
+  get_dims image;
   let image2 = Sdlvideo.create_RGB_surface_format
   image [] (Refe.get_w()) (Refe.get_h())
   and right = ref (0,0,0)
