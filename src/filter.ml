@@ -493,58 +493,6 @@ let median_filtr3 img =
 
 
 
-
-let rec p_list li pix =
-  begin
-    match li with
-	    | [] -> [pix]
-      | e::li when e <> pix -> e::(p_list li pix)
-      | _ -> li
-  end
-
-
-(* function needed for the main tolerance function *)
-let tolc color_init color_applied =
-  if float(color_applied) >= float(color_init) -. float(color_init)
-      *. float(Refe.get_tolerance()) /. 100.
-     && float(color_applied) <= float(color_init) +. float(color_init)
-      *. float(Refe.get_tolerance()) /. 100. then
-    true
-  else
-    false
-
-(* main tolerance function *)
-let tolerance (r,g,b) (r_n, g_n, b_n) =
-  if tolc r r_n && tolc g g_n && tolc b b_n then
-   true
-  else
-   false
-
-let contour image =
-  let (w,h) = ((Sdlvideo.surface_info image).Sdlvideo.w,
-               (Sdlvideo.surface_info image).Sdlvideo.h) in
-  let image2 = Sdlvideo.create_RGB_surface_format
-  image [] w h
-  and right = ref (0,0,0)
-  and down = ref (0,0,0)
-  and center = ref (0,0,0)
-  and listcolor = ref [] in
-    for x=0 to (w)-1 do
-      for y=0 to (h)-1 do
-        center := Sdlvideo.get_pixel_color image x y;
-        right := Sdlvideo.get_pixel_color image (x+1) y;
-        down := Sdlvideo.get_pixel_color image x (y+1);
-        if (tolerance !center !right = false &&  x < (w)-1
-        || tolerance !center !down = false  &&  y < (h)-1 ) then
-          Sdlvideo.put_pixel_color image2 x y (0,0,0) else
-          Sdlvideo.put_pixel_color image2 x y !center;
-        if (tolerance !center !right = false || tolerance !center !down = false) then
-          listcolor := p_list !listcolor !center
-        else() ;
-      done;
-    done;
-    Refe.li := !listcolor;
-    image2
 (* ------------------------------------ ------------------------------------- *)
 
 (* END *)
