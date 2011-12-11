@@ -4,16 +4,12 @@
 (* --- Variable --- *)
 
 (* mouse var *)
-let xold = ref 0
-let yold = ref 0
+let xold = ref 0.
+let yold = ref 0.
 let bl_down = ref false
-let zold = ref 0
-let rzold = ref 0
+let zold = ref 0.
+let rzold = ref 0.
 let br_down = ref false
-
-(* temp var for the mouse *)
-let anglex = ref 0
-let angley = ref 0
 
 (* for the movement of the map with keys *)
 let pas = ref 2.
@@ -26,8 +22,6 @@ let g_mode = function
   | Fill -> `fill
   | Line -> `line
   | Point -> `point
-
-let light_b = ref true
 
 let fullscreen = ref true
 
@@ -42,60 +36,50 @@ let tx = ref 0.
 let dty() = (float (-(Refe.get_w()/(4*Refe.get_step()))))
 let ty = ref 0.
 let dtz() = (float (-((Refe.get_h())/Refe.get_step())))
-let tz = ref 10.
-
-(* camera *)
-let eye = new Camera.point3 1. 0. 10.
-let at = new Camera.point3  (float (-(Refe.get_w()/(2*Refe.get_step())))) 0. 0.
-let up = new Camera.point3  0. 1. 0.
-let cameraAngle = ref 0
-let cameraDist = ref 0
-let cameraOff = ref 0
+let tz = ref 0.
 
 (* light var *)
-let lr = ref 0.
-let lg = ref 0.
-let lb = ref 0.
 let lx = ref 0.
-let ly = ref 0.
+let ly = ref (-242.)
 let lz = ref 0.
+let monte = ref true
+let light_b = ref true
+
+let init_b = ref true
+let set_init ()= init_b := true
+let get_init ()= !init_b
 
 
 
 (* --- Function --- *)
 
-let init () =
-  (* init of some variable translation *)
+let reset () =
+  rx := -40.;
+  ry := 0.;
+  rz := 0.;
   tx := dtx();
   ty := dty();
-  tz := dtz();
+  tz := dtz()
+
+let init () =
   ignore (Glut.init Sys.argv);
   Glut.initDisplayMode ~alpha:true ~depth:true ~double_buffer:true ();
-  (*Glut.initWindowSize ~w:800 ~h:600;*)
-  ignore (Glut.createWindow "OpenGl");
-  Glut.fullScreen ();
+  (* init of some variable translation *)
+  reset ();
+  ly := (-242.);
+  monte := true;
   (* color gradient *)
   GlDraw.shade_model `smooth;
   (* background color *)
   GlClear.color (0., 0., 0.);
   GlClear.depth 1.;
-  (*GlMat.translate3 (0., 0., -50.);*)
-  (*GlClear.clear [`color; `depth];*)
   List.iter Gl.enable [ `depth_test;
                         `lighting;
                         `light0;
-                        (*`fog;*)
                         `color_material;];
   (* for the light *)
   GlLight.color_material ~face:`front `ambient_and_diffuse;
   GlLight.light_model (`ambient (0.2, 0.2, 0.2, 1.));
-  (* for the fog *)
-  (*GlLight.fog (`mode (`exp));
-  List.iter GlLight.fog [ `density (0.1);
-                          `start (0.);
-                          `End (10.);
-                          `color (0., 0., 1., 0.);];*)
-  (*GlFunc.depth_func `lequal;*)
   GlDraw.shade_model `smooth;
   GlFunc.depth_func `less;
   GlMisc.hint `perspective_correction `nicest
@@ -117,42 +101,40 @@ let init_light () =
   GlLight.material ~face:`front (`shininess 42.0)
 
 
-let findcolor = function
-  | (a,b,c) -> lr:= a; lg:= b; lb:= c
+let dn () =
+  if !monte then
+    if (!ly < 381.) then
+      ly := !ly +. 4.
+    else
+      monte := false
+  else
+    if (!ly > (-243.)) then
+      ly := !ly -. 4.
+    else
+      monte := true
 
 
-(*let distance_lp (x2,y2,z2) =
-  sqrt ((x2-.(!lx))*.(x2-.(!lx))+.(y2-.(!ly))*.(y2-.(!ly))+.(z2-.(!lz))*.(z2-.(!lz)))
-
-let attenuation (x2,y2,z2) =
-  max(0.,1. -. ((distance_lp (x2,y2,z2))/.z2))
-
-let light (x2,y2,z2) =
-  let a = attenuation (x2,y2,z2) in
-    (x2*.a, y2*.a, z2*.a)
- *)
 let gColor = function
   | (r,g,b) -> GlDraw.color ((r/.255.), (g/.255.), (b/.255.))
 
 
 let rec create_tri = function
     [] -> ()
-  | e::l -> (*findcolor (snd e);*)
-            gColor (snd e);
+  | e::l -> gColor (snd e);
             GlDraw.vertex3 (fst e);
             create_tri l
 
 
 (* affichage de la scene - display *)
-let display ~area  =
+let display (*~area*) ()  =
+  (* init de init, et ouais, norag' *)
+  if !init_b then
+    (init ();
+    init_b := false);
   GlClear.clear [`color; `depth];
+  GlMat.mode `modelview;
   GlMat.load_identity ();
-  (*eye#setX !tx;
-  eye#setY !ty;
-  eye#setZ !tz;
-  GluMat.look_at (eye#getX, eye#getY, eye#getZ)
-                 (at#getX, at#getY, at#getZ)
-                 (up#getX, up#getY, up#getZ);*)
+  init_light ();
   GlMat.translate3 (!tx, !ty, !tz);
   GlMat.rotate3 !rx (2.0, 0.0, 0.0);
   GlMat.rotate3 !ry (0.0, 2.0, 0.0);
@@ -162,52 +144,40 @@ let display ~area  =
   GlDraw.begins `triangles;
   create_tri (Refe.get_list_3d());
   GlDraw.ends ();
-  Glut.swapBuffers ()
-
-
-let reshape ~w ~h =
-  let ratio = (float_of_int w) /. (float_of_int h) in
+  (* reshape *)
+  let ratio = (float_of_int 1024) /. (float_of_int 768) in
     GlMat.mode `projection;
     GlMat.load_identity ();
-    GlDraw.viewport 0 0 w h;
-    (*GlMat.rotate ~angle:(-. !rx) ~x:0. ~y:0. ~z:1. ();
-    GlMat.rotate ~angle:(-. !ry) ~x:1. ~y:0. ~z:0. ();*)
+    GlDraw.viewport 0 0 1024 768;
     GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
-    GlMat.mode `modelview;
-    GlMat.load_identity ()
+  Gl.flush ()
 
+let reshape_ x y =
+let ratio = (float_of_int x) /. (float_of_int y) in
+  GlMat.mode `projection;
+  GlMat.load_identity ();
+  GlDraw.viewport 0 0 x y;
+  GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
 
-(* fonction xor *)
 let xor a b =
-  if a = true then
-    not b
-  else
-    b
+if a = true then
+  not b
+else
+  b
 
-
-let reset () =
-  rx := -40.;
-  ry := 0.;
-  rz := 0.;
-  (*tx := 0.;
-  ty := 0.;
-  tz := 5.*)
-  tx := dtx();
-  ty := dty();
-  tz := dtz()
 
 
 (* deal with the mouse event *)
-let motion ~x ~y =
+let motion x y =
   if !bl_down then
     begin
-      tx := (!tx -. (float(!xold - x)));
-      ty := (!ty +. (float(!yold - y)));
+      tx := (!tx -. (!xold -. x));
+      ty := (!ty +. (!yold -. y));
     end;
   if !br_down then
     begin
-      tz := (!tz +. (float(!zold - y)));
-      rz := (!rz -. (float(!rzold - x)));
+      tz := (!tz +. (!zold -. y));
+      rz := (!rz -. (!rzold -. x));
     end;
   xold := x;
   zold := y;
@@ -215,74 +185,39 @@ let motion ~x ~y =
   rzold := x
 
 
-(* get the mouse_event *)
-let mouse_event ~button ~state ~x ~y = match button, state with
-  | Glut.LEFT_BUTTON, Glut.DOWN -> bl_down := true;
-                                   xold := x;
-                                   yold := y;
-  | Glut.LEFT_BUTTON, Glut.UP -> bl_down := false;
-  | Glut.RIGHT_BUTTON, Glut.DOWN -> br_down := true;
-                                    zold := y;
-                                    rzold := x;
-  | Glut.RIGHT_BUTTON, Glut.UP -> br_down := false;
-  | _ -> ()
+(* mouse event *)
+let act_leftDown x y = bl_down := true; xold := x; yold := y
+let act_leftUp () = bl_down := false
+let act_rightDown x y = br_down := true; zold := y; rzold := x
+let act_rightUP () = br_down := false
 
 
-(* get the keyboard_event *)
-let keyboard_event ~key ~x ~y = match key with
-    (* ESCAPE *)
-    027 -> exit 0
-  | 105 | 151 -> rx := !rx +. !pas
-  | 107 | 153 -> rx := !rx -. !pas
-  | 106 | 152 -> ry := !ry +. !pas
-  | 108 | 154 -> ry := !ry -. !pas
-  | 117 | 165 -> rz := !rz -. !pas
-  | 111 | 157 -> rz := !rz +. !pas
-  | 119 | 167 -> mode_ := Line
-  | 102 | 146 -> mode_ := Fill
-  | 112 | 160 -> mode_ := Point
-  | 113 | 161 -> tz := !tz +. !pas
-  | 101 | 145 -> tz := !tz -. !pas
-  | 114 | 162 -> reset ()
-  | 50 -> ly := !ly -. !pas
-  | 51 -> lz := !lz -. !pas
-  | 52 -> lx := !lx -. !pas
-  | 54 -> lx := !lx +. !pas
-  | 56 -> ly := !ly +. !pas
-  | 57 -> lz := !lz +. !pas
-  (*| 50 -> ty := !ty -. !pas
-  | 51 -> tz := !tz -. !pas
-  | 52 -> tx := !tx -. !pas
-  | 54 -> tx := !tx +. !pas
-  | 56 -> ty := !ty +. !pas
-  | 57 -> tz := !tz +. !pas*)
-  (*| 49 -> print_endline ("eyeX = " ^(string_of_float !tx))
-  | 55 -> print_endline ("eyeY = " ^(string_of_float !ty))
-  | 48 -> print_endline ("eyeZ = " ^(string_of_float !tz))*)
-  | 103 -> light_b := (xor !light_b true)
-  | _ -> ()
+(* keyboard event *)
+let act_i () = rx := !rx +. !pas
+let act_k () = rx := !rx -. !pas
+let act_j () = ry := !ry +. !pas
+let act_l () = ry := !ry -. !pas
+let act_u () = rz := !rz -. !pas
+let act_o () = rz := !rz +. !pas
+let act_w () = mode_ := Line
+let act_f () = mode_ := Fill
+let act_p () = mode_ := Point
+let act_q () = tz := !tz +. !pas
+let act_e () = tz := !tz -. !pas
+let act_r () = reset ()
+let act_g () = light_b := (xor !light_b true)
+let act_2 () = ly := !ly -. !pas
+let act_3 () = lz := !lz -. !pas
+let act_4 () = lx := !lx -. !pas
+let act_6 () = lx := !lx +. !pas
+let act_8 () = ly := !ly +. !pas
+let act_9 () = lz := !lz +. !pas
 
 
-(* same with special key *)
-let keyboard_special_event ~key ~x ~y = match key with
-  | Glut.KEY_LEFT -> tx := !tx -. !pas
-  | Glut.KEY_RIGHT -> tx := !tx +. !pas
-  | Glut.KEY_DOWN -> ty := !ty -. !pas
-  | Glut.KEY_UP -> ty := !ty +. !pas
-  | _ -> ()
+(* special keyboard event *)
+let act_keyLeft () = tx := !tx -. !pas
+let act_keyRight () = tx := !tx +. !pas
+let act_keyDown () = ty := !ty -. !pas
+let act_keyUP () = ty := !ty +. !pas
 
-let idle () =
-  init_light ();
-  display ()
-
-let main_engine () =
-    init ();
-    Glut.keyboardFunc keyboard_event;
-    Glut.specialFunc keyboard_special_event;
-    Glut.mouseFunc mouse_event;
-    Glut.motionFunc motion;
-    Glut.reshapeFunc reshape;
-    (*Glut.displayFunc display;*)
-    Glut.idleFunc (Some idle);
-    Glut.mainLoop ()
 
