@@ -35,13 +35,17 @@ let show img dst =
 
 (* ------------------- Write colors in a .txt --------------------------------*)
 
-(* fnction analyze if the elemnt is in tje list if true add the elmnt in this *)
+(* fnction analyze if the elemnt is in the list if true add the elmnt in this *)
 let rec p_list li pix =
   begin
     match li with
-	    | [] -> [pix]
-      | e::li when e <> pix -> e::(p_list li pix)
-      | _ -> li
+    | [] -> begin 
+              let (r,g,b) = pix in print_endline
+                    (string_of_int(r)^","^string_of_int(g)^","^string_of_int(b));
+              [pix]; 
+            end
+    | e::li when e <> pix -> e::(p_list li pix)
+    | _ -> li
   end
 
 (*    (int*int*int) -> string    *)
@@ -209,9 +213,6 @@ let pre_trait () =
 	(* Grid function *)
 	(* :show img2 display;
 	wait_key ();*)
-	contour_hor img2 (Refe.get_step());
-	contour_ver img2 (Refe.get_step());
-	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
   (* on affiche l'image apres traitement*)
