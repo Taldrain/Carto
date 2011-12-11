@@ -653,8 +653,8 @@ let rand_alt () =
 		i := !i + 1;
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-    Post.post_treat ();
-    Graphics_engine.main_engine ()
+    Post.post_treat ()
+    (*Graphics_engine.main_engine ()*)
 
 (* Formulaire de demande d'altitude *)
 let save_alt () =
@@ -673,8 +673,8 @@ let save_alt () =
 		} in
 		ignore (Refe.list_alt := str::(Refe.get_list_alt ()));
 	done;
-    Post.post_treat ();
-    Graphics_engine.main_engine ()
+    Post.post_treat ()
+    (*Graphics_engine.main_engine ()*)
 
 (* WINDOW TO ENTER THE ALTS *)
 let winalt () =
