@@ -152,12 +152,6 @@ let display (*~area*) ()  =
     GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
   Gl.flush ()
 
-let reshape_ x y =
-let ratio = (float_of_int x) /. (float_of_int y) in
-  GlMat.mode `projection;
-  GlMat.load_identity ();
-  GlDraw.viewport 0 0 x y;
-  GluMat.perspective ~fovy:45. ~aspect:ratio ~z:(1.,500.);
 
 let xor a b =
 if a = true then
