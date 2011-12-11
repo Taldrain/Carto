@@ -36,8 +36,7 @@ let exec_so level pict_view =
 	pict_view#set_file "/tmp/tmp.bmp"
 
 let put_scale sc =
-    Refe.tolerance := sc#digits;
-    print_endline (string_of_int (Refe.get_tolerance ()))
+    Refe.tolerance := int_of_float (sc#adjustment#value)
 
 let destrof () =
     ()
@@ -126,7 +125,6 @@ let view_img () =
         ~page_incr:1.
         ~page_size:1. ();
     range#set_adjustment adj;
-    print_endline (string_of_int range#digits);
 
 
 	(* -- CALLBACK -- *)
