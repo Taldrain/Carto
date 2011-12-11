@@ -66,31 +66,66 @@ let exec_glgtk () =
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
 		~width:1024
-		~height:768
+		~height:800
 		~position:`CENTER
         ~show:true in
-    let box = GPack.hbox
+    let box = GPack.vbox
         ~packing:w#add () in
     let area = GlGtk.area [`RGBA;`DOUBLEBUFFER;`DEPTH_SIZE 1;`USE_GL]
         ~width:1024
         ~height:768
-        ~packing:box#pack () in
+        ~packing:box#add () in
+    let btn = GButton.button
+        ~label:"Close"
+        ~packing:box#add () in
     area#connect#realize ~callback:Graphics_engine.init;
-    area#connect#display ~callback:(fun () -> (Graphics_engine.boucleGTK (); area#swap_buffers ()));
-    area#event#add [`KEY_PRESS];
-
+    area#connect#display ~callback:(fun () -> (Graphics_engine.display ();
+                                               area#swap_buffers ()));
+    area#event#add [`ALL_EVENTS];
 
     (fun () ->
     GMain.Timeout.add
       ~ms:2
       ~callback:
-       (fun () -> Graphics_engine.boucleGTK (); area#swap_buffers (); true); ());
+       (fun () -> Graphics_engine.display (); area#swap_buffers (); true); ());
+
+   area#event#connect#button_press ~callback:
+    begin fun ev ->
+      let button = GdkEvent.Button.button ev in
+        if button = 1 then Graphics_engine.act_leftDown (GdkEvent.Button.x ev)
+                           (GdkEvent.Button.y ev) else
+        if button = 3 then Graphics_engine.act_rightDown (GdkEvent.Button.x ev)
+                           (GdkEvent.Button.y ev) ;
+        Graphics_engine.display ();
+        area#swap_buffers ();
+          true
+    end;
+
+   area#event#connect#motion_notify ~callback:
+    begin fun ev ->
+      let motion = GdkEvent.Motion.is_hint ev in
+        if motion then Graphics_engine.motion (GdkEvent.Motion.x ev)
+                               (GdkEvent.Motion.y ev) ;
+        Graphics_engine.display ();
+        area#swap_buffers ();
+          true
+    end;
+
+   area#event#connect#button_release ~callback:
+    begin fun ev ->
+      let button = GdkEvent.Button.button ev in
+        if button = 1 then Graphics_engine.act_leftUp () else
+        if button = 3 then Graphics_engine.act_rightUP () ;
+        Graphics_engine.display ();
+        area#swap_buffers ();
+          true
+    end;
 
    w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
-        print_endline "new_event";
-        if key = GdkKeysyms._Escape then (area#destroy ();w#destroy ()) else
+        if key = GdkKeysyms._Escape then (area#destroy (); w#destroy ();
+                                          Graphics_engine.set_init ()) else
         if key = GdkKeysyms._Down then Graphics_engine.act_keyDown () else
         if key = GdkKeysyms._Up then Graphics_engine.act_keyUP () else
         if key = GdkKeysyms._Right then Graphics_engine.act_keyRight () else
@@ -113,12 +148,20 @@ let exec_glgtk () =
         if key = GdkKeysyms._4 then Graphics_engine.act_4 () else
         if key = GdkKeysyms._6 then Graphics_engine.act_6 () else
         if key = GdkKeysyms._8 then Graphics_engine.act_8 () else
-        if key = GdkKeysyms._9 then Graphics_engine.act_9 ();
-      Graphics_engine.boucleGTK ();
+        if key = GdkKeysyms._9 then Graphics_engine.act_9 () else
+        if key = GdkKeysyms._d then Graphics_engine.dn () ;
+      if Graphics_engine.get_init () then
+        (Graphics_engine.display ();
+         Graphics_engine.set_init ())
+      else
+        Graphics_engine.display ();
       area#swap_buffers ();
         true
     end;
-    print_endline "3"
+    btn#connect#clicked ~callback:
+        (fun () -> area#destroy (); w#destroy ();
+                   Graphics_engine.set_init ());
+   ()
 
 
 
