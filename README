@@ -1,29 +1,68 @@
-                       Projet Infospe - EPITA 2011/2012
-                            Cartographie - Caml
 
+            Supermap 1.0 : Installation et Instructions d'utilisation
 
-Commandes :
+1. Description
 
-Zoom : q -> -
-       e -> +
+  Supermap est un projet de Cartographie developpé par quatre étudiants
+d'InfoSpe d'EPITA. Ce projet est écrit en OCaml et utilise les trois
+bibliothèques SDL, Lablgl et Lablgtk.
 
-Déplacer la carte : UP    -> vers le haut
-                    DOWN  -> vers le bas
-                    RIGHT -> vers la droite
-                    LEFT  -> vers la gauche
+2. Requièrement
 
-Rotation de la carte : i -> sur l'axe des x, en positif
-                       k -> sur l'axe des x, en negatif
-                       l -> sur l'axe des y, en positif
-                       j -> sur l'axe des y, en negatif
-                       o -> sur l'axe des z, en positif
-                       u -> sur l'axe des z, en negatif
+  * Objective Caml
+  * OCamlSDL
+  * LablGl
+  * Lablgtk - avec le support GlGtk
 
-Différents modes : w -> fil de fer (wire)
-                   f -> surface plein (fill)
-                   p -> nuage de points
+  Il est possible de récuperer OCaml par ce lien :
+    http://caml.inria.fr/ocaml
 
-Lumière : g -> activer/désactiver
+  OcamlSDL:
+    http://ocamlsdl.sourceforge.net/home.html
 
+  LablGl:
+    http://wwwfun.kurims.kyoto-u.ac.jp/soft/lsl/lablgl.html
 
-Utilisation possible de la souris. Attention, sensibilité élevée.
+  LablGtk:
+    http://www.maths.nagoya-u.ac.jp/~garrigue/soft/olabl/lablgtk.html
+
+3. Installation
+
+  Il n'existe pas de version pre-compilé du programme. Après avoir toutes les
+dépendances nécessaires, se placer dans le dossier principal du projet, par
+défaut carto/
+
+ Puis compiler le programme:
+    Pour une machine 64 bits:
+        $ make
+    Pour une machine 32 bits:
+        $ make 64
+
+ Installer le programme:
+        $ make install
+
+ Desinstaller le programme:
+        $ make desinstall
+
+4. Utilisation
+
+  Les paramètres du programme sont accessibles par les options -help ou --help.
+
+  Commandes clavier pour la 3D:
+  Zoom : q -> -
+         e -> +
+  Déplacer la carte : UP    -> vers le haut
+                      DOWN  -> vers le bas
+                      RIGHT -> vers la droite
+                      LEFT  -> vers la gauche
+  Rotation de la carte : i -> sur l'axe des x, en positif
+                         k -> sur l'axe des x, en negatif
+                         l -> sur l'axe des y, en positif
+                         j -> sur l'axe des y, en negatif
+                         o -> sur l'axe des z, en positif
+                         u -> sur l'axe des z, en negatif
+  Différents modes : w -> fil de fer (wire)
+                     f -> surface plein (fill)
+                     p -> nuage de points
+  Lumière : d -> rester pour appuyer pour un effet jour/nuit
+
