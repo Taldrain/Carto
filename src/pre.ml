@@ -67,8 +67,10 @@ let list_to_text li =
 (* ---------------------------- Edge detection ------------------------------ *)
 
 (* Basic Edge function *)
-let contour image image2 =
-  let right = ref (0,0,0)
+let contour image =
+  let image2 = Sdlvideo.create_RGB_surface_format
+  image [] (Refe.get_w()) (Refe.get_h())
+  and right = ref (0,0,0)
   and down = ref (0,0,0)
   and center = ref (0,0,0)
   and listcolor = ref [] in
@@ -88,7 +90,9 @@ let contour image image2 =
     done;
     Refe.li := !listcolor;
     (* call fct which write colors in a .txt *)
-    list_to_text !listcolor
+    if (Refe.save_ornot_color() = true) then
+      list_to_text !listcolor;
+    image2
 
 
 
@@ -189,27 +193,11 @@ let pre_trait () =
   let img = Sdlloader.load_image (Refe.get_filename ()) in
   (* getting dimensions *)
   get_dims img;
-  let img2 = Sdlvideo.create_RGB_surface_format
-  img [] (Refe.get_w()) (Refe.get_h()) in
+  let img2 = contour img(*Sdlvideo.create_RGB_surface_format
+  img [] (Refe.get_w()) (Refe.get_h())*) in
 	(* we create the display surface *)
   let display = Sdlvideo.set_video_mode (Refe.get_w()) (Refe.get_h()) [] in
-	(* on affiche l'image avant traitement*)
-	(*    show img display;
-	wait_key();*)
 	(* Grid function *)
-	(*let img3 = (Filter.gauss3_filter img 1.) in
-  Sdlvideo.save_BMP img3 "gauss.bmp";
-  let img4 = (Filter.average1 img) in
-  Sdlvideo.save_BMP img4 "contour.bmp";
-  let img5 = (Filter.sobel_filter_f img) in
-  Sdlvideo.save_BMP img5 "contourf.bmp";*)
-  (*  we call the pretraitement function *)
-  (*let img3 = img in
-  img_to_grey img3;
-  Sdlvideo.save_BMP img3 "grey.bmp";*)
-  let img4 = Filter.median_filtr3 img in
-  Sdlvideo.save_BMP img4 "median.bmp";
-	contour img img2;
 	show img2 display;
 	wait_key ();
 	contour_hor img2 (Refe.get_step());
@@ -217,7 +205,7 @@ let pre_trait () =
 	contour_diag1 img2 (Refe.get_step());
 	map_to_mat 0 0 0 0;
 	matXY_to_matRGB img;
-  	(* on affiche l'image apres traitement*)
+  (* on affiche l'image apres traitement*)
 	show img2 display;
 	(* recording the image *)
 	Sdlvideo.save_BMP img2 "out.bmp";
