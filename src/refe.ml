@@ -72,5 +72,5 @@ let list_xyz = ref [((0,0,0),(0,0,0))]
 let get_list_xyz() = !list_xyz
 
 
-let list_tri3D = ref [((0.,0.,0.),(0.,0.,0.))]
+let list_tri3D = ref ( [] : ((float*float*float)*(float*float*float)) list )
 let get_list_tri3D () = !list_tri3D
