@@ -42,14 +42,6 @@ let exec_random btn =
 	btn#misc#set_sensitive true
 
 
-
-let exec_3d_obj () =
-	(* PETAGE DU MOTEUR 3D *)
-	Parser_obj.open_obj ();
-	Parser_obj.put_color ()
-	(*Graphics_engine.main_engine ()*)
-
-
 let exec_glgtk () =
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
@@ -150,6 +142,12 @@ let exec_glgtk () =
         (fun () -> area#destroy (); w#destroy ();
                    Graphics_engine.set_init ());
    ()
+
+let exec_3d_obj () =
+	(* PETAGE DU MOTEUR 3D *)
+	Parser_obj.open_obj ();
+	Parser_obj.put_color ();
+    exec_glgtk ()
 
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
