@@ -142,7 +142,7 @@ let display (*~area*) ()  =
   GlDraw.polygon_mode `both (g_mode !mode_);
   GlDraw.line_width 1.0;
   GlDraw.begins `triangles;
-  if !Refe.get_perso then
+  if Refe.get_perso() then
     create_tri (Refe.get_list_tri3D())
   else
     create_tri (Refe.get_list_3d());
