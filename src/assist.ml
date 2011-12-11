@@ -35,8 +35,10 @@ let exec_ult pict_view =
 let put_scale sc =
     Refe.tolerance := int_of_float (sc#adjustment#value)
 
-let destrof () =
-	Refe.filename := "/tmp/tmp.bmp"
+let destrof w chk =
+    Refe.perso := chk#active;
+	Refe.filename := "/tmp/tmp.bmp";
+    w#destroy ()
 
 
 let view_img () =
@@ -45,7 +47,6 @@ let view_img () =
 		~width:800
 		~height:570
 		~position:`CENTER in
-	ignore (win#connect#destroy ~callback:destrof);
     let big_vbox = GPack.vbox
         ~packing:win#add () in
 	let hbox = GPack.hbox
@@ -99,6 +100,11 @@ let view_img () =
 		~packing:box_fram1#add () in
 	let _separator = GMisc.separator `HORIZONTAL
 		~packing:box#add () in
+
+	let chk_liss = GButton.check_button
+		~label:"Our liss method"
+        ~active:false
+		~packing:box#pack () in
 	let btn = GButton.button
 		~label:"Close"
 		~packing:box#pack () in
@@ -150,7 +156,8 @@ let view_img () =
                              exec_ult picture;
                              btn#misc#set_sensitive true));
 
-	ignore (btn#connect#clicked ~callback:(win#destroy));
+	ignore (btn#connect#clicked
+        ~callback:(fun () -> destrof win chk_liss));
 
 
 	win#show ()
