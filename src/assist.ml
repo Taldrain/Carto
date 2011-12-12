@@ -829,6 +829,7 @@ let aboutbox () =
         ~name:"SuperMap"
         ~version:"RC-1"
         ~title:"About"
+        ~position:`CENTER
         ~show:true () in
         (*win#connect#response (on `CLOSE | `DELETE_EVENT -> win#destroy ()); ()*)
 ()

@@ -1,4 +1,4 @@
-.SUFFIXES: .ml .cmx
+.SUFFIXES: .ml .mli .cmx .cmi
 
 CC=ocamlopt.opt
 RM=rm -f
@@ -6,6 +6,8 @@ OUT=supermap
 ML=refe.ml parser_obj.ml filter.ml pre.ml post.ml\
    graphics_engine.ml browser.ml assist.ml main.ml argv.ml
 CMX=${ML:.ml=.cmx}
+MLI=${ML:.ml=.mli}
+CMI=${ML:.ml=.cmi}
 WALL=-I +lablgtk2 -I +sdl -I +lablGL -ccopt -L.\
 	 str.cmxa       \
      lablgl.cmxa    \
@@ -39,7 +41,10 @@ cleanso:
 .ml.cmx:
 	${CC} ${WALL} -c $<
 
-assemble: ${CMX}
+.mli.cmi:
+	${CC} ${WALL} -c $<
+
+assemble: ${CMI} ${CMX}
 	${CC} ${WALL} ${CMX} -o ${OUT}
 
 genperlin:
@@ -49,6 +54,6 @@ post:
 	cp ${OUT} .. && ${RM} ${OUT}
 
 clean:
-	${RM} -rf *.cm* *.o .*.swp ~* '#'* *.so *.mli _build/
+	${RM} -rf *.cm* *.o .*.swp ~* '#'* *.so  _build/
 
 #END
