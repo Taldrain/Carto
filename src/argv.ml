@@ -50,7 +50,7 @@ let args =
      (fun str -> (save (Filter.boost_filtr (sTS str)) "boosted.bmp");
      ()), flou);
    ("-r3d", Arg.Unit
-     (fun () -> (Main.exec_3d_inst ());
+     (fun () -> (Refe.wg := true ;Main.exec_3d_inst ());
      ()), inst_3d);
    ("-v", Arg.Unit
      (fun () -> (print_endline (Refe.gVersion));

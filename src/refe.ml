@@ -87,3 +87,5 @@ let get_tolerance() = !tolerance
 let perso = ref false
 let get_perso () = !perso
 
+let wg = ref false
+let g_wg () = !wg

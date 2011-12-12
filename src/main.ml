@@ -43,6 +43,9 @@ let exec_random btn =
 
 
 let exec_glgtk () =
+  if (Refe.g_wg ()) then
+    ignore(GtkMain.Main.init ());
+
   	let w = GWindow.window
 		~title:"Carto TopoTeam" ()
 		~width:1024
@@ -107,7 +110,9 @@ let exec_glgtk () =
         if key = GdkKeysyms._Escape then (Refe.list_tri3D := [];
 										  Refe.list_3d := [];
 										  area#destroy (); w#destroy ();
-                                          Graphics_engine.set_init ()) else
+                                          Graphics_engine.set_init ();
+                                          if (Refe.g_wg ()) then
+                                             exit 0) else
         if key = GdkKeysyms._Down then Graphics_engine.act_keyDown () else
         if key = GdkKeysyms._Up then Graphics_engine.act_keyUP () else
         if key = GdkKeysyms._Right then Graphics_engine.act_keyRight () else
@@ -143,7 +148,10 @@ let exec_glgtk () =
 
     ignore (btn#connect#clicked ~callback:
         (fun () -> area#destroy (); w#destroy ();
-                   Graphics_engine.set_init ()));
+                   Graphics_engine.set_init ();
+                   if (Refe.g_wg ()) then
+                      exit 0));
+    GMain.main ();
    ()
 
 let exec_3d_obj () =
