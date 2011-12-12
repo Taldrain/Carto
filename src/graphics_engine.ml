@@ -104,12 +104,12 @@ let init_light () =
 let dn () =
   if !monte then
     if (!ly < 381.) then
-      ly := !ly +. 4.
+      ly := !ly +. 6.
     else
       monte := false
   else
     if (!ly > (-243.)) then
-      ly := !ly -. 4.
+      ly := !ly -. 6.
     else
       monte := true
 
@@ -126,7 +126,7 @@ let rec create_tri = function
 
 
 (* affichage de la scene - display *)
-let display (*~area*) ()  =
+let display ()  =
   (* init de init, et ouais, norag' *)
   if !init_b then
     (init ();

@@ -1,4 +1,4 @@
-(* Parse des arguments entrés en parametres du programme *)
+(* Parsing of arguments *)
 
 let annon_fun str =
   print_endline ("'"^str^"'"^" is not an option, check -help or --help.")

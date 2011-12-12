@@ -59,8 +59,9 @@ let exec_glgtk () =
         ~label:"Close"
         ~packing:box#add () in
     ignore (area#connect#realize ~callback:Graphics_engine.init);
-    ignore (area#connect#display ~callback:(fun () -> (Graphics_engine.display ();
-                                               area#swap_buffers ())));
+    ignore (area#connect#display ~callback:
+              (fun () -> (Graphics_engine.display ();
+                          area#swap_buffers ())));
     area#event#add [`ALL_EVENTS];
 
 
