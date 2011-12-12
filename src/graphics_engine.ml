@@ -104,12 +104,12 @@ let init_light () =
 let dn () =
   if !monte then
     if (!ly < 381.) then
-      ly := !ly +. 6.
+      ly := !ly +. 10.
     else
       monte := false
   else
     if (!ly > (-243.)) then
-      ly := !ly -. 6.
+      ly := !ly -. 10.
     else
       monte := true
 

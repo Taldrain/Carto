@@ -161,6 +161,8 @@ let exec_glgtk () =
                    Graphics_engine.set_init ();
                    if (Refe.g_wg ()) then
                       exit 0));
+    if (Refe.g_wg ()) then
+      GMain.main ();
    ()
 
 let exec_3d_obj () =
