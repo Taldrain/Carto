@@ -136,6 +136,19 @@ let average5() =
   done;
   mat
 
+let booster() = 
+  let mat = Array.make_matrix 3 3 0 in
+  mat.(0).(0) <- -1;
+  mat.(1).(0) <- -1;
+  mat.(2).(0) <- -1;
+  mat.(0).(1) <- -1;
+  mat.(1).(1) <- 9;
+  mat.(2).(1) <- -1;
+  mat.(0).(2) <- -1;
+  mat.(1).(2) <- -1;
+  mat.(2).(2) <- -1;
+  mat 
+
 (* ------------------------------------ ------------------------------------- *)
 
 (* -------------------------- Pre filter functions -------------------------- *)
@@ -490,8 +503,9 @@ let median_filtr5 img =
 let median_filtr3 img =
   median_filtr img 3
 
+(* booster (rehausseur) filter with 3x3 matrix *)
 let boost_filtr img =
-  assert false
+  filtr_simpl_img img (booster()) 3 1
 
 (* ------------------------------------ ------------------------------------- *)
 

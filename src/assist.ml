@@ -276,7 +276,14 @@ let exec_prec pict_view =
         end
 
 let exec_uflo pict_view =
-    ()
+    if (!rank <= 5) then
+    begin
+    let ret = Filter.boost_filtr (Stack.top stacky) in
+    rank := !rank + 1;
+    Stack.push ret stacky;
+    sdl_to_bmp (Stack.top stacky);
+	pict_view#set_file ("/tmp/tmp.bmp");
+    end
 
 let gridy combo =
     match (GEdit.text_combo_get_active combo) with
@@ -437,7 +444,7 @@ let win_flout () =
 		~border_width:5
 		~packing:fram2#add () in
 	let btn_uflo = GButton.button
-		~label:"Unfloute"
+		~label:"Booster"
 		~packing:box_fram2#add () in
 	let box_moy = GPack.hbox
 		~spacing:5
@@ -568,7 +575,7 @@ let win_flout () =
 
 	ignore (btn_uflo#connect#clicked
 		~callback:(fun () -> (gridy combo;
-                              exec_gauss picture;
+                              exec_uflo picture;
                               grise btn_prec
                                     btn_uflo
                                     btn_aveg1
