@@ -193,7 +193,7 @@ let exec_off btn pict_view =
 
 let exec_rerand pct =
     begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.orig_file := "/tmp/rand_map.bmp";
         Refe.rand_file := true;)

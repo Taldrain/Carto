@@ -31,7 +31,7 @@ let exec_brow win b_img b_obj =
 
 let exec_random btn =
     begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.orig_file := (Refe.get_filename ());
         Refe.rand_file := true;)
@@ -155,7 +155,7 @@ let exec_3d_obj () =
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
 	begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		Refe.filename := "/tmp/rand_map.bmp"
 	else
 		Refe.filename := "carte.bmp"

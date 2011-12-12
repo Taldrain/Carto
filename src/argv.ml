@@ -19,6 +19,7 @@ let args =
   let med5 = " Apply the Median filter with a 5x5 matrix" in
   let grey = " Apply the Grey filter" in
   let inst_3d = " Instant 3d on a randomly generate map" in
+  let flou = " Erase the blur" in
   let v = " Print version and exit" in
     (* Look at my indentation, my indentation is Amazing... *)
   [("-sobel", Arg.String
@@ -45,6 +46,9 @@ let args =
    ("-grey", Arg.String
      (fun str -> (save (Filter.img_to_grey (sTS str)) "grey.bmp");
      ()), grey);
+   ("-boost", Arg.String
+     (fun str -> (save (Filter.boost_filtr (sTS str)) "boosted.bmp");
+     ()), flou);
    ("-r3d", Arg.Unit
      (fun () -> (Main.exec_3d_inst ());
      ()), inst_3d);
