@@ -204,7 +204,7 @@ let pre_trait () =
   let img = Sdlloader.load_image (Refe.get_filename ()) in
   (* getting dimensions *)
   get_dims img;
-  let img2 = contour img in
+  let _img2 = contour img in
 	(* we create the display surface *)
 	(* Grid function *)
 	(* :show img2 display;

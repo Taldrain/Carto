@@ -196,6 +196,7 @@ let exec_rerand pct =
 	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.orig_file := "/tmp/rand_map.bmp";
+		Refe.file_type := "img";
         Refe.rand_file := true;)
 	else
 		failwith "Fatal error on genperlin"
@@ -514,7 +515,8 @@ let win_flout () =
 		~file:(Refe.get_filename ())
 		~packing:secbox#add () in
 
-   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss btn_med1 btn_med2 btn_wb;
+   grise btn_prec btn_aveg1 btn_aveg2 btn_gauss
+         btn_med1 btn_med2 btn_wb btn_uflo;
 
 	(* -- CALLBACK -- *)
 	ignore (btn_rerand#connect#clicked
