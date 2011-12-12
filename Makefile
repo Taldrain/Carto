@@ -24,7 +24,7 @@ clean:
 
 cleanall: clean
 	${RM} ${OUT} InfoCarto.txt supermap.obj
-	${RM} out.bmp rand_map.bmp contour?.bmp tmp.bmp median.bmp
+	${RM} contour.bmp out.bmp rand_map.bmp contour?.bmp tmp.bmp median.bmp
 
 
 #END

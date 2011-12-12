@@ -37,7 +37,9 @@ let put_scale sc =
 
 let destrof w chk =
     Refe.perso := chk#active;
-	Refe.filename := "/tmp/tmp.bmp";
+	(*Refe.filename := "/tmp/tmp.bmp";*)
+	Refe.filename := (Refe.get_orig_file ());
+	Refe.li := [];
     w#destroy ()
 
 
