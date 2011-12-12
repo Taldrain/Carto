@@ -4,6 +4,7 @@ VPATH=src/
 GPATH=generator/
 OUT=supermap genperlin
 IMG=img/car*
+CP=cp -f
 
 all:
 	cd ${VPATH} && ${MAKE}
@@ -25,6 +26,13 @@ clean:
 cleanall: clean
 	${RM} ${OUT} InfoCarto.txt supermap.obj
 	${RM} contour.bmp out.bmp rand_map.bmp contour?.bmp tmp.bmp median.bmp
+
+install:
+	${CP} ${OUT} /usr/bin/
+
+desinstall:
+	${RM} /usr/bin/supermap
+	${RM} /usr/bin/genperlin
 
 
 #END

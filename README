@@ -39,10 +39,10 @@ défaut carto/
         $ make 64
 
  Installer le programme:
-        $ make install
+        # make install
 
  Desinstaller le programme:
-        $ make desinstall
+        # make desinstall
 
 4. Utilisation
 

@@ -136,7 +136,7 @@ let average5() =
   done;
   mat
 
-let booster() = 
+let booster() =
   let mat = Array.make_matrix 3 3 0 in
   mat.(0).(0) <- -1;
   mat.(1).(0) <- -1;
@@ -147,7 +147,7 @@ let booster() =
   mat.(0).(2) <- -1;
   mat.(1).(2) <- -1;
   mat.(2).(2) <- -1;
-  mat 
+  mat
 
 (* ------------------------------------ ------------------------------------- *)
 

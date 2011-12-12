@@ -40,7 +40,7 @@ let exec_brow win b_img b_obj =
 
 let exec_random btn btn_obj =
     begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.orig_file := (Refe.get_filename ());
 		Refe.file_type := "img";
@@ -70,8 +70,9 @@ let exec_glgtk () =
         ~label:"Close"
         ~packing:box#add () in
     ignore (area#connect#realize ~callback:Graphics_engine.init);
-    ignore (area#connect#display ~callback:(fun () -> (Graphics_engine.display ();
-                                               area#swap_buffers ())));
+    ignore (area#connect#display ~callback:
+              (fun () -> (Graphics_engine.display ();
+                          area#swap_buffers ())));
     area#event#add [`ALL_EVENTS];
 
 
@@ -165,7 +166,7 @@ let exec_3d_obj () =
 let exec_3d_inst () =
 	(* 3D POUR LES PRESSES *)
 	begin
-	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
+	if ((Sys.command "genperlin -save > /tmp/rand_map.bmp") = 0) then
 		Refe.filename := "/tmp/rand_map.bmp"
 	else
 		Refe.filename := "carte.bmp"

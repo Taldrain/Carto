@@ -258,9 +258,9 @@ let rec test_membership_3 x y = function
 let test_x x y =
 	if (test_membership_3 x y (!list_in_tri_coords)) then false
 	else let i = ref 0 in
-		let get_z ((_,_,c),_) = c in 
+		let get_z ((_,_,c),_) = c in
 		let zi e f = get_z (get_f e f) in
-			while ((!i) <  ((y-(!y0))+1)) 
+			while ((!i) <  ((y-(!y0))+1))
 					&& ( (zi x ((!y0)+(!i))) = (!z0)) do
 				i := !i + 1
 			done;
@@ -271,7 +271,7 @@ let test_x x y =
 				end
 			else false
 
-	
+
 (* test d altitude su la hauteur *)
 let test_y x y =
 	if (test_membership_3 x y (!list_in_tri_coords)) then false
@@ -316,16 +316,16 @@ let new_triangles x y =
 				if (testx && testy) then
 					begin
 						match (x,y) with
-						| (x,y) when 
-							y > ((Refe.get_w())/(Refe.get_step())-1) -> 
+						| (x,y) when
+							y > ((Refe.get_w())/(Refe.get_step())-1) ->
 									begin
 										xx := (x-1);
 										yx := (y-1);
 										xy := (x-1);
 										yy := (y-1)
 									end;
-						| (x,y) when 
-							x > ((Refe.get_h())/(Refe.get_step())) -> 
+						| (x,y) when
+							x > ((Refe.get_h())/(Refe.get_step())) ->
 									begin
 										xx := (x-1);
 										yx := (y-1);
@@ -367,7 +367,7 @@ let triangulation () =
 	let rec tri x y = match (x,y) with
 		| (x,y) when y > ((Refe.get_w())/(Refe.get_step())-1) -> ()
 		| (x,y) when x > ((Refe.get_h())/(Refe.get_step())) -> tri 1 (y+1)
-		| (x,y) when (test_membership_3 x y (!list_in_tri_coords)) 
+		| (x,y) when (test_membership_3 x y (!list_in_tri_coords))
 			-> tri (x+1) y
 		| (x,y) -> begin
 						new_triangles x y;
@@ -382,7 +382,7 @@ let print_liste l =
 	let rec print_list liste i =
 		match liste with
 		| [] -> ()
-		| ((x,y,z),(r,g,b))::l -> 
+		| ((x,y,z),(r,g,b))::l ->
 									print_string "((";
 									print_float x;
 									print_string ",";

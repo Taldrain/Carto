@@ -109,7 +109,8 @@ let contour image =
         || tolerance !center !down = false  &&  y < (h)-1 ) then
           Sdlvideo.put_pixel_color image2 x y (0,0,0) else
           Sdlvideo.put_pixel_color image2 x y !center;
-        if (tolerance !center !right = false || tolerance !center !down = false) then
+        if (tolerance !center !right = false || tolerance !center !down = false)
+        then
           listcolor := p_list !listcolor !center
         else() ;
       done;
