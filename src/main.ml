@@ -7,13 +7,20 @@ let quit () =
 	GMain.quit ();
 	exit 0
 
+let reset () =
+   Refe.li := [];
+   Refe.list_alt := [];
+   Refe.list_3d := [];
+   Refe.list_xyz := [];
+   Refe.list_tri3D := []
 
 let exec_fst_treat btn =
 	Assist.winstep ();
 	btn#misc#set_sensitive true
 
-let exec_assist () =
-	Assist.winalt ()
+let exec_assist btn =
+	Assist.winalt ();
+    btn#misc#set_sensitive true
 
 let exec_brow win b_img b_obj =
 	Browser.browser win;
@@ -21,25 +28,29 @@ let exec_brow win b_img b_obj =
 	begin
         Refe.orig_file := (Refe.get_filename ());
 		if ((Refe.get_file_type ()) = "obj") then
-			b_obj#misc#set_sensitive true
+			(b_obj#misc#set_sensitive true;
+			b_img#misc#set_sensitive false)
 		else
             begin
   	        Assist.win_flout ();
-			b_img#misc#set_sensitive true
+			b_img#misc#set_sensitive true;
+            b_obj#misc#set_sensitive false
             end
 	end
 
-let exec_random btn =
+let exec_random btn btn_obj =
     begin
 	if ((Sys.command "./genperlin -save > /tmp/rand_map.bmp") = 0) then
 		(Refe.filename := "/tmp/rand_map.bmp";
         Refe.orig_file := (Refe.get_filename ());
+		Refe.file_type := "img";
         Refe.rand_file := true;)
 	else
 		failwith "Fatal error on genperlin"
 	end;
   	Assist.win_flout ();
-	btn#misc#set_sensitive true
+	btn#misc#set_sensitive true;
+    btn_obj#misc#set_sensitive false
 
 
 let exec_glgtk () =
@@ -103,8 +114,8 @@ let exec_glgtk () =
    w#event#connect#key_press ~callback:
     begin fun ev ->
       let key = GdkEvent.Key.keyval ev in
-        if key = GdkKeysyms._Escape then (Refe.list_tri3D := [];
-										  Refe.list_3d := [];
+        area#swap_buffers ();
+        if key = GdkKeysyms._Escape then (reset ();
 										  area#destroy (); w#destroy ();
                                           Graphics_engine.set_init ()) else
         if key = GdkKeysyms._Down then Graphics_engine.act_keyDown () else
@@ -136,12 +147,12 @@ let exec_glgtk () =
          Graphics_engine.set_init ())
       else
         Graphics_engine.display ();
-      area#swap_buffers ();
         true
     end);
 
     ignore (btn#connect#clicked ~callback:
-        (fun () -> area#destroy (); w#destroy ();
+        (fun () -> reset ();
+                    area#destroy (); w#destroy ();
                    Graphics_engine.set_init ()));
    ()
 
@@ -234,6 +245,9 @@ let main () =
 	let btn_3d_obj = GButton.button
 		~label:"3D OBJ"
 		~packing:main_box#pack () in
+    let btn_noclik = GButton.button
+		~label:"View 3D"
+		~packing:main_box#pack () in
     let _sep = GMisc.separator `HORIZONTAL
 		~packing:main_box#pack () in
     let _sep = GMisc.separator `HORIZONTAL
@@ -241,10 +255,7 @@ let main () =
     let _sep = GMisc.separator `HORIZONTAL
 		~packing:main_box#pack () in
 	let btn_3d_inst = GButton.button
-		~label:"3D instantane"
-		~packing:main_box#pack () in
-    let btn_noclik = GButton.button
-		~label:"Do not click"
+		~label:"Instant 3D"
 		~packing:main_box#pack () in
 	let btn_quit = GButton.button
 		~label:"Quit"
@@ -254,6 +265,7 @@ let main () =
 	btn_pre_treat#misc#set_sensitive false;
 	btn_assist#misc#set_sensitive false;
 	btn_3d_obj#misc#set_sensitive false;
+    btn_noclik#misc#set_sensitive false;
 
 	(* --------- *)
 	(* CALLBACKS *)
@@ -272,12 +284,12 @@ let main () =
 	ignore (btn_browse#connect#clicked
 		~callback:(fun () -> exec_brow w btn_pre_treat btn_3d_obj));
 	ignore (btn_rand#connect#clicked
-		~callback:(fun () -> exec_random btn_pre_treat));
+		~callback:(fun () -> exec_random btn_pre_treat btn_3d_obj));
 
 	ignore (btn_pre_treat#connect#clicked
 		~callback:(fun () -> exec_fst_treat btn_assist));
 	ignore (btn_assist#connect#clicked
-		~callback:exec_assist);
+		~callback:(fun () -> exec_assist btn_noclik));
 	ignore (btn_3d_obj#connect#clicked
 		~callback:exec_3d_obj);
 	ignore (btn_3d_inst#connect#clicked

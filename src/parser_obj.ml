@@ -45,7 +45,7 @@ let obj_file = open_in (Refe.get_filename ()) in
 
 	try
 	parser_obj ()
-	with _ -> print_endline "Fait chier"
+	with _ -> print_endline "Little exception not important"
 
 let rec affich = function
 	| [] -> ()
@@ -70,6 +70,6 @@ let rec put_colors = function
 	| e::l -> (e, (255., 0., 0.))::(put_colors l)
 
 let put_color () =
-	Refe.list_3d := (put_colors !l_topCoords);
-	affich (Refe.get_list_3d ());
-	print_endline ""
+	Refe.list_3d := (put_colors !l_topCoords)
+	(*affich (Refe.get_list_3d ());*)
+	(*print_endline ""*)
