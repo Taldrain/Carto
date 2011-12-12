@@ -209,7 +209,7 @@ let write_obj() =
 
 
 
-(* OPTIMISATION DE LA TRIANGULATION *)
+(* --------------  OPTIMISATION DE LA TRIANGULATION ------------------------- *)
 
 (* variables globales necessaires a la triangularisation *)
 let x0 = ref 0
@@ -220,39 +220,8 @@ let yx = ref 0
 let xy = ref 0
 let yy = ref 0
 
-(* liste despoint a l interieur d un triangle *)
+(* liste des point a l interieur d un triangle *)
 let list_in_tri_coords = ref ( [] : (int*int) list )
-
-
-
-
-(*
-(* calculer un angle a partir de trois point *)
-let calc_angle xA yA xD yD xB yB =
-	acos ( ( ( ((xD-.xB)*.(xD-.xB)) +. ((yD-.yB)*.(yD-.yB)) )
-			+. ( ((xD-.xA)*.(xD-.xA)) +. ((yD-.yA)*.(yD-.yA)) )
-			-. ( ((xB-.xA)*.(xB-.xA)) +. ((yB-.yA)*.(yB-.yA)) ) )
-		/. ( 2. *. ( ((xD-.xB)*.(xD-.xB)) +. ((yD-.yB)*.(yD-.yB)) )
-*. ( ((xD-.xA)*.(xD-.xA)) +. ((yD-.yA)*.(yD-.yA)) ) ) )
-*)
-
-
-(*
-(* somme des trois angles *)
-let som_angles xA yA xB yB xC yC xD yD =
-	(calc_angle xA yA xD yD xB yB)
-	+. (calc_angle xB yB xD yD xC yC)
-	+. (calc_angle xC yC xD yD xA yA)
-*)
-
-(*
-(* test d egalite de pi *)
-let test_2pi x =
-	(*if (x>6.28318) && (x<6.28319) then true
-			else false*)
-	x = ((2.)*.(acos (-1.)))
-*)
-
 
 
 (* stocker les couples (x,y) appartenent a un triangle,
@@ -272,61 +241,6 @@ let stock_in_tri_coordsY x y =
 		done
 
 
-
-(*
-(* tester si (x,y) appartient deja a un triangle - 1st version *)
-let tri_membership_1 x y =
-	let rec test_membership i =
-		if ((i+2) > (List.length !Refe.list_tri3D)) then false
-		else
-			begin
-				let xi ((a,_,_),_) = a in
-				let yi ((_,b,_),_) = b in
-					let	x1 = xi (List.nth !Refe.list_tri3D i) in
-					let y1 = yi (List.nth !Refe.list_tri3D i) in
-					let x2 = xi (List.nth !Refe.list_tri3D (i+1)) in
-					let y2 = yi (List.nth !Refe.list_tri3D (i+1)) in
-					let x3 = xi (List.nth !Refe.list_tri3D (i+2)) in
-					let y3 = yi (List.nth !Refe.list_tri3D (i+2)) in
-						if (test_2pi 
-								(som_angles x1 y1 x2 y2 x3 y3 
-									(float_of_int x) (float_of_int y))) 
-								then true
-						else test_membership (i+3)
-			end;
-	in test_membership 0
-*)
-
-
-
-(*
-(* tester si (x,y) appartient deja a un triangle - 2nd version *)
-let tri_membership_2 x y =
-	let rec test_membership_2 i =
-		if ((i+2) > (List.length !Refe.list_tri3D)) then false
-		else
-			begin
-				let xt = float_of_int x in
-				let yt = float_of_int y in
-				let xi ((a,_,_),_) = a in
-				let yi ((_,b,_),_) = b in
-					let	x1 = xi (List.nth !Refe.list_tri3D i) in
-					let y1 = yi (List.nth !Refe.list_tri3D i) in
-					let x2 = xi (List.nth !Refe.list_tri3D (i+1)) in
-					let y2 = yi (List.nth !Refe.list_tri3D (i+1)) in
-					let x3 = xi (List.nth !Refe.list_tri3D (i+2)) in
-					let y3 = yi (List.nth !Refe.list_tri3D (i+2)) in
-						if ((xt>=x1) && (yt>=y1)) && ((xt<=x2) && (yt<=y2))
-							&& ((xt<=y3) && (yt<=y3)) then true
-						else test_membership_2 (i+3)
-				end;
-in test_membership_2 0
-*)
-
-
-
-
-
 (* tester si (x,y) appartient deja a un triangle - 3rd version *)
 (* principe: tester si (x,y) appartient ou non a une liste de couplet,
 	cette liste est generer dans test_x et test_y *)
@@ -334,7 +248,6 @@ let rec test_membership_3 x y = function
 	| [] -> false
 	| (a,b)::l -> if (x=a) && (y=b) then true
 					else test_membership_3 x y l
-	
 
 
 (* test d altitude sur la largeur *)
@@ -371,51 +284,6 @@ let test_y x y =
 				end
 			else false
 
-(* le triangle du bas a atteint son max, mais pas celui du haut *)
-let rec tri_max_up x y =
-	if (test_y x y) then
-						begin
-							 match (x,y) with
-							| (x,y) when 
-								y > ((Refe.get_w())/(Refe.get_step())-1) -> 
-										begin
-											xy := (x-1);
-											yy := (y-1);
-										end;
-							| (x,y) when 
-								x > ((Refe.get_h())/(Refe.get_step())) -> 
-										begin
-											xy := (x-1);
-											yy := (y-1);
-										end;
-							| (x,y) -> tri_max_up (x+1) (y+1)
-						end
-	else
-		xy := (x-1);
-		yy := (y-1)
-
-(* le triangle du haut a atteint son max, mais pas celui du bas *)
-let rec tri_max_down x y =
-	if (test_x x y) then
-						begin
-							match (x,y) with
-							| (x,y) when 
-								y > ((Refe.get_w())/(Refe.get_step())-1) -> 
-										begin
-											xx := (x-1);
-											yx := (y-1);
-									end;
-							| (x,y) when 
-								x > ((Refe.get_h())/(Refe.get_step())) -> 
-										begin
-											xx := (x-1);
-											yx := (y-1);
-										end;
-							| (x,y) -> tri_max_down (x+1) (y+1)
-						end
-	else
-		xx := (x-1);
-		yx := (y-1)
 
 (* creer la liste de coordonnees des grands triangles *)
 let stock_tri3D x0 y0 x1 y1 x2 y2 =
@@ -462,18 +330,6 @@ let new_triangles x y =
 									end;
 						| (x,y) ->  tri_max (x+1) (y+1);
 					end;
-			(*	if ( testx && (not testy) ) then
-					begin
-						xx := (x-1);
-						yx := (y-1);
-						tri_max_up (x+1) (y+1)
-					end;
-				if ( (not testx) && testy) then
-					begin
-						xy := (x-1);
-						yy := (y-1);
-						tri_max_down (x+1) (y+1)
-					end;*)
 				if ( (not testx) || (not testy) ) then
 					begin
 						xx := (x-1);
@@ -516,7 +372,6 @@ let triangulation () =
 	in tri 1 1
 
 
-(*
 (* DEBUG AFFICHAGE List_tri3D *)
 let print_liste l =
 	print_endline "-----------------------------------------";
@@ -546,7 +401,6 @@ let print_liste l =
 										)
 		in print_list l 1;
 	print_endline "-----------------------------------------"
-*)
 
 
 
