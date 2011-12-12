@@ -435,7 +435,6 @@ let median_filtr img dim =
             mat_f.(x).(y) <- Sdlvideo.get_pixel_color img x y;
       done;
     done;
-  print_endline (Refe.get_grid_stat());
   let mat_final = ref (Array.make_matrix 1 1 (0,0,0)) in
   if Refe.get_grid_stat() = "None" then
     begin

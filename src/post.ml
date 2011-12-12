@@ -8,22 +8,24 @@ let li_ord = ref []
 let altitude pix =
   let rec alt pi li = match li with
   | [] -> failwith "Pas d'altitude";
-  | e::_ when e.Refe.orig_color = pi -> (e.Refe.alt, e.Refe.rgb)
-  | e::l -> alt pi l in
+  | e::li when Pre.tolerance e.Refe.orig_color pi -> (e.Refe.alt, e.Refe.rgb)
+  | e::li -> alt pi li in
   alt pix (Refe.get_list_alt())
 
+(*  mat  x y , r g b  ->   mat  x y z , r g b *)
 let get_alt() =
   begin
     for y = 0 to (Refe.get_h())/( Refe.get_step()) do
       for x = 0 to (Refe.get_w())/(Refe.get_step()) do
-	   begin
-		 let ((d,e), b) = (Refe.get_matrice_rgb()).(x).(y) in
-		 let alti = altitude b in
-		 match alti with
-		 	| (al, co) ->
-	     Array.set (Refe.get_matrice_ret()).(x) (y) ((d, e, al),co)
-       end
-	  done;
+	      begin
+          (*  ((x,y),(r,g,b)) *)
+		      let ((d,e), b) = (Refe.get_matrice_rgb()).(x).(y) in
+		      let alti = altitude b in
+		        match alti with
+		 	      | (al, co) ->
+	            Array.set (Refe.get_matrice_ret()).(x) (y) ((d, e, al),co)
+        end
+	    done;
     done;
   end
 

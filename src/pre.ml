@@ -39,11 +39,7 @@ let show img dst =
 let rec p_list li pix =
   begin
     match li with
-    | [] -> begin 
-              let (r,g,b) = pix in print_endline
-                    (string_of_int(r)^","^string_of_int(g)^","^string_of_int(b));
-              [pix]; 
-            end
+    | [] -> [pix]
     | e::li when e <> pix -> e::(p_list li pix)
     | _ -> li
   end
