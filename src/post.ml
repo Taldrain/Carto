@@ -30,11 +30,9 @@ let get_alt() =
 
 
 
+(* ----------------------------------- -------------------------------------- *)
 
-(* [[DEBUT]] SUITE DE FONCTIONS POUR LISSAGE DES ALTITUDES *)
-(* 0 1 2
-   7 x 3
-   6 5 4 *)
+(* ---- [[DEBUT]] SUITE DE FONCTIONS POUR LISSAGE DES ALTITUDES ------------- *)
 
 let red_pill matrix x y =
 	if ((x < (Array.length matrix)) &&
@@ -101,7 +99,11 @@ let liss () =
        end;
 	  done;
     done
+
+
 (* [[FIN]] SUITE DE FONCTIONS POUR LISSAGE DES ALTITUDES *)
+
+(* ----------------------------------- -------------------------------------- *)
 
 let get_f x y = (Refe.get_matrice_fin()).(x).(y)
 
@@ -136,7 +138,10 @@ let rec i_2_f = function
 					::i_2_f l
 
 
-(*FONCTIONS NECESSAIRES AU .OBJ *)
+
+(* ----------------------------------- -------------------------------------- *)
+
+(* ------------------- FONCTIONS NECESSAIRES AU .OBJ ------------------------ *)
 
 (* (int*int*int)list -> ((int*int*int)*int)list avec le dernier int le numero
 de l'element *)
@@ -204,10 +209,7 @@ let write_obj() =
 
 
 
-
-
-
-
+(* ----------------------------------- -------------------------------------- *)
 
 (* --------------  OPTIMISATION DE LA TRIANGULATION ------------------------- *)
 
@@ -404,6 +406,9 @@ let print_liste l =
 
 
 
+(* ----------------------------------- -------------------------------------- *)
+
+(* --------------------------  Main function -------------------------------- *)
 
 (*fonction main du post_treatment *)
 let post_treat() =

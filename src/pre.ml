@@ -122,7 +122,6 @@ let contour image =
     (* call fct which write colors in a .txt *)
     if (Refe.save_ornot_color() = true) then
       list_to_text !listcolor;
-    Sdlvideo.save_BMP image2 "contour.bmp";
     image2
 
 
